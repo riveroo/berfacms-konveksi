@@ -63,14 +63,30 @@
                         class="w-full h-10 px-4 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 outline-none transition">
                 </div>
 
+                {{-- Row 2: Per Page --}}
+                <div class="flex items-end gap-2">
+                    <div class="flex-1">
+                        <x-text variant="label" class="mb-1.5">Per Page</x-text>
+                        <select name="perPage" onchange="this.form.submit()"
+                            class="w-full h-10 px-4 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 outline-none transition cursor-pointer">
+                            <option value="10" {{ request('perPage') == '10' ? 'selected' : '' }}>10</option>
+                            <option value="25" {{ request('perPage') == '25' ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ request('perPage') == '50' ? 'selected' : '' }}>50</option>
+                            <option value="100" {{ request('perPage') == '100' ? 'selected' : '' }}>100</option>
+                        </select>
+                    </div>
+                </div>
+
                 {{-- Row 2: Action Buttons --}}
                 <div class="flex items-end gap-2">
                     <x-button type="submit" variant="indigo" class="flex-1 h-10">
                         Apply
                     </x-button>
-                    <x-button href="{{ route('transactions.index') }}" variant="outline" class="flex-1 h-10">
-                        Reset
-                    </x-button>
+                    @if(request()->anyFilled(['search', 'trx_id', 'status', 'date_from', 'date_to', 'perPage']))
+                        <x-button href="{{ route('transactions.index') }}" variant="outline" class="flex-1 h-10">
+                            Reset
+                        </x-button>
+                    @endif
                 </div>
 
             </div>

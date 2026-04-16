@@ -35,7 +35,8 @@ class PreOrderController extends Controller
             $q->whereDate('created_at', '<=', $request->date_to);
         });
 
-        $preOrders = $query->paginate(15)->withQueryString();
+        $perPage = $request->query('perPage', 10);
+        $preOrders = $query->paginate($perPage)->withQueryString();
 
         return view('admin.pre_orders.index', compact('preOrders'));
     }

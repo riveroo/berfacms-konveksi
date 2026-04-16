@@ -138,13 +138,48 @@ class ProductResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['variants.stocks']);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('product_name')
-                    ->label(fn () => __('product.product_name'))
+                    ->label(fn() => __('product.product_name'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('variants_count')
+                    ->label('Variants')
+                    ->counts('variants'),
+                Tables\Columns\TextColumn::make('price_range')
+                    ->label('Price Range')
+                    ->getStateUsing(function (Product $record) {
+                        $prices = $record->variants->flatMap->stocks->pluck('price')->filter();
+                        if ($prices->isEmpty()) {
+                            return 'Rp 0';
+                        }
+                        $min = $prices->min();
+                        $max = $prices->max();
+                        if ($min == $max) {
+                            return 'Rp ' . number_format($min, 0, ',', '.');
+                        }
+                        return 'Rp ' . number_format($min, 0, ',', '.') . ' - Rp ' . number_format($max, 0, ',', '.');
+                    })
+                    ->fontFamily('outfit')
+                    ->color('rose'),
+                Tables\Columns\TextColumn::make('total_stock')
+                    ->label('Total Stock')
+                    ->getStateUsing(function (Product $record) {
+                        return $record->variants->flatMap->stocks->sum('stock');
+                    })
+                    ->badge()
+                    ->color(fn(int $state): string => match (true) {
+                        $state <= 5 => 'danger',
+                        $state <= 20 => 'warning',
+                        default => 'success',
+                    }),
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Active')
                     ->boolean()

@@ -35,13 +35,30 @@ Route::get('/products', function (Illuminate\Http\Request $request) {
 })->name('products.index');
 
 Route::get('/products/{id}', function ($id) {
-    $product = Product::with('variants.stocks.sizeOption')->where('is_active', true)->findOrFail($id);
-    $otherProducts = Product::where('id', '!=', $product->id)
+    $product = \App\Models\Product::with('variants.stocks.sizeOption')->where('is_active', true)->findOrFail($id);
+    
+    // Find first variant+size combination with stock > 0
+    $defaultSelection = null;
+    foreach ($product->variants as $variant) {
+        $availableStock = $variant->stocks->where('stock', '>', 0)->sortBy('size_option_id')->first();
+        if ($availableStock) {
+            $defaultSelection = [
+                'variant_id' => $variant->id,
+                'size_option_id' => $availableStock->size_option_id
+            ];
+            break;
+        }
+    }
+
+    $defaultVariantId = $defaultSelection['variant_id'] ?? null;
+    $defaultSizeId = $defaultSelection['size_option_id'] ?? null;
+
+    $otherProducts = \App\Models\Product::where('id', '!=', $product->id)
         ->where('is_active', true)
         ->latest()
         ->take(5)
         ->get();
-    return view('products.show', compact('product', 'otherProducts'));
+    return view('products.show', compact('product', 'otherProducts', 'defaultVariantId', 'defaultSizeId'));
 })->name('products.show');
 
 Route::get('/dashboard', function () {
@@ -54,7 +71,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::get('/login', function () {
+    return redirect('/admin/login');
+})->name('login');
+
+// require __DIR__.'/auth.php';
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');

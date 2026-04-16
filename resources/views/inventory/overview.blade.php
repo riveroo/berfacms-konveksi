@@ -119,12 +119,24 @@
                 </div>
             </div>
 
+            <!-- Per Page -->
+            <div class="w-full sm:w-24">
+                <x-text variant="label" class="mb-1.5 ml-1 text-[10px]">Per Page</x-text>
+                <select name="perPage" onchange="this.form.submit()"
+                    class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none cursor-pointer">
+                    <option value="10" {{ request('perPage') == '10' ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ request('perPage') == '25' ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request('perPage') == '50' ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ request('perPage') == '100' ? 'selected' : '' }}>100</option>
+                </select>
+            </div>
+
             <!-- Action Buttons -->
             <div class="flex items-center gap-2">
                 <x-button type="submit" variant="indigo" class="h-10 px-5">
                     Search
                 </x-button>
-                @if(request('search') || request('supplier_id') || request('product_type_id'))
+                @if(request('search') || request('supplier_id') || request('product_type_id') || request('perPage'))
                     <x-button href="{{ route('inventory.overview') }}" variant="outline" class="h-10 px-4">
                         Reset
                     </x-button>

@@ -35,7 +35,8 @@ class TransactionController extends Controller
             $q->whereDate('created_at', '<=', $request->date_to);
         });
 
-        $transactions = $query->paginate(15)->withQueryString();
+        $perPage = $request->query('perPage', 10);
+        $transactions = $query->paginate($perPage)->withQueryString();
 
         return view('admin.transactions.index', compact('transactions'));
     }

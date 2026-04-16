@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Konveksi hub | Solusi Apparel & Seragam Premium</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
     
     <!-- SEO -->
     <meta name="description" content="Konveksi hub adalah mitra terpercaya untuk pembuatan seragam kantor, polo shirt, jaket, dan apparel premium dengan kualitas terbaik dan pengiriman tepat waktu.">
@@ -131,7 +132,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Portfolio 1 -->
                 <div class="group relative aspect-[3/4] rounded-[2rem] overflow-hidden cursor-pointer" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
-                    <img src="https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=1888&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Office Shirt">
+                    <img src="{{ asset('portfolio/office-shirt.png') }}" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Office Shirt">
                     <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/90 via-indigo-900/20 to-transparent transition-opacity duration-500" :class="hover ? 'opacity-100' : 'opacity-60'"></div>
                     <div class="absolute bottom-8 left-8 right-8 text-white transition-transform duration-500" :class="hover ? '-translate-y-2' : 'translate-y-0'">
                         <p class="text-indigo-400 font-bold text-xs uppercase tracking-widest mb-2">Office Shirt</p>
@@ -161,7 +162,7 @@
 
                 <!-- Portfolio 4 -->
                 <div class="group relative aspect-[3/4] rounded-[2rem] overflow-hidden cursor-pointer" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
-                    <img src="https://images.unsplash.com/photo-1597435165688-6c84c6c18cf5?q=80&w=1964&auto=format&fit=crop" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Tote Bag">
+                    <img src="{{ asset('portfolio/tote-bag.png') }}" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Tote Bag">
                     <div class="absolute inset-0 bg-gradient-to-t from-cyan-900/90 via-cyan-900/20 to-transparent transition-opacity duration-500" :class="hover ? 'opacity-100' : 'opacity-60'"></div>
                     <div class="absolute bottom-8 left-8 right-8 text-white transition-transform duration-500" :class="hover ? '-translate-y-2' : 'translate-y-0'">
                         <p class="text-cyan-400 font-bold text-xs uppercase tracking-widest mb-2">Tote Bag</p>

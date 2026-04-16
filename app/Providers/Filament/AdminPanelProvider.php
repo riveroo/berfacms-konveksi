@@ -34,8 +34,10 @@ class AdminPanelProvider extends PanelProvider
             ->darkMode(false)
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15%')
-            ->brandName('Admin Panel')
-            ->brandLogo(fn() => view('vendor.filament.logo'))
+            ->brandName('Berfa CMS')
+            ->brandLogo(asset('images/logo.png'))
+            ->brandLogoHeight('3rem')
+            ->favicon(asset('images/favicon.png'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -43,10 +45,7 @@ class AdminPanelProvider extends PanelProvider
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
-            ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
-            ])
+            ->widgets([])
             ->navigationGroups([
                 \Filament\Navigation\NavigationGroup::make()->label('Catalog')->icon('heroicon-o-shopping-bag'),
                 \Filament\Navigation\NavigationGroup::make()->label('Sales')->icon('heroicon-o-banknotes'),
