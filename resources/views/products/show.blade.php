@@ -433,7 +433,7 @@
                     
                     // Auto set image if variant is pre-selected
                     if (this.selectedVariant) {
-                        const variant = this.productData.find(v => v.id === this.selectedVariant);
+                        const variant = this.productData.find(v => v.id == this.selectedVariant);
                         if (variant && variant.image_url) {
                             setMainImage(null, variant.image_url);
                         }
@@ -464,8 +464,8 @@
                     if (!priceEl || !noticeEl) return;
 
                     if (this.selectedVariant && this.selectedSize) {
-                        const variant = this.productData.find(v => v.id === this.selectedVariant);
-                        const stockItem = variant ? variant.stocks.find(s => s.size_option_id === this.selectedSize) : null;
+                        const variant = this.productData.find(v => v.id == this.selectedVariant);
+                        const stockItem = variant ? variant.stocks.find(s => s.size_option_id == this.selectedSize) : null;
 
                         if (stockItem && stockItem.stock > 0) {
                             priceEl.innerHTML = this.formatRupiah(stockItem.price);
@@ -486,13 +486,13 @@
                         const sId = parseInt(btn.getAttribute('data-size-id'));
                         let hasStock = false;
                         if (this.selectedVariant) {
-                            const v = this.productData.find(v => v.id === this.selectedVariant);
+                            const v = this.productData.find(v => v.id == this.selectedVariant);
                             if (v) {
-                                const s = v.stocks.find(s => s.size_option_id === sId);
+                                const s = v.stocks.find(s => s.size_option_id == sId);
                                 if (s && s.stock > 0) hasStock = true;
                             }
                         } else {
-                            hasStock = this.productData.some(v => v.stocks.some(s => s.size_option_id === sId && s.stock > 0));
+                            hasStock = this.productData.some(v => v.stocks.some(s => s.size_option_id == sId && s.stock > 0));
                         }
 
                         if (!hasStock) {
@@ -506,13 +506,13 @@
                         const vId = parseInt(btn.getAttribute('data-variant-id'));
                         let hasStock = false;
                         if (this.selectedSize) {
-                            const v = this.productData.find(v => v.id === vId);
+                            const v = this.productData.find(v => v.id == vId);
                             if (v) {
-                                const s = v.stocks.find(s => s.size_option_id === this.selectedSize);
+                                const s = v.stocks.find(s => s.size_option_id == this.selectedSize);
                                 if (s && s.stock > 0) hasStock = true;
                             }
                         } else {
-                            const v = this.productData.find(v => v.id === vId);
+                            const v = this.productData.find(v => v.id == vId);
                             if (v && v.stocks.some(s => s.stock > 0)) hasStock = true;
                         }
 
@@ -526,8 +526,8 @@
 
                 isValidSelection() {
                     if (!this.selectedVariant || !this.selectedSize) return false;
-                    const v = this.productData.find(v => v.id === this.selectedVariant);
-                    const s = v ? v.stocks.find(s => s.size_option_id === this.selectedSize) : null;
+                    const v = this.productData.find(v => v.id == this.selectedVariant);
+                    const s = v ? v.stocks.find(s => s.size_option_id == this.selectedSize) : null;
                     return s && s.stock > 0;
                 },
 
@@ -615,8 +615,8 @@
 
                     // Check stock limit
                     if (this.selectedVariant && this.selectedSize) {
-                        const variant = this.productData.find(v => v.id === this.selectedVariant);
-                        const stockItem = variant ? variant.stocks.find(s => s.size_option_id === this.selectedSize) : null;
+                        const variant = this.productData.find(v => v.id == this.selectedVariant);
+                        const stockItem = variant ? variant.stocks.find(s => s.size_option_id == this.selectedSize) : null;
                         if (stockItem && val > stockItem.stock) val = stockItem.stock;
                     }
 
