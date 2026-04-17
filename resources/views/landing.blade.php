@@ -132,7 +132,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <!-- Portfolio 1 -->
                 <div class="group relative aspect-[3/4] rounded-[2rem] overflow-hidden cursor-pointer" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
-                    <img src="{{ asset('portfolio/office-shirt.png') }}" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Office Shirt">
+                    <img src="/portfolio/office-shirt.png" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Office Shirt">
                     <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/90 via-indigo-900/20 to-transparent transition-opacity duration-500" :class="hover ? 'opacity-100' : 'opacity-60'"></div>
                     <div class="absolute bottom-8 left-8 right-8 text-white transition-transform duration-500" :class="hover ? '-translate-y-2' : 'translate-y-0'">
                         <p class="text-indigo-400 font-bold text-xs uppercase tracking-widest mb-2">Office Shirt</p>
@@ -162,7 +162,7 @@
 
                 <!-- Portfolio 4 -->
                 <div class="group relative aspect-[3/4] rounded-[2rem] overflow-hidden cursor-pointer" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
-                    <img src="{{ asset('portfolio/tote-bag.png') }}" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Tote Bag">
+                    <img src="/portfolio/tote-bag.png" class="w-full h-full object-cover transition-transform duration-700" :class="hover ? 'scale-110' : 'scale-100'" alt="Tote Bag">
                     <div class="absolute inset-0 bg-gradient-to-t from-cyan-900/90 via-cyan-900/20 to-transparent transition-opacity duration-500" :class="hover ? 'opacity-100' : 'opacity-60'"></div>
                     <div class="absolute bottom-8 left-8 right-8 text-white transition-transform duration-500" :class="hover ? '-translate-y-2' : 'translate-y-0'">
                         <p class="text-cyan-400 font-bold text-xs uppercase tracking-widest mb-2">Tote Bag</p>

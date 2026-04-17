@@ -137,3 +137,20 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/inventory/overview/import', [\App\Http\Controllers\InventoryOverviewController::class, 'import'])->name('inventory.overview.import');
 });
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/fix-storage', function () {
+        $shortcut = public_path('storage');
+        if (is_link($shortcut) || file_exists($shortcut)) {
+            // Delete existing link or folder first
+            @unlink($shortcut);
+        }
+
+        try {
+            \Illuminate\Support\Facades\Artisan::call('storage:link');
+            return 'Storage link recreated successfully.';
+        } catch (\Exception $e) {
+            return 'Error: ' . $e->getMessage();
+        }
+    })->name('admin.fix-storage');
+});
