@@ -140,21 +140,20 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/fix-storage', function () {
-        $target = storage_path('app/public');
         $shortcut = public_path('storage');
-
-        if (is_link($shortcut) || file_exists($shortcut)) {
+        
+        // Jika sudah ada tapi berupa link rusak, hapus
+        if (is_link($shortcut)) {
             @unlink($shortcut);
         }
 
-        try {
-            if (symlink($target, $shortcut)) {
-                return 'Storage link recreated successfully using symlink().';
-            }
-            return 'Failed to create storage link using symlink().';
-        } catch (\Exception $e) {
-            return 'Error: ' . $e->getMessage() . '. Note: This usually happens because "symlink" function is disabled on your hosting.';
+        // Jika folder belum ada, buat foldernya secara fisik
+        if (!file_exists($shortcut)) {
+            mkdir($shortcut, 0755, true);
+            return 'Physical storage folder created in public/storage. No symlink needed.';
         }
+
+        return 'Public storage folder already exists.';
     })->name('admin.fix-storage');
 });
 
