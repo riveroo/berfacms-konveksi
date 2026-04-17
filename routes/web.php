@@ -38,20 +38,10 @@ Route::get('/products/{id}', function ($id) {
     $product = \App\Models\Product::with('variants.stocks.sizeOption')->where('is_active', true)->findOrFail($id);
 
     // Find first variant+size combination with stock > 0
-    $defaultSelection = null;
-    foreach ($product->variants as $variant) {
-        $availableStock = $variant->stocks->where('stock', '>', 0)->sortBy('size_option_id')->first();
-        if ($availableStock) {
-            $defaultSelection = [
-                'variant_id' => $variant->id,
-                'size_option_id' => $availableStock->size_option_id
-            ];
-            break;
-        }
-    }
-
-    $defaultVariantId = $defaultSelection['variant_id'] ?? null;
-    $defaultSizeId = $defaultSelection['size_option_id'] ?? null;
+    $firstAvailable = $product->variants->flatMap->stocks->where('stock', '>', 0)->first();
+    
+    $defaultVariantId = $firstAvailable ? $firstAvailable->variant_id : null;
+    $defaultSizeId = $firstAvailable ? $firstAvailable->size_option_id : null;
 
     $otherProducts = \App\Models\Product::where('id', '!=', $product->id)
         ->where('is_active', true)

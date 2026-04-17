@@ -430,6 +430,14 @@
 
                 init() {
                     this.updateUI();
+                    
+                    // Auto set image if variant is pre-selected
+                    if (this.selectedVariant) {
+                        const variant = this.productData.find(v => v.id === this.selectedVariant);
+                        if (variant && variant.image_url) {
+                            setMainImage(null, variant.image_url);
+                        }
+                    }
                 },
 
                 formatRupiah(number) {
