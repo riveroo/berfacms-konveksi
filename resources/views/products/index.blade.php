@@ -115,14 +115,12 @@
                     <div x-cloak x-show="!gridLoading" style="display: none;" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                         @forelse($products as $product)
                             <!-- Refined Standard Native Hover Scaling via transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg hover:border-indigo-200 class chain! -->
-                            <div class="group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:border-indigo-200 flex flex-col h-full relative cursor-pointer">
+                            <a href="{{ route('products.show', $product->id) }}" class="group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:border-indigo-200 flex flex-col h-full relative">
                                 
                                 <div class="w-full aspect-[1/1] bg-gray-100 overflow-hidden relative shrink-0">
                                     @if($product->thumbnail)
-                                        <!-- Lazy loaded dynamically optimized image rendering! -->
                                         <img src="{{ Storage::url($product->thumbnail) }}" alt="{{ $product->product_name }}" loading="lazy" class="w-full h-full object-cover object-center bg-gray-50 mix-blend-multiply transition-transform duration-300 ease-in-out group-hover:scale-105">
                                     @else
-                                        <!-- Safe lazy failback placeholder -->
                                         <img src="https://placehold.co/400x400/f3f4f6/94a3b8?text=No+Image" alt="Placeholder" loading="lazy" class="w-full h-full object-cover object-center bg-gray-50 mix-blend-multiply transition-transform duration-300 ease-in-out group-hover:scale-105">
                                     @endif
                                     
@@ -136,7 +134,7 @@
                                 </div>
                                 
                                 <div class="p-4 flex flex-col flex-1 bg-white relative z-20">
-                                    <h3 class="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug mb-2 transition-colors">
+                                    <h3 class="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug mb-2 transition-colors group-hover:text-indigo-600">
                                         {{ $product->product_name }}
                                     </h3>
                                     
@@ -157,12 +155,12 @@
                                             @endif
                                         </div>
     
-                                        <x-button href="{{ route('products.show', $product->id) }}" variant="outline" size="sm" class="w-full py-2 rounded-lg bg-indigo-50 hover:bg-indigo-600 hover:text-white border-indigo-100">
+                                        <div class="w-full py-2 rounded-lg bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white border border-indigo-100 text-indigo-600 text-xs font-bold text-center transition-all">
                                             Lihat Detail
-                                        </x-button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         @empty
                             <div class="col-span-full py-20 text-center bg-white rounded-2xl shadow-sm border border-gray-200">
                                 <svg class="mx-auto h-20 w-20 text-gray-300 mb-6 drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor">
