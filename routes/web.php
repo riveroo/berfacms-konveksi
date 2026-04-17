@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Artisan;
 use App\Models\Product;
 
 Route::get('/', function () {
@@ -16,16 +16,16 @@ Route::get('/stock', [PublicStockController::class, 'index'])->name('public.stoc
 Route::get('/products', function (Illuminate\Http\Request $request) {
     $sort = $request->query('sort', 'latest');
     $productsQuery = Product::with('variants.stocks.sizeOption')->where('is_active', true)->latest();
-    
+
     $products = $productsQuery->get();
-    
+
     if ($sort === 'price_asc') {
-        $products = $products->sortBy(function($product) {
+        $products = $products->sortBy(function ($product) {
             $prices = $product->variants->flatMap->stocks->pluck('price')->filter()->toArray();
             return count($prices) > 0 ? min($prices) : 0;
         });
     } elseif ($sort === 'price_desc') {
-        $products = $products->sortByDesc(function($product) {
+        $products = $products->sortByDesc(function ($product) {
             $prices = $product->variants->flatMap->stocks->pluck('price')->filter()->toArray();
             return count($prices) > 0 ? max($prices) : 0;
         });
@@ -36,7 +36,7 @@ Route::get('/products', function (Illuminate\Http\Request $request) {
 
 Route::get('/products/{id}', function ($id) {
     $product = \App\Models\Product::with('variants.stocks.sizeOption')->where('is_active', true)->findOrFail($id);
-    
+
     // Find first variant+size combination with stock > 0
     $defaultSelection = null;
     foreach ($product->variants as $variant) {
@@ -122,11 +122,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/pre-orders', [PreOrderController::class, 'index'])->name('pre-orders.index');
     Route::get('/admin/pre-orders/create', [PreOrderController::class, 'create'])->name('pre-orders.create');
     Route::post('/admin/pre-orders/store', [PreOrderController::class, 'store'])->name('pre-orders.store');
-    
+
     Route::get('/admin/pre-orders/{id}', [PreOrderController::class, 'detail'])->name('pre-orders.detail');
     Route::post('/admin/pre-orders/{id}/reject', [PreOrderController::class, 'reject'])->name('pre-orders.reject');
     Route::post('/admin/pre-orders/{id}/accept', [PreOrderController::class, 'accept'])->name('pre-orders.accept');
-    
+
     Route::get('/coming-soon', function () {
         return view('coming-soon');
     })->name('coming-soon');
@@ -153,4 +153,29 @@ Route::middleware(['auth'])->group(function () {
             return 'Error: ' . $e->getMessage();
         }
     })->name('admin.fix-storage');
+});
+
+Route::get('/migrate-database', function () {
+    try {
+        // Menjalankan migrasi dengan flag --force (wajib di production)
+        Artisan::call('migrate', ['--force' => true]);
+
+        return 'Migrasi Berhasil! <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Terjadi Error: ' . $e->getMessage();
+    }
+});
+
+Route::get('/run-seeder', function () {
+    try {
+        // Opsi A: Menjalankan DatabaseSeeder utama
+        Artisan::call('db:seed', ['--force' => true]);
+
+        // Opsi B: Jika ingin menjalankan seeder spesifik (hapus komentar di bawah jika perlu)
+        // Artisan::call('db:seed', ['--class' => 'UserSeeder', '--force' => true]);
+
+        return 'Seeding Berhasil! <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Terjadi Error saat Seeding: ' . $e->getMessage();
+    }
 });
