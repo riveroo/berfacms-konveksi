@@ -409,10 +409,7 @@
     </main>
 
     <!-- Footer -->
-    <footer
-        class="border-t border-gray-100 py-8 text-center text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-auto">
-        &copy; 2026 KonveksiHub. Hak Cipta Dilindungi.
-    </footer>
+    <x-layouts.footer />
 
     <script>
         document.addEventListener('alpine:init', () => {

@@ -177,10 +177,6 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-200 py-8 text-center text-gray-500 text-sm mt-auto">
-        <div class="max-w-7xl mx-auto px-4">
-            &copy; 2026 KonveksiHub. Hak Cipta Dilindungi.
-        </div>
-    </footer>
+    <x-layouts.footer />
 </body>
 </html>

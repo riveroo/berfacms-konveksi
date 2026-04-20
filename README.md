@@ -1,59 +1,83 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Konveksi hub - Professional Apparel Manufacturer System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Konveksi Hub Banner](https://images.unsplash.com/photo-1556905055-8f358a7a47b2?q=80&w=2070&auto=format&fit=crop)
 
-## About Laravel
+**Konveksi hub** adalah sistem manajemen konveksi modern yang dibangun menggunakan **Laravel 12**, **Filament v3**, dan **Tailwind CSS**. Sistem ini dirancang untuk memfasilitasi pemesanan seragam dan apparel premium secara efisien, mulai dari katalog produk hingga manajemen stok dan transaksi.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🌐 Frontend (Customer Facing)
+- **Landing Page Premium**: Antarmuka modern dengan desain responsif menggunakan Alpine.js.
+- **Katalog Produk**: Penjelajahan produk dengan filter kategori dan pengurutan harga.
+- **Cek Stok Real-time**: Halaman publik untuk memantau ketersediaan stok produk (warna & ukuran).
+- **Sistem Keranjang & Checkout**: Proses pemesanan yang mudah dengan instruksi pembayaran manual.
+- **Konfirmasi WhatsApp**: Integrasi langsung ke WhatsApp Admin untuk bukti pembayaran dan konsultasi.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🔐 Backend (Admin Panel)
+- **Dashboard Statistik**: Overview performa penjualan dan stok menggunakan Filament Widgets.
+- **Manajemen Produk & Varian**: Pengelolaan produk kompleks dengan banyak varian warna dan ukuran.
+- **Manajemen Transaksi**: Kontrol penuh atas status pesanan (Pending, Processing, Shipped, dsb).
+- **Inventory Overview**: Pemantauan stok gudang secara menyeluruh.
+- **Import/Export Excel**: Kemudahan pengisian stok dalam jumlah besar menggunakan file Excel.
 
-## Learning Laravel
+## 🛠️ Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Framework**: Laravel 12
+- **Admin Panel**: Filament v3
+- **Frontend**: Blade, Tailwind CSS, Alpine.js
+- **Database**: MySQL / SQLite
+- **Package Penting**:
+    - `maatwebsite/excel`: Untuk manajemen data stok via Excel.
+    - `awcodes/filament-table-repeater`: UI yang disempurnakan untuk input varian.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📦 Instalasi
 
-## Laravel Sponsors
+### 1. Clone Repositori
+```bash
+git clone https://github.com/username/konveksihub.git
+cd konveksihub
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 2. Instalasi Dependensi
+```bash
+composer install
+npm install
+```
 
-### Premium Partners
+### 3. Konfigurasi Environment
+Salin file `.env.example` menjadi `.env` dan atur konfigurasi database Anda.
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 4. Migrasi & Database Setup
+```bash
+php artisan migrate
+php artisan db:seed # Opsional untuk data testing
+```
 
-## Contributing
+### 5. Build Aset Frontend
+```bash
+npm run build
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 6. Jalankan Server
+```bash
+php artisan serve
+```
 
-## Code of Conduct
+## ☁️ Deployment Notes (Shared Hosting)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Sistem ini telah dioptimasi untuk berjalan di lingkungan *shared hosting* yang memiliki keterbatasan fungsi PHP (`exec`, `symlink`):
 
-## Security Vulnerabilities
+1. **Storage Fix**: Gunakan route `/admin/fix-storage` untuk menginisialisasi folder fisik `public/storage` jika fungsi `symlink()` dinonaktifkan.
+2. **Filesystem**: Konfigurasi `public` disk diarahkan langsung ke `public_path('storage')` di `config/filesystems.php`.
+3. **Database Migration**: Gunakan route `/migrate-database` jika akses SSH tidak tersedia.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📄 Lisensi
 
-## License
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+*Developed with ❤️ for Konveksi hub.*

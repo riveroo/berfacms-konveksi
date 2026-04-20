@@ -10,6 +10,9 @@ Route::get('/', function () {
     return view('landing');
 });
 
+Route::get('/privacy-policy', fn() => view('legal.privacy'))->name('privacy');
+Route::get('/terms-of-use', fn() => view('legal.terms'))->name('terms');
+
 use App\Http\Controllers\PublicStockController;
 Route::get('/stock', [PublicStockController::class, 'index'])->name('public.stock');
 
