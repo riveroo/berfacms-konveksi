@@ -22,7 +22,25 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active',
+        'role_id',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function canAccess($menu, $action)
+    {
+        if (!$this->role || !$this->role->is_active) {
+            return false;
+        }
+
+        $permission = $this->role->permissions->where('menu_name', $menu)->first();
+
+        return $permission && $permission->{"can_{$action}"};
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,6 +62,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 }

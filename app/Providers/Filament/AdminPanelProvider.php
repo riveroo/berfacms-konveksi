@@ -47,10 +47,12 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->navigationGroups([
+                \Filament\Navigation\NavigationGroup::make()->label('Page Editor')->icon('heroicon-o-document-duplicate'),
                 \Filament\Navigation\NavigationGroup::make()->label('Catalog')->icon('heroicon-o-shopping-bag'),
                 \Filament\Navigation\NavigationGroup::make()->label('Sales')->icon('heroicon-o-banknotes'),
                 \Filament\Navigation\NavigationGroup::make()->label('Inventory')->icon('heroicon-o-inbox-stack'),
                 \Filament\Navigation\NavigationGroup::make()->label('Master Data')->icon('heroicon-o-folder-open'),
+                \Filament\Navigation\NavigationGroup::make()->label('User Management')->icon('heroicon-o-users'),
             ])
             ->navigationItems([
                 // Catalog custom link
@@ -58,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Catalog')
                     ->url(fn(): string => route('cek-stok.product'))
                     ->icon('heroicon-o-clipboard-document-list')
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('products', 'read'))
                     ->sort(2),
 
                 // Sales links
@@ -66,18 +69,21 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn(): string => route('transactions.index'))
                     ->icon('heroicon-o-shopping-cart')
                     ->isActiveWhen(fn() => request()->routeIs('transactions.*') && !request()->routeIs('transactions.report'))
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('transactions', 'read'))
                     ->sort(1),
                 \Filament\Navigation\NavigationItem::make('Pre Order / Quotation')
                     ->group('Sales')
                     ->url(fn(): string => route('pre-orders.index'))
                     ->icon('heroicon-o-document-text')
                     ->isActiveWhen(fn() => request()->routeIs('pre-orders.*'))
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('pre_orders', 'read'))
                     ->sort(2),
                 \Filament\Navigation\NavigationItem::make('Sales Report')
                     ->group('Sales')
                     ->url(fn(): string => route('transactions.report'))
                     ->icon('heroicon-o-chart-bar')
                     ->isActiveWhen(fn() => request()->routeIs('transactions.report'))
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('reports', 'read'))
                     ->sort(3),
 
                 // Inventory Links (Coming soon except Overview)
@@ -86,22 +92,33 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn(): string => route('inventory.overview'))
                     ->icon('heroicon-o-presentation-chart-line')
                     ->isActiveWhen(fn() => request()->routeIs('inventory.overview'))
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'read'))
                     ->sort(2),
                 \Filament\Navigation\NavigationItem::make('Stock In')
                     ->group('Inventory')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-arrow-down-tray')
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'add'))
                     ->sort(3),
                 \Filament\Navigation\NavigationItem::make('Stock Out')
                     ->group('Inventory')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-arrow-up-tray')
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'delete'))
                     ->sort(4),
                 \Filament\Navigation\NavigationItem::make('Adjustment')
                     ->group('Inventory')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-adjustments-horizontal')
+                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'edit'))
                     ->sort(5),
+
+                // Page Editor links
+                \Filament\Navigation\NavigationItem::make('Appearance')
+                    ->group('Page Editor')
+                    ->url(fn(): string => route('coming-soon'))
+                    ->icon('heroicon-o-cog')
+                    ->sort(2),
             ])
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,

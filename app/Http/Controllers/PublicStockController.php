@@ -17,22 +17,32 @@ class PublicStockController extends Controller
         $sizes = SizeOption::ordered()->get();
         $productTypes = ProductType::orderBy('name')->get();
 
-        $query = Product::with(['variants.stocks', 'variants.productType'])
-            ->where('is_active', true)
-            ->orderBy('product_name');
+        $query = \App\Models\Variant::with(['product', 'productType', 'stocks'])
+            ->whereHas('product', function($q) {
+                $q->where('is_active', true);
+            })
+            ->orderBy(
+                \App\Models\Product::select('product_name')
+                    ->whereColumn('products.id', 'variants.product_id')
+                    ->limit(1)
+            );
 
         if ($typeId) {
-            $query->whereHas('variants', function ($q) use ($typeId) {
-                $q->where('product_type_id', $typeId);
-            });
+            $query->where('product_type_id', $typeId);
         }
 
         if ($search) {
-            $query->where('product_name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('product', function ($q2) use ($search) {
+                    $q2->where('product_name', 'like', "%{$search}%");
+                })
+                ->orWhere('variant_name', 'like', "%{$search}%")
+                ->orWhere('variant_code', 'like', "%{$search}%");
+            });
         }
 
-        $products = $query->paginate(12);
+        $variants = $query->paginate(25)->withQueryString();
 
-        return view('public.stock', compact('sizes', 'products', 'productTypes', 'search', 'typeId'));
+        return view('public.stock', compact('sizes', 'variants', 'productTypes', 'search', 'typeId'));
     }
 }

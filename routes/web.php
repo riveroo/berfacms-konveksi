@@ -174,3 +174,10 @@ Route::get('/run-seeder', function () {
         return 'Terjadi Error saat Seeding: ' . $e->getMessage();
     }
 });
+
+Route::fallback(function () {
+    return response()->view('errors.custom', [
+        'code' => 404,
+        'exception' => new \Exception('We can\'t seem to find the page you\'re looking for.'),
+    ], 404);
+});
