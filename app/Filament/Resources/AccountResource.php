@@ -24,7 +24,7 @@ class AccountResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->check() && auth()->user()->canAccess('users', 'read');
+        return canAccessMenu('admin/accounts');
     }
 
     public static function form(Form $form): Form

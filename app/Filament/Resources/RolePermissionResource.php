@@ -24,7 +24,42 @@ class RolePermissionResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->check() && auth()->user()->canAccess('roles', 'read');
+        return canAccessMenu('admin/role-permissions');
+    }
+
+    public static function getMenusConfig(): array
+    {
+        return [
+            'Page Editor' => [
+                ['name' => 'Landing Page', 'route' => 'admin/landing-page'],
+                ['name' => 'Appearance', 'route' => '/coming-soon'],
+            ],
+            'Catalog' => [
+                ['name' => 'Products', 'route' => 'admin/products'],
+                ['name' => 'Product Inventory', 'route' => 'cek-stok/product'],
+            ],
+            'Sales' => [
+                ['name' => 'Orders', 'route' => 'admin/transactions'],
+                ['name' => 'Pre Order', 'route' => 'admin/pre-orders'],
+                ['name' => 'Sales Report', 'route' => 'admin/transactions/report'],
+            ],
+            'Inventory' => [
+                ['name' => 'Items', 'route' => 'admin/items'],
+                ['name' => 'Inventory Overview', 'route' => '/inventory/overview'],
+                ['name' => 'Stock In', 'route' => '/coming-soon'],
+                ['name' => 'Stock Out', 'route' => '/coming-soon'],
+                ['name' => 'Adjustment', 'route' => '/coming-soon'],
+            ],
+            'Master Data' => [
+                ['name' => 'Product Type', 'route' => 'admin/product-types'],
+                ['name' => 'Size Option', 'route' => 'admin/size-options'],
+                ['name' => 'Units', 'route' => 'admin/units'],
+            ],
+            'User Management' => [
+                ['name' => 'Account', 'route' => 'admin/accounts'],
+                ['name' => 'Roles & Permission', 'route' => 'admin/role-permissions'],
+            ],
+        ];
     }
 
     public static function form(Form $form): Form
@@ -43,16 +78,18 @@ class RolePermissionResource extends Resource
                     ->view('filament.forms.components.permission-matrix')
                     ->columnSpanFull()
                     ->default(function () {
-                        $menus = ['products', 'transactions', 'pre_orders', 'reports', 'inventory', 'users', 'roles'];
-                        return array_map(function ($menu) {
-                            return [
-                                'menu_name' => $menu,
-                                'can_read' => false,
-                                'can_add' => false,
-                                'can_edit' => false,
-                                'can_delete' => false,
-                            ];
-                        }, $menus);
+                        $matrix = [];
+                        foreach (self::getMenusConfig() as $group => $items) {
+                            foreach ($items as $item) {
+                                $matrix[] = [
+                                    'group' => $group,
+                                    'menu_name' => $item['name'],
+                                    'route' => $item['route'],
+                                    'can_access' => false,
+                                ];
+                            }
+                        }
+                        return $matrix;
                     }),
             ]);
     }
@@ -85,17 +122,19 @@ class RolePermissionResource extends Resource
                     ->modal()
                     ->mutateRecordDataUsing(function (\Illuminate\Database\Eloquent\Model $record, array $data): array {
                         $matrix = [];
-                        $menus = ['products', 'transactions', 'pre_orders', 'reports', 'inventory', 'users', 'roles'];
-                        
-                        foreach ($menus as $menu) {
-                            $perm = $record->permissions->where('menu_name', $menu)->first();
-                            $matrix[] = [
-                                'menu_name' => $menu,
-                                'can_read' => $perm ? $perm->can_read : false,
-                                'can_add' => $perm ? $perm->can_add : false,
-                                'can_edit' => $perm ? $perm->can_edit : false,
-                                'can_delete' => $perm ? $perm->can_delete : false,
-                            ];
+                        foreach (self::getMenusConfig() as $group => $items) {
+                            foreach ($items as $item) {
+                                $perm = $record->permissions
+                                    ->where('menu_name', $item['name'])
+                                    ->where('route', $item['route'])
+                                    ->first();
+                                $matrix[] = [
+                                    'group' => $group,
+                                    'menu_name' => $item['name'],
+                                    'route' => $item['route'],
+                                    'can_access' => $perm ? $perm->can_access : false,
+                                ];
+                            }
                         }
                         $data['permissions_matrix'] = $matrix;
                         return $data;
@@ -108,14 +147,14 @@ class RolePermissionResource extends Resource
                         
                         $permissionIds = [];
                         foreach ($matrix as $row) {
-                            $perm = \App\Models\Permission::firstOrCreate([
-                                'menu_name' => $row['menu_name'],
-                                'can_read' => $row['can_read'],
-                                'can_add' => $row['can_add'],
-                                'can_edit' => $row['can_edit'],
-                                'can_delete' => $row['can_delete'],
-                            ]);
-                            $permissionIds[] = $perm->id;
+                            if (!empty($row['can_access'])) {
+                                $perm = \App\Models\Permission::firstOrCreate([
+                                    'menu_name' => $row['menu_name'],
+                                    'route' => $row['route'],
+                                    'can_access' => true,
+                                ]);
+                                $permissionIds[] = $perm->id;
+                            }
                         }
                         $record->permissions()->sync($permissionIds);
                         

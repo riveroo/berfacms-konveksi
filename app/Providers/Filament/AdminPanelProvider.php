@@ -60,7 +60,7 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Catalog')
                     ->url(fn(): string => route('cek-stok.product'))
                     ->icon('heroicon-o-clipboard-document-list')
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('products', 'read'))
+                    ->visible(fn() => canAccessMenu('cek-stok/product'))
                     ->sort(2),
 
                 // Sales links
@@ -69,21 +69,21 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn(): string => route('transactions.index'))
                     ->icon('heroicon-o-shopping-cart')
                     ->isActiveWhen(fn() => request()->routeIs('transactions.*') && !request()->routeIs('transactions.report'))
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('transactions', 'read'))
+                    ->visible(fn() => canAccessMenu('admin/transactions'))
                     ->sort(1),
                 \Filament\Navigation\NavigationItem::make('Pre Order / Quotation')
                     ->group('Sales')
                     ->url(fn(): string => route('pre-orders.index'))
                     ->icon('heroicon-o-document-text')
                     ->isActiveWhen(fn() => request()->routeIs('pre-orders.*'))
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('pre_orders', 'read'))
+                    ->visible(fn() => canAccessMenu('admin/pre-orders'))
                     ->sort(2),
                 \Filament\Navigation\NavigationItem::make('Sales Report')
                     ->group('Sales')
                     ->url(fn(): string => route('transactions.report'))
                     ->icon('heroicon-o-chart-bar')
                     ->isActiveWhen(fn() => request()->routeIs('transactions.report'))
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('reports', 'read'))
+                    ->visible(fn() => canAccessMenu('admin/transactions/report'))
                     ->sort(3),
 
                 // Inventory Links (Coming soon except Overview)
@@ -92,25 +92,25 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn(): string => route('inventory.overview'))
                     ->icon('heroicon-o-presentation-chart-line')
                     ->isActiveWhen(fn() => request()->routeIs('inventory.overview'))
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'read'))
+                    ->visible(fn() => canAccessMenu('/inventory/overview'))
                     ->sort(2),
                 \Filament\Navigation\NavigationItem::make('Stock In')
                     ->group('Inventory')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'add'))
+                    ->visible(fn() => canAccessMenu('/coming-soon'))
                     ->sort(3),
                 \Filament\Navigation\NavigationItem::make('Stock Out')
                     ->group('Inventory')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-arrow-up-tray')
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'delete'))
+                    ->visible(fn() => canAccessMenu('/coming-soon'))
                     ->sort(4),
                 \Filament\Navigation\NavigationItem::make('Adjustment')
                     ->group('Inventory')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-adjustments-horizontal')
-                    ->visible(fn() => auth()->check() && auth()->user()->canAccess('inventory', 'edit'))
+                    ->visible(fn() => canAccessMenu('/coming-soon'))
                     ->sort(5),
 
                 // Page Editor links
@@ -118,6 +118,7 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Page Editor')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-cog')
+                    ->visible(fn() => canAccessMenu('/coming-soon'))
                     ->sort(2),
             ])
             ->renderHook(
@@ -138,6 +139,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
                 \App\Http\Middleware\SetLanguage::class,
+                \App\Http\Middleware\CheckMenuPermission::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

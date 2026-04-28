@@ -45,10 +45,13 @@
                         </p>
                         
                         @if(app()->environment('local'))
-                            <div class="border-t border-gray-200 pt-3 mt-3">
-                                <p class="text-xs font-bold text-gray-500 mb-2">Stack Trace:</p>
-                                <pre class="font-mono text-xs text-gray-600 whitespace-pre-wrap break-all">{{ $exception->getTraceAsString() }}</pre>
-                            </div>
+                            <details class="border-t border-gray-200 pt-3 mt-3 group">
+                                <summary class="text-xs font-bold text-gray-500 mb-2 select-none cursor-pointer hover:text-gray-700 transition flex items-center gap-1 outline-none">
+                                    Show Stack Trace
+                                    <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </summary>
+                                <pre class="font-mono text-[10px] sm:text-xs text-gray-600 whitespace-pre-wrap break-all mt-3 bg-white p-4 rounded-xl border border-gray-100 shadow-inner overflow-x-auto">{{ $exception->getTraceAsString() }}</pre>
+                            </details>
                         @else
                             <p class="text-xs text-gray-500">
                                 Detailed traces are disabled in production for security reasons.

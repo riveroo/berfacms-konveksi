@@ -19,53 +19,51 @@ class RbacSeeder extends Seeder
         DB::table('permissions')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $menus = ['products', 'transactions', 'pre_orders', 'reports', 'inventory', 'users', 'roles'];
+        $menus = \App\Filament\Resources\RolePermissionResource::getMenusConfig();
 
-        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
-        $staffRole = Role::firstOrCreate(['name' => 'Staff']);
+        $adminRole = Role::firstOrCreate(['name' => 'Super Admin'], ['is_active' => true]);
+        $staffRole = Role::firstOrCreate(['name' => 'Staff'], ['is_active' => true]);
 
         $adminPermissionIds = [];
         $staffPermissionIds = [];
 
-        foreach ($menus as $menu) {
-            // Admin gets full access
-            $adminPerm = Permission::firstOrCreate([
-                'menu_name' => $menu,
-                'can_read' => true,
-                'can_add' => true,
-                'can_edit' => true,
-                'can_delete' => true,
-            ]);
-            $adminPermissionIds[] = $adminPerm->id;
+        foreach ($menus as $group => $items) {
+            foreach ($items as $item) {
+                // Admin gets full access
+                $adminPerm = Permission::firstOrCreate([
+                    'menu_name' => $item['name'],
+                    'route' => $item['route'],
+                    'can_access' => true,
+                ]);
+                $adminPermissionIds[] = $adminPerm->id;
 
-            // Staff gets limited access
-            $isStaffAccessible = in_array($menu, ['products', 'transactions', 'inventory']);
-            $staffPerm = Permission::firstOrCreate([
-                'menu_name' => $menu,
-                'can_read' => $isStaffAccessible,
-                'can_add' => $isStaffAccessible,
-                'can_edit' => false,
-                'can_delete' => false,
-            ]);
-            $staffPermissionIds[] = $staffPerm->id;
+                // Staff gets limited access
+                $isStaffAccessible = in_array($item['name'], ['Products', 'Product Inventory', 'Orders', 'Pre Order']);
+                if ($isStaffAccessible) {
+                    $staffPerm = Permission::firstOrCreate([
+                        'menu_name' => $item['name'],
+                        'route' => $item['route'],
+                        'can_access' => true,
+                    ]);
+                    $staffPermissionIds[] = $staffPerm->id;
+                }
+            }
         }
 
         $adminRole->permissions()->sync($adminPermissionIds);
         $staffRole->permissions()->sync($staffPermissionIds);
 
-        // Assign Admin role to the first user if exists, or create a default admin
-        $adminUser = User::first();
+        // Assign Admin role to the admin user
+        $adminUser = User::where('email', 'admin@admin.com')->first();
         if (!$adminUser) {
             $adminUser = User::create([
                 'name' => 'Super Admin',
-                'email' => 'admin@konveksihub.com',
+                'email' => 'admin@admin.com',
                 'password' => Hash::make('password'),
                 'is_active' => true,
             ]);
         }
         
-        if (!$adminUser->role_id) {
-            $adminUser->update(['role_id' => $adminRole->id]);
-        }
+        $adminUser->update(['role_id' => $adminRole->id]);
     }
 }

@@ -9,17 +9,12 @@ class Permission extends Model
 {
     protected $fillable = [
         'menu_name',
-        'can_read',
-        'can_add',
-        'can_edit',
-        'can_delete',
+        'route',
+        'can_access',
     ];
 
     protected $casts = [
-        'can_read' => 'boolean',
-        'can_add' => 'boolean',
-        'can_edit' => 'boolean',
-        'can_delete' => 'boolean',
+        'can_access' => 'boolean',
     ];
 
     public function roles(): BelongsToMany
