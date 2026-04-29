@@ -254,7 +254,7 @@
                 </div>
 
                 <!-- CTA Buttons -->
-                <div class="flex items-center gap-4 mt-8">
+                <div class="flex flex-wrap items-center gap-4 mt-8">
                     <a href="{{ $waLink }}" target="_blank"
                         class="flex-1 max-w-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-4 rounded-2xl transition-all shadow-xl shadow-emerald-200 active:scale-95 flex items-center justify-center gap-3">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -299,8 +299,8 @@
                 }
             @endphp
 
-            <div class="overflow-hidden rounded-2xl border border-gray-200 shadow-sm bg-white">
-                <table class="w-full text-sm text-center border-collapse">
+            <div class="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm bg-white">
+                <table class="w-full text-sm text-center border-collapse min-w-[500px]">
                     <thead class="bg-gray-50/50 text-gray-500 uppercase text-[10px] font-bold tracking-widest">
                         <tr>
                             <th rowspan="2"
@@ -353,14 +353,14 @@
 
         <!-- Other Products Section -->
         <div class="mt-20 w-full mb-12">
-            <div class="flex justify-between items-end mb-8">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-end gap-4 sm:gap-0 mb-8">
                 <div>
                     <h2 class="text-2xl font-black text-gray-900 font-outfit tracking-tight uppercase">Produk Lainnya
                     </h2>
                     <p class="text-gray-400 text-xs mt-1 font-medium">Mungkin Anda juga menyukai ini</p>
                 </div>
                 <a href="/products"
-                    class="bg-gray-50 hover:bg-emerald-50 text-emerald-600 px-5 py-2.5 rounded-xl text-xs font-black transition-all border border-transparent hover:border-emerald-100 flex items-center gap-2 group">
+                    class="bg-gray-50 hover:bg-emerald-50 text-emerald-600 px-5 py-2.5 rounded-xl text-xs font-black transition-all border border-transparent hover:border-emerald-100 flex items-center justify-center gap-2 group w-full sm:w-auto">
                     LIHAT SEMUA
                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
