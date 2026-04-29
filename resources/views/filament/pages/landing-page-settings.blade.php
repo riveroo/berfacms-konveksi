@@ -1,5 +1,22 @@
 <x-filament-panels::page>
     <div class="space-y-4" x-data="{ open: 'hero' }">
+        <style>
+            .loader {
+                border: 2px solid #f3f3f3;
+                border-top: 2px solid #3498db;
+                border-radius: 50%;
+                width: 14px;
+                height: 14px;
+                animation: spin 1s linear infinite;
+                display: inline-block;
+                margin-right: 8px;
+                vertical-align: middle;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
         
         <!-- Hero Section CMS -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -34,11 +51,14 @@
                             </div>
                         </div>
                         @error('newHero') <div class="text-red-500 text-sm mt-3">{{ $message }}</div> @enderror
-                        <div class="mt-4">
-                            <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors" wire:loading.attr="disabled" wire:target="saveHero, newHeroImage">
+                        <div class="mt-4 flex items-center gap-4">
+                            <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors inline-flex items-center" wire:loading.attr="disabled" wire:target="saveHero, newHeroImage">
                                 <span wire:loading.remove wire:target="saveHero">Upload Image</span>
-                                <span wire:loading wire:target="saveHero">Uploading...</span>
+                                <span wire:loading wire:target="saveHero"><span class="loader"></span>Uploading...</span>
                             </button>
+                            <div wire:loading wire:target="newHeroImage" class="text-xs text-primary-600 flex items-center">
+                                <span class="loader"></span> Memproses gambar...
+                            </div>
                         </div>
                     </form>
                 @else
@@ -167,11 +187,14 @@
                             @error('newLogoImage') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         @error('newLogo') <div class="text-red-500 text-sm mt-3">{{ $message }}</div> @enderror
-                        <div>
-                            <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors" wire:loading.attr="disabled" wire:target="saveLogo, newLogoImage">
+                        <div class="mt-4 flex items-center gap-4">
+                            <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors inline-flex items-center" wire:loading.attr="disabled" wire:target="saveLogo, newLogoImage">
                                 <span wire:loading.remove wire:target="saveLogo">Add Logo</span>
-                                <span wire:loading wire:target="saveLogo">Saving...</span>
+                                <span wire:loading wire:target="saveLogo"><span class="loader"></span>Saving...</span>
                             </button>
+                            <div wire:loading wire:target="newLogoImage" class="text-xs text-primary-600 flex items-center">
+                                <span class="loader"></span> Memproses logo...
+                            </div>
                         </div>
                     </form>
                 @else
@@ -241,11 +264,14 @@
                             @error('newCategoryLink') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         @error('newCategory') <div class="text-red-500 text-sm mt-3">{{ $message }}</div> @enderror
-                        <div>
-                            <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors" wire:loading.attr="disabled" wire:target="saveCategory, newCategoryImage">
+                        <div class="mt-4 flex items-center gap-4">
+                            <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors inline-flex items-center" wire:loading.attr="disabled" wire:target="saveCategory, newCategoryImage">
                                 <span wire:loading.remove wire:target="saveCategory">Add Category</span>
-                                <span wire:loading wire:target="saveCategory">Saving...</span>
+                                <span wire:loading wire:target="saveCategory"><span class="loader"></span>Saving...</span>
                             </button>
+                            <div wire:loading wire:target="newCategoryImage" class="text-xs text-primary-600 flex items-center">
+                                <span class="loader"></span> Memproses gambar...
+                            </div>
                         </div>
                     </form>
                 @else
@@ -403,11 +429,14 @@
                         @error('newBannerLink') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
-                    <div>
-                        <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors" wire:loading.attr="disabled" wire:target="saveBannerCta, newBannerImage">
+                    <div class="mt-4 flex items-center gap-4">
+                        <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-500 transition-colors inline-flex items-center" wire:loading.attr="disabled" wire:target="saveBannerCta, newBannerImage">
                             <span wire:loading.remove wire:target="saveBannerCta">Save Banner</span>
-                            <span wire:loading wire:target="saveBannerCta">Saving...</span>
+                            <span wire:loading wire:target="saveBannerCta"><span class="loader"></span>Saving...</span>
                         </button>
+                        <div wire:loading wire:target="newBannerImage" class="text-xs text-primary-600 flex items-center">
+                            <span class="loader"></span> Memproses banner...
+                        </div>
                     </div>
                 </form>
             </div>

@@ -169,12 +169,22 @@ class LandingPageSettings extends Page
 
         $this->reset(['newHeroImage', 'newHeroLink']);
         $this->loadData();
+        
+        \Filament\Notifications\Notification::make()
+            ->title('Hero image uploaded successfully')
+            ->success()
+            ->send();
     }
 
     public function deleteHero($id)
     {
         LandingHero::find($id)?->delete();
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Hero image deleted')
+            ->success()
+            ->send();
     }
 
     public function toggleHeroActive($id)
@@ -184,6 +194,11 @@ class LandingPageSettings extends Page
             $hero->is_active = !$hero->is_active;
             $hero->save();
             $this->loadData();
+
+            \Filament\Notifications\Notification::make()
+                ->title('Hero status updated')
+                ->success()
+                ->send();
         }
     }
 
@@ -212,12 +227,22 @@ class LandingPageSettings extends Page
 
         $this->reset(['newValueImage', 'newValueTitle', 'newValueDescription']);
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Value card added successfully')
+            ->success()
+            ->send();
     }
 
     public function deleteValue($id)
     {
         LandingValue::find($id)?->delete();
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Value card deleted')
+            ->success()
+            ->send();
     }
 
     // Logo Methods
@@ -242,12 +267,22 @@ class LandingPageSettings extends Page
 
         $this->reset(['newLogoImage']);
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Logo uploaded successfully')
+            ->success()
+            ->send();
     }
 
     public function deleteLogo($id)
     {
         LandingClientLogo::find($id)?->delete();
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Logo deleted')
+            ->success()
+            ->send();
     }
 
     public function toggleLogoActive($id)
@@ -257,6 +292,11 @@ class LandingPageSettings extends Page
             $logo->is_active = !$logo->is_active;
             $logo->save();
             $this->loadData();
+
+            \Filament\Notifications\Notification::make()
+                ->title('Logo status updated')
+                ->success()
+                ->send();
         }
     }
 
@@ -285,12 +325,22 @@ class LandingPageSettings extends Page
 
         $this->reset(['newCategoryImage', 'newCategoryTitle', 'newCategoryLink']);
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Category added successfully')
+            ->success()
+            ->send();
     }
 
     public function deleteCategory($id)
     {
         LandingCategory::find($id)?->delete();
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Category deleted')
+            ->success()
+            ->send();
     }
 
     // Popular Products Methods
@@ -312,12 +362,22 @@ class LandingPageSettings extends Page
 
         $this->reset(['newPopularProductId']);
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Product added to popular section')
+            ->success()
+            ->send();
     }
 
     public function deletePopularProduct($id)
     {
         LandingPopularProduct::find($id)?->delete();
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Product removed from popular section')
+            ->success()
+            ->send();
     }
 
     // Banner CTA Methods
@@ -326,6 +386,11 @@ class LandingPageSettings extends Page
         $this->bannerActive = !$this->bannerActive;
         if ($this->bannerCta) {
             LandingBannerCta::where('id', $this->bannerCta['id'])->update(['is_active' => $this->bannerActive]);
+            
+            \Filament\Notifications\Notification::make()
+                ->title('Banner status updated')
+                ->success()
+                ->send();
         }
     }
 
@@ -367,6 +432,11 @@ class LandingPageSettings extends Page
         $this->reset(['newBannerImage']);
         $this->loadData();
         $this->bannerCta = LandingBannerCta::first()->toArray();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Banner settings saved successfully')
+            ->success()
+            ->send();
     }
 
     // Review Methods
@@ -392,12 +462,22 @@ class LandingPageSettings extends Page
 
         $this->reset(['newReviewText', 'newReviewerName', 'newClientName']);
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Review added successfully')
+            ->success()
+            ->send();
     }
 
     public function deleteReview($id)
     {
         LandingReview::find($id)?->delete();
         $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Review deleted')
+            ->success()
+            ->send();
     }
 
     // Footer Methods
@@ -437,5 +517,10 @@ class LandingPageSettings extends Page
 
         $this->loadData();
         $this->footer = LandingFooter::first()->toArray();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Footer settings saved successfully')
+            ->success()
+            ->send();
     }
 }
