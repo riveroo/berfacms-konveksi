@@ -59,7 +59,7 @@ class RbacSeeder extends Seeder
             $adminUser = User::create([
                 'name' => 'Super Admin',
                 'email' => 'admin@admin.com',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('admin'),
                 'is_active' => true,
             ]);
         }
