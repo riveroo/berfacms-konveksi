@@ -1,4 +1,4 @@
-    <section id="beranda" class="relative w-full h-[60vh] md:h-[80vh] overflow-hidden bg-slate-900">
+    <section id="beranda" class="relative w-full aspect-[16/9] md:aspect-[24/10] overflow-hidden bg-slate-900">
         <div class="absolute inset-0 z-0 w-full h-full" 
             x-data='{ 
                 current: 0, 
