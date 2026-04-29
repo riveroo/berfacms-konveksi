@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('permission_role');
         
-        \Illuminate\Support\Facades\DB::table('permissions')->truncate();
+        \Illuminate\Support\Facades\DB::table('permissions')->delete();
         
         Schema::table('permissions', function (Blueprint $table) {
             $table->dropColumn('name');

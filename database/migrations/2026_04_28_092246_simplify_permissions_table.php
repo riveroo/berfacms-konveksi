@@ -28,8 +28,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::table('role_permissions')->truncate();
-        DB::table('permissions')->truncate();
+        DB::table('role_permissions')->delete();
+        DB::table('permissions')->delete();
 
         Schema::table('permissions', function (Blueprint $table) {
             $table->dropColumn(['route', 'can_access']);
