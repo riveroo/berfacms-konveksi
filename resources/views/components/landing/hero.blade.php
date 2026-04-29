@@ -1,4 +1,4 @@
-    <section id="beranda" class="relative w-full aspect-[16/9] md:aspect-[24/10] overflow-hidden bg-slate-900">
+    <section id="beranda" class="relative w-full aspect-[24/10] overflow-hidden bg-slate-900">
         <div class="absolute inset-0 z-0 w-full h-full" 
             x-data='{ 
                 current: 0, 
@@ -19,11 +19,11 @@
                         class="absolute inset-0 w-full h-full">
                         <template x-if="slide.link">
                             <a :href="slide.link" class="block w-full h-full cursor-pointer">
-                                <img :src="slide.image" class="w-full h-full object-contain md:object-cover" alt="Hero Banner">
+                                <img :src="slide.image" class="w-full h-full object-cover" alt="Hero Banner">
                             </a>
                         </template>
                         <template x-if="!slide.link">
-                            <img :src="slide.image" class="w-full h-full object-contain md:object-cover" alt="Hero Banner">
+                            <img :src="slide.image" class="w-full h-full object-cover" alt="Hero Banner">
                         </template>
                     </div>
                 </template>
