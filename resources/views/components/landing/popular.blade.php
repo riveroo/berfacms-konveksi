@@ -17,11 +17,11 @@
         @endphp
 
         @if($populars->count() > 0)
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div class="flex gap-6 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-8 overflow-x-auto md:overflow-visible pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
                 @foreach($populars as $popular)
                     @php $product = $popular->product; @endphp
                     @if($product)
-                    <a href="{{ route('products.show', $product->slug ?? $product->id) }}" class="block">
+                    <a href="{{ route('products.show', $product->slug ?? $product->id) }}" class="snap-center shrink-0 w-[280px] md:w-auto block">
                         <div
                             class="group bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer">
                             <div class="relative aspect-square overflow-hidden bg-white p-4">
@@ -52,10 +52,10 @@
                 @endforeach
             </div>
         @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div class="flex gap-6 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-8 overflow-x-auto md:overflow-visible pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
                 @for ($i = 1; $i <= 4; $i++)
                     <div
-                        class="group bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer">
+                        class="snap-center shrink-0 w-[280px] md:w-auto group bg-slate-50 border border-slate-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer">
                         <div class="relative aspect-square overflow-hidden bg-white p-4">
                             <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop"
                                 class="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
