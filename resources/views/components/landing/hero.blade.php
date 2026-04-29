@@ -19,11 +19,11 @@
                         class="absolute inset-0 w-full h-full">
                         <template x-if="slide.link">
                             <a :href="slide.link" class="block w-full h-full cursor-pointer">
-                                <img :src="slide.image" class="w-full h-full object-cover" alt="Hero Banner">
+                                <img :src="slide.image" class="w-full h-full object-contain md:object-cover" alt="Hero Banner">
                             </a>
                         </template>
                         <template x-if="!slide.link">
-                            <img :src="slide.image" class="w-full h-full object-cover" alt="Hero Banner">
+                            <img :src="slide.image" class="w-full h-full object-contain md:object-cover" alt="Hero Banner">
                         </template>
                     </div>
                 </template>

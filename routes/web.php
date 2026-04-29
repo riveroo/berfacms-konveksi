@@ -161,6 +161,20 @@ Route::get('/migrate-database', function () {
     }
 });
 
+Route::get('/build-assets', function () {
+    try {
+        // Set PATH agar npm bisa ditemukan di beberapa env hosting
+        putenv('PATH=' . getenv('PATH') . ':/usr/local/bin:/usr/bin:/bin');
+        
+        // Jalankan npm run build dan tangkap outputnya
+        $output = shell_exec('npm run build 2>&1');
+
+        return 'Build Selesai! <br><pre>' . $output . '</pre>';
+    } catch (\Exception $e) {
+        return 'Terjadi Error saat Build: ' . $e->getMessage();
+    }
+});
+
 Route::get('/run-seeder', function () {
     try {
         // Opsi A: Menjalankan DatabaseSeeder utama
