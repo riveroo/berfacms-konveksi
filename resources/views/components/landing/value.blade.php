@@ -1,5 +1,5 @@
 <!-- Our Values / Layanan -->
-<section id="layanan" class="bg-white relative ">
+<section id="layanan" class="bg-white relative py-16 md:py-24">
     <div class="max-w-7xl mx-auto px-6">
         <div class="text-center mb-16">
             <span class="text-indigo-600 font-bold uppercase tracking-widest text-sm mb-4 block">Our Values</span>
