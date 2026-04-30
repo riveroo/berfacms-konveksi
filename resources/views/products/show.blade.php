@@ -43,13 +43,13 @@
     <x-layouts.header />
 
     <!-- Breadcrumb -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 pt-24">
-        <nav class="text-xs text-gray-400 flex items-center gap-1">
+    <div class="py-4 text-center text-sm max-w-5xl mx-auto px-4 sm:px-6">
+        <nav class="text-xs text-gray-400 flex flex-wrap items-center justify-center gap-1">
             <a href="/" class="hover:text-indigo-600">Home</a>
             <span>›</span>
             <a href="{{ route('products.index') }}" class="hover:text-indigo-600">Katalog</a>
             <span>›</span>
-            <span class="text-gray-600 truncate max-w-[180px]">{{ $product->product_name }}</span>
+            <span class="text-gray-600 truncate max-w-[180px] break-words">{{ $product->product_name }}</span>
         </nav>
     </div>
 
@@ -98,7 +98,7 @@
     @endphp
 
     <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 pb-10 flex-1" x-data="productDetail()">
+    <main class="w-full min-w-0 max-w-5xl mx-auto px-4 sm:px-6 pb-10 flex-1" x-data="productDetail()">
         <!-- Simple Toast Notification -->
         <div x-show="toast.show" x-transition x-cloak
             class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-gray-900/90 backdrop-blur-sm text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/10">
@@ -115,16 +115,16 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
 
             <!-- ========== LEFT: Product Images ========== -->
-            <div class="lg:col-span-5 space-y-4">
-                <div class="aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 relative group">
+            <div class="lg:col-span-5 space-y-4 min-w-0">
+                <div class="w-full overflow-hidden aspect-square bg-gray-50 rounded-2xl border border-gray-100 relative group">
                     <img id="mainImage" src="{{ $images[0] ?? '' }}" alt="{{ $product->product_name }}"
-                        class="w-full h-full object-cover transition-all duration-500 group-hover:scale-105">
+                        class="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
                 </div>
 
                 @if(count($images) > 1)
                     <div class="relative group/thumb">
                         <button id="thumbPrev"
-                            class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 -ml-1">
+                            class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                             </svg>
@@ -138,7 +138,7 @@
                             @endforeach
                         </div>
                         <button id="thumbNext"
-                            class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 -mr-1">
+                            class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-7 h-7 bg-white border border-gray-300 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                             </svg>
@@ -148,7 +148,7 @@
             </div>
 
             <!-- ========== RIGHT: Product Info ========== -->
-            <div class="lg:col-span-7 flex flex-col">
+            <div class="lg:col-span-7 flex flex-col min-w-0">
 
                 <!-- Product Name -->
                 <h1 class="text-lg sm:text-xl font-bold text-gray-900 leading-snug mb-5">
@@ -176,27 +176,27 @@
                 <div class="space-y-6 text-sm">
 
                     <!-- Deskripsi -->
-                    <div class="flex gap-4">
+                    <div class="flex flex-wrap gap-2">
                         <span
                             class="text-gray-400 w-24 shrink-0 font-bold uppercase tracking-wider text-[10px]">Deskripsi
                             :</span>
                         <span
-                            class="text-gray-600 leading-relaxed">{{ $product->description ?: 'Bahan kualitas premium yang cocok untuk berbagai situasi.' }}</span>
+                            class="text-gray-600 leading-relaxed break-words flex-1 min-w-[200px]">{{ $product->description ?: 'Bahan kualitas premium yang cocok untuk berbagai situasi.' }}</span>
                     </div>
 
                     <!-- Ukuran -->
-                    <div class="flex gap-4 items-start">
+                    <div class="flex flex-wrap gap-2 items-start">
                         <span
                             class="text-gray-400 w-24 shrink-0 pt-2.5 font-bold uppercase tracking-wider text-[10px]">Ukuran
                             :</span>
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-2 flex-1">
                             @php
                                 $allSizes = $product->variants->flatMap->stocks->pluck('sizeOption')->filter()->unique('id')->sortBy('order');
                             @endphp
                             @forelse($allSizes as $size)
                                 <button type="button" @click="pickSize({{ $size->id }})" data-size-id="{{ $size->id }}"
                                     :class="selectedSize == {{ $size->id }} ? 'border-emerald-500 text-emerald-600 bg-emerald-50 ring-2 ring-emerald-500/10' : 'border-gray-200 text-gray-700 hover:border-emerald-300'"
-                                    class="size-btn min-w-[44px] h-10 px-4 border rounded-xl text-sm font-bold transition-all focus:outline-none flex items-center justify-center">
+                                    class="size-btn min-w-[44px] h-10 px-4 border rounded-xl text-sm font-bold transition-all focus:outline-none flex items-center justify-center break-words">
                                     {{ $size->name }}
                                 </button>
                             @empty
@@ -206,18 +206,18 @@
                     </div>
 
                     <!-- Warna -->
-                    <div class="flex gap-4 items-start">
+                    <div class="flex flex-wrap gap-2 items-start">
                         <span
                             class="text-gray-400 w-24 shrink-0 pt-2.5 font-bold uppercase tracking-wider text-[10px]">Warna
                             :</span>
-                        <div class="flex flex-wrap gap-2">
+                        <div class="flex flex-wrap gap-2 flex-1">
                             @foreach($product->variants as $variant)
                                 <button type="button"
                                     @click="pickColor({{ $variant->id }}, '{{ $variant->image ? Storage::url($variant->image) : '' }}')"
                                     data-variant-id="{{ $variant->id }}"
                                     :class="selectedVariant == {{ $variant->id }} ? 'border-emerald-500 text-emerald-600 bg-emerald-50 ring-2 ring-emerald-500/10' : 'border-gray-200 text-gray-700 hover:border-emerald-300'"
-                                    class="color-btn px-4 h-10 border rounded-xl text-sm font-bold transition-all focus:outline-none flex gap-3 items-center">
-                                    <span class="w-4 h-4 rounded-full border border-gray-200 shadow-sm"
+                                    class="color-btn px-4 h-10 border rounded-xl text-sm font-bold transition-all focus:outline-none flex gap-3 items-center break-words">
+                                    <span class="w-4 h-4 rounded-full border border-gray-200 shadow-sm shrink-0"
                                         style="background-color: {{ strtolower($variant->color) }}"></span>
                                     <span class="whitespace-nowrap">{{ $variant->variant_name }}</span>
                                 </button>
@@ -226,14 +226,14 @@
                     </div>
 
                     <!-- Kuantitas -->
-                    <div class="flex gap-4 items-center">
+                    <div class="flex flex-wrap gap-2 items-center">
                         <span
                             class="text-gray-400 w-24 shrink-0 font-bold uppercase tracking-wider text-[10px]">Kuantitas
                             :</span>
                         <div
                             class="flex items-center border border-gray-200 rounded-xl h-10 overflow-hidden bg-gray-50/50">
                             <button @click="adjustQty(-1)"
-                                class="w-10 h-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-white transition-all active:scale-90">
+                                class="w-10 h-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-white transition-all active:scale-90 shrink-0">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                         d="M20 12H4" />
@@ -243,7 +243,7 @@
                                 class="w-12 h-full text-center text-sm font-black text-gray-800 bg-transparent border-none focus:ring-0"
                                 readonly>
                             <button @click="adjustQty(1)"
-                                class="w-10 h-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-white transition-all active:scale-90">
+                                class="w-10 h-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-white transition-all active:scale-90 shrink-0">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                         d="M12 4v16m8-8H4" />
@@ -258,7 +258,9 @@
                     <a href="{{ $waLink }}" target="_blank"
                         class="flex-1 max-w-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-4 rounded-2xl transition-all shadow-xl shadow-emerald-200 active:scale-95 flex items-center justify-center gap-3">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                        </svg>
                         Hubungi Kami
                     </a>
                     <button type="button" @click="shareProduct()"
@@ -299,8 +301,8 @@
                 }
             @endphp
 
-            <div class="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm bg-white">
-                <table class="w-full text-sm text-center border-collapse min-w-[500px]">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-center border-collapse min-w-max">
                     <thead class="bg-gray-50/50 text-gray-500 uppercase text-[10px] font-bold tracking-widest">
                         <tr>
                             <th rowspan="2"
@@ -370,14 +372,14 @@
                 </a>
             </div>
 
-            <div class="flex gap-4 overflow-x-auto pb-8 snap-x thumb-scroll px-1 -mx-1">
+            <div class="flex gap-4 overflow-x-auto pb-8 snap-x thumb-scroll">
                 @foreach ($otherProducts as $other)
                     @php
                         $oPriceMin = $other->variants->flatMap->stocks->min('price');
                         $oPriceMax = $other->variants->flatMap->stocks->max('price');
                     @endphp
                     <a href="/products/{{ $other->id }}"
-                        class="group block w-[180px] md:w-[220px] shrink-0 bg-white rounded-[1.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-1 transition-all duration-300 snap-start flex flex-col overflow-hidden">
+                        class="group block min-w-[200px] max-w-[220px] flex-shrink-0 bg-white rounded-[1.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-1 transition-all duration-300 snap-start flex flex-col overflow-hidden">
                         <div class="w-full aspect-[4/5] bg-gray-50 flex items-center justify-center overflow-hidden">
                             @if ($other->thumbnail)
                                 <img src="{{ Storage::url($other->thumbnail) }}" alt="{{ $other->product_name }}"
@@ -395,7 +397,8 @@
                             <div class="mt-auto pt-2">
                                 <span class="text-rose-500 font-black text-sm tracking-tight font-outfit">
                                     @if($oPriceMin && $oPriceMax && $oPriceMin !== $oPriceMax)
-                                        Rp{{ number_format($oPriceMin, 0, ',', '.') }} - Rp{{ number_format($oPriceMax, 0, ',', '.') }}
+                                        Rp{{ number_format($oPriceMin, 0, ',', '.') }} -
+                                        Rp{{ number_format($oPriceMax, 0, ',', '.') }}
                                     @elseif($oPriceMin)
                                         Rp{{ number_format($oPriceMin, 0, ',', '.') }}
                                     @else
@@ -430,7 +433,7 @@
 
                 init() {
                     this.updateUI();
-                    
+
                     // Auto set image if variant is pre-selected
                     if (this.selectedVariant) {
                         const variant = this.productData.find(v => v.id == this.selectedVariant);
