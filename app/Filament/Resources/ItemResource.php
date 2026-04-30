@@ -21,6 +21,11 @@ class ItemResource extends Resource
     protected static ?string $navigationGroup = 'Inventory';
     protected static ?int $navigationSort = 1;
 
+    public static function canViewAny(): bool
+    {
+        return canAccessMenu('admin/items');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

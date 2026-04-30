@@ -20,6 +20,11 @@ class ProductResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Catalog';
 
+    public static function canViewAny(): bool
+    {
+        return canAccessMenu('admin/products');
+    }
+
     public static function getModelLabel(): string
     {
         return __('product.product_details');

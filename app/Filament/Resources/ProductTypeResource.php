@@ -19,6 +19,11 @@ class ProductTypeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationGroup = 'Master Data';
+
+    public static function canViewAny(): bool
+    {
+        return canAccessMenu('admin/product-types');
+    }
     protected static ?string $navigationLabel = 'Product Type';
 
     public static function form(Form $form): Form

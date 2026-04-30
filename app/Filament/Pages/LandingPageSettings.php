@@ -26,6 +26,11 @@ class LandingPageSettings extends Page
     protected static ?string $slug = 'landing-page';
     protected static string $view = 'filament.pages.landing-page-settings';
 
+    public static function canAccess(): bool
+    {
+        return canAccessMenu('admin/landing-page');
+    }
+
     public $heroes = [];
     public $values = [];
     public $logos = [];

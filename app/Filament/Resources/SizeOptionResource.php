@@ -21,6 +21,11 @@ class SizeOptionResource extends Resource
 
     protected static ?string $navigationGroup = 'Master Data';
 
+    public static function canViewAny(): bool
+    {
+        return canAccessMenu('admin/size-options');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

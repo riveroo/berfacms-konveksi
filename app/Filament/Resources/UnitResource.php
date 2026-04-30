@@ -20,6 +20,11 @@ class UnitResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-scale';
     protected static ?string $navigationGroup = 'Master Data';
 
+    public static function canViewAny(): bool
+    {
+        return canAccessMenu('admin/units');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

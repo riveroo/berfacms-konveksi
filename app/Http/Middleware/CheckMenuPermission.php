@@ -26,6 +26,7 @@ class CheckMenuPermission
         // we'll find if the path starts with any of our mapped routes.
         $mappedRoutes = [
             'admin/landing-page',
+            'admin/appearance',
             'admin/products',
             'cek-stok/product',
             'admin/transactions/report',
@@ -33,6 +34,7 @@ class CheckMenuPermission
             'admin/pre-orders',
             'admin/items',
             '/inventory/overview',
+            '/coming-soon',
             'admin/product-types',
             'admin/size-options',
             'admin/units',
