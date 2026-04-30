@@ -18,6 +18,9 @@ class Transaction extends Model
         'account_number',
         'account_name',
         'transfer_amount',
+        'transaction_type',
+        'item_status',
+        'payment_status',
     ];
 
     public const STATUSES = [
@@ -36,5 +39,15 @@ class Transaction extends Model
     public function details()
     {
         return $this->hasMany(TransactionDetail::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(TransactionPayment::class);
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(TransactionLog::class)->orderBy('created_at', 'desc');
     }
 }

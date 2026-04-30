@@ -27,6 +27,18 @@ class TransactionController extends Controller
             $q->where('status', $request->status);
         });
 
+        $query->when($request->filled('payment_status'), function ($q) use ($request) {
+            $q->where('payment_status', $request->payment_status);
+        });
+
+        $query->when($request->filled('transaction_type'), function ($q) use ($request) {
+            $q->where('transaction_type', $request->transaction_type);
+        });
+
+        $query->when($request->filled('item_status'), function ($q) use ($request) {
+            $q->where('item_status', $request->item_status);
+        });
+
         $query->when($request->filled('date_from'), function ($q) use ($request) {
             $q->whereDate('created_at', '>=', $request->date_from);
         });
@@ -52,40 +64,31 @@ class TransactionController extends Controller
         return view('admin.transactions.detail', compact('transaction'));
     }
 
-    public function cancel(Request $request, $id)
+    public function cancel(Request $request, $id, \App\Services\UpdateTransactionService $updateTransactionService)
     {
         $transaction = Transaction::findOrFail($id);
-        $transaction->update(['status' => 'cancelled']);
-        
-        // Optional: you can restore stock here if you want:
-        // foreach ($transaction->details as $detail) {
-        //     \App\Models\Stock::where('variant_id', $detail->variant_id)
-        //          ->where('size_option_id', $detail->size_option_id)
-        //          ->increment('stock', $detail->quantity);
-        // }
+        $updateTransactionService->cancel($transaction);
 
         return back()->with('success', 'Order cancelled successfully.');
     }
 
-    public function inputPayment(Request $request, $id)
+    public function inputPayment(Request $request, $id, \App\Services\PaymentService $paymentService)
     {
         $request->validate([
             'account_number' => 'required|string',
             'bank_name' => 'required|string',
-            'account_name' => 'required|string',
-            'transfer_amount' => 'required|numeric|min:0',
+            'amount' => 'required|numeric|min:0',
+            'payment_date' => 'nullable|date',
         ]);
 
         $transaction = Transaction::findOrFail($id);
-        $transaction->update([
-            'status' => 'paid',
-            'account_number' => $request->account_number,
-            'bank_name' => $request->bank_name,
-            'account_name' => $request->account_name,
-            'transfer_amount' => $request->transfer_amount,
-        ]);
-
-        return back()->with('success', 'Payment inputted successfully.');
+        
+        try {
+            $paymentService->createPayment($transaction, $request->all());
+            return back()->with('success', 'Payment inputted successfully.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
     }
 
     public function updateStatus(Request $request, $id)
@@ -99,6 +102,12 @@ class TransactionController extends Controller
             'status' => $request->status,
         ]);
 
+        \App\Models\TransactionLog::create([
+            'transaction_id' => $transaction->id,
+            'user_id' => auth()->id(),
+            'action' => 'Changed transaction status',
+        ]);
+
         return back()->with('success', 'Status updated successfully.');
     }
 
@@ -109,11 +118,12 @@ class TransactionController extends Controller
         return view('admin.transactions.create', compact('clients', 'products'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, \App\Services\CreateTransactionService $createTransactionService)
     {
         $request->validate([
             'client_phone' => 'required|string',
             'client_name' => 'required|string',
+            'transaction_type' => 'required|in:pre_order,direct_order',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.variant_id' => 'required|exists:variants,id',
@@ -123,59 +133,24 @@ class TransactionController extends Controller
             'items.*.discount' => 'nullable|numeric|min:0',
         ]);
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
-            $client = \App\Models\Client::firstOrCreate(
-                ['phone_number' => $request->client_phone],
-                [
-                    'client_name' => $request->client_name,
-                    'information' => $request->client_info
-                ]
-            );
-
-            // Calculate totals defensively to ensure they match backend limits
-            $totalPrice = 0;
-            $itemsDiscount = 0;
+        try {
+            $result = $createTransactionService->execute($request->all());
             
-            foreach ($request->items as $item) {
-                $totalPrice += ($item['price'] * $item['qty']);
-                $itemsDiscount += $item['discount'];
+            $redirectUrl = route('transactions.detail', $result['transaction']->id);
+            if ($request->transaction_type === 'pre_order' && $result['preOrder']) {
+                $redirectUrl = route('pre-orders.detail', $result['preOrder']->id);
             }
-            
-            $overallDiscount = $request->overall_discount ?? 0;
-            $grandTotal = $totalPrice - ($itemsDiscount + $overallDiscount);
 
-            $transaction = Transaction::create([
-                'trx_id' => 'TRX-' . strtoupper(uniqid()),
-                'client_id' => $client->id,
-                'total_price' => $totalPrice,
-                'total_discount' => $itemsDiscount + $overallDiscount,
-                'grand_total' => $grandTotal > 0 ? $grandTotal : 0,
-                'status' => 'waiting for payment',
+            return response()->json([
+                'success' => true,
+                'redirect_url' => $redirectUrl
             ]);
-
-            foreach ($request->items as $item) {
-                \App\Models\TransactionDetail::create([
-                    'transaction_id' => $transaction->id,
-                    'product_id' => $item['product_id'],
-                    'variant_id' => $item['variant_id'],
-                    'size_option_id' => $item['size_option_id'],
-                    'price' => $item['price'],
-                    'quantity' => $item['qty'],
-                    'discount' => $item['discount'],
-                    'subtotal' => ($item['price'] * $item['qty']) - $item['discount'],
-                ]);
-
-                // Optional: Update stock here
-                $stock = \App\Models\Stock::where('variant_id', $item['variant_id'])
-                    ->where('size_option_id', $item['size_option_id'])
-                    ->first();
-                if ($stock) {
-                    $stock->decrement('stock', $item['qty']);
-                }
-            }
-        });
-
-        return response()->json(['success' => true]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
 
     public function edit($id)
@@ -197,7 +172,7 @@ class TransactionController extends Controller
         return view('admin.transactions.edit', compact('transaction', 'clients', 'products'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, \App\Services\UpdateTransactionService $updateTransactionService)
     {
         $transaction = \App\Models\Transaction::with('details')->findOrFail($id);
         if (in_array($transaction->status, ['done', 'cancelled'])) {
@@ -207,6 +182,8 @@ class TransactionController extends Controller
         $request->validate([
             'client_phone' => 'required|string',
             'client_name' => 'required|string',
+            'transaction_type' => 'required|in:pre_order,direct_order',
+            'item_status' => 'required|string',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.variant_id' => 'required|exists:variants,id',
@@ -216,64 +193,18 @@ class TransactionController extends Controller
             'items.*.discount' => 'nullable|numeric|min:0',
         ]);
 
-        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $transaction) {
-            $client = \App\Models\Client::firstOrCreate(
-                ['phone_number' => $request->client_phone],
-                [
-                    'client_name' => $request->client_name,
-                    'information' => $request->client_info
-                ]
-            );
+        try {
+            $updateTransactionService->update($transaction, $request->all());
 
-            // Restore stocks from old details
-            foreach ($transaction->details as $oldDetail) {
-                \App\Models\Stock::where('variant_id', $oldDetail->variant_id)
-                    ->where('size_option_id', $oldDetail->size_option_id)
-                    ->increment('stock', $oldDetail->quantity);
-            }
-            // Delete old details
-            $transaction->details()->delete();
-
-            $totalPrice = 0;
-            $itemsDiscount = 0;
-            
-            foreach ($request->items as $item) {
-                $totalPrice += ($item['price'] * $item['qty']);
-                $itemsDiscount += $item['discount'];
-            }
-            
-            $overallDiscount = $request->overall_discount ?? 0;
-            $grandTotal = $totalPrice - ($itemsDiscount + $overallDiscount);
-
-            $transaction->update([
-                'client_id' => $client->id,
-                'total_price' => $totalPrice,
-                'total_discount' => $itemsDiscount + $overallDiscount,
-                'grand_total' => $grandTotal > 0 ? $grandTotal : 0,
+            return response()->json([
+                'success' => true,
+                'redirect_url' => route('transactions.detail', $transaction->id)
             ]);
-
-            foreach ($request->items as $item) {
-                \App\Models\TransactionDetail::create([
-                    'transaction_id' => $transaction->id,
-                    'product_id' => $item['product_id'],
-                    'variant_id' => $item['variant_id'],
-                    'size_option_id' => $item['size_option_id'],
-                    'price' => $item['price'],
-                    'quantity' => $item['qty'],
-                    'discount' => $item['discount'],
-                    'subtotal' => ($item['price'] * $item['qty']) - $item['discount'],
-                ]);
-
-                // Reduce stock again
-                $stock = \App\Models\Stock::where('variant_id', $item['variant_id'])
-                    ->where('size_option_id', $item['size_option_id'])
-                    ->first();
-                if ($stock) {
-                    $stock->decrement('stock', $item['qty']);
-                }
-            }
-        });
-
-        return response()->json(['success' => true]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
 }

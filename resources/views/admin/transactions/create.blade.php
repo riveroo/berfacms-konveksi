@@ -12,8 +12,9 @@
             </x-button>
         </div>
 
-        <!-- Top Section: Client Information -->
-        <div class="max-w-2xl">
+        <!-- Top Section: Client Information & Transaction Information -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Client Information -->
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-6">
                     <x-text variant="heading">Customer Information</x-text>
@@ -60,6 +61,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Transaction Information -->
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <x-text variant="heading">Transaction Information</x-text>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <x-text variant="label" class="mb-1.5">No Invoice</x-text>
+                        <input type="text" value="Auto-generated on save" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Transaction Type</x-text>
+                        @php
+                            $trxType = request('type', 'direct_order');
+                            $trxTypeFormatted = ucwords(str_replace('_', ' ', $trxType));
+                        @endphp
+                        <input type="text" value="{{ $trxTypeFormatted }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Transaction Date</x-text>
+                        <input type="text" value="{{ now()->format('Y-m-d H:i') }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Last Update</x-text>
+                        <input type="text" value="{{ now()->format('Y-m-d H:i') }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Item Status</x-text>
+                        <input type="text" value="In Progress" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Payment Status</x-text>
+                        <input type="text" value="Unpaid" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Bottom Section: Order Items List (Full Width) -->
@@ -90,7 +134,8 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                             <template x-for="(item, index) in items" :key="index">
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition border-b border-transparent"
+                                    :class="{ 'border-rose-300 bg-rose-50/50 dark:bg-rose-900/10 dark:border-rose-900/30': errors['items.'+index+'.qty'] }">
                                     <td class="px-5 py-4">
                                         <div class="font-medium text-gray-900 dark:text-white" x-text="item.product_name"></div>
                                     </td>
@@ -99,7 +144,10 @@
                                         <div class="text-xs text-gray-500 mt-0.5" x-text="'Size ' + item.size_name"></div>
                                     </td>
                                     <td class="px-4 py-4 text-right text-gray-600 dark:text-gray-400" x-text="formatRupiah(item.price)"></td>
-                                    <td class="px-4 py-4 text-center font-bold text-gray-900 dark:text-white" x-text="item.qty"></td>
+                                    <td class="px-4 py-4 text-center">
+                                        <div class="font-bold text-gray-900 dark:text-white" x-text="item.qty"></div>
+                                        <div x-show="errors['items.'+index+'.qty']" class="text-xs text-rose-500 mt-1 font-medium whitespace-nowrap" x-text="errors['items.'+index+'.qty'][0]"></div>
+                                    </td>
                                     <td class="px-4 py-4 text-right text-rose-500 font-medium" x-text="item.discount > 0 ? '-' + formatRupiah(item.discount) : '-'"></td>
                                     <td class="px-4 py-4 text-right font-bold text-gray-900 dark:text-white" x-text="formatRupiah((item.price * item.qty) - item.discount)"></td>
                                     <td class="px-4 py-4 text-center">
@@ -378,6 +426,7 @@
                 },
 
                 items: [],
+                errors: {},
                 overallDiscount: 0,
 
                 // Computed subtotals
@@ -470,12 +519,15 @@
                         alert('Please fill customer phone and name');
                         return;
                     }
+                    
+                    this.errors = {}; // Reset errors before submitting
 
                     try {
                         let response = await fetch('{{ route('transactions.store') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
                             body: JSON.stringify({
@@ -483,15 +535,31 @@
                                 client_name: this.clientName,
                                 client_info: this.clientInfo,
                                 overall_discount: parseFloat(this.overallDiscount || 0),
+                                transaction_type: '{{ request('type', 'direct_order') }}',
                                 items: this.items
                             })
                         });
 
+                        const result = await response.json();
+
                         if (response.ok) {
-                            alert('Order successfully created!');
-                            window.location.href = redirectUrl;
+                            if (window.FilamentNotification) {
+                                // Or a toast system if configured
+                            } else {
+                                alert('Transaction created successfully!');
+                            }
+                            
+                            if (result.redirect_url) {
+                                window.location.href = result.redirect_url;
+                            } else {
+                                window.location.href = redirectUrl;
+                            }
+                        } else if (response.status === 422) {
+                            // Validation error
+                            this.errors = result.errors || {};
+                            alert('Stock not sufficient or validation failed. Please check the items.');
                         } else {
-                            alert('Failed to create order. Please check the data.');
+                            alert(result.message || 'Failed to create order. Please check the data.');
                         }
                     } catch (error) {
                         alert('Network error occurred.');

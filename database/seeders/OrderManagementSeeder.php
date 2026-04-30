@@ -24,18 +24,24 @@ class OrderManagementSeeder extends Seeder
         ];
 
         foreach ($clients as $data) {
-            Client::create($data);
+            Client::updateOrCreate(['phone_number' => $data['phone_number']], $data);
         }
 
         $statuses = Transaction::STATUSES;
         $clientIds = Client::pluck('id')->toArray();
+        $transactionTypes = ['pre_order', 'direct_order'];
+        $itemStatuses = ['in_progress', 'awaiting_pickup', 'collected'];
+        $paymentStatuses = ['unpaid', 'deposit', 'paid'];
 
         for ($i = 1; $i <= 10; $i++) {
             Transaction::create([
-                'trx_id'      => 'TRX' . str_pad($i, 3, '0', STR_PAD_LEFT),
+                'trx_id'      => 'TRX-' . strtoupper(uniqid()),
                 'client_id'   => $clientIds[array_rand($clientIds)],
                 'total_price' => rand(150000, 5000000),
                 'status'      => $statuses[array_rand($statuses)],
+                'transaction_type' => $transactionTypes[array_rand($transactionTypes)],
+                'item_status' => $itemStatuses[array_rand($itemStatuses)],
+                'payment_status' => $paymentStatuses[array_rand($paymentStatuses)],
             ]);
         }
     }

@@ -32,7 +32,7 @@ class RolePermissionResource extends Resource
         return [
             'Page Editor' => [
                 ['name' => 'Landing Page', 'route' => 'admin/landing-page'],
-                ['name' => 'Appearance', 'route' => '/coming-soon'],
+                ['name' => 'Appearance', 'route' => 'admin/appearance'],
             ],
             'Catalog' => [
                 ['name' => 'Products', 'route' => 'admin/products'],

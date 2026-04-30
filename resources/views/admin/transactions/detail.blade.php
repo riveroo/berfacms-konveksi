@@ -30,43 +30,35 @@
             </div>
         @endif
 
-        @if(in_array($transaction->status, ['waiting for payment', 'paid', 'on progress']))
-            <div
-                class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm flex items-center justify-end gap-3">
+        @if(!in_array($transaction->status, ['cancelled', 'done']))
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm flex items-center justify-end gap-3">
 
-                @if($transaction->status === 'waiting for payment')
-                    <!-- Cancel Button -->
-                    <form action="{{ route('transactions.cancel', $transaction->id) }}" method="POST" class="inline">
-                        @csrf
-                        <x-button type="submit" variant="danger"
-                            onclick="return confirm('Are you sure you want to cancel this order?')">
-                            Cancel Order
-                        </x-button>
-                    </form>
-
-                    <!-- Input Payment Button -->
-                    <x-button type="button" @click="paymentModalOpen = true" variant="primary">
-                        Input Payment
+                <!-- Cancel Button -->
+                <form action="{{ route('transactions.cancel', $transaction->id) }}" method="POST" class="inline">
+                    @csrf
+                    <x-button type="submit" variant="danger"
+                        onclick="return confirm('Are you sure you want to cancel this order?')">
+                        Cancel Order
                     </x-button>
+                </form>
 
-                    <!-- Edit Button -->
-                    <x-button href="{{ url('/admin/transactions/' . $transaction->id . '/edit') }}" variant="outline">
-                        Edit
-                    </x-button>
+                <!-- Input Payment Button -->
+                @if($transaction->payment_status !== 'paid')
+                <x-button type="button" @click="paymentModalOpen = true" variant="primary">
+                    Input Payment
+                </x-button>
                 @endif
 
-                @if(in_array($transaction->status, ['paid', 'on progress']))
-                    <!-- Update Status Button -->
-                    <x-button type="button" @click="statusModalOpen = true" variant="primary">
-                        Update Status
-                    </x-button>
-                @endif
+                <!-- Edit Button -->
+                <x-button href="{{ url('/admin/transactions/' . $transaction->id . '/edit') }}" variant="outline">
+                    Edit
+                </x-button>
 
             </div>
         @endif
 
         <!-- Customer Information Section -->
-        <div class="max-w-2xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-6">
                     <x-text variant="heading">Customer Information</x-text>
@@ -87,6 +79,45 @@
                         <x-text variant="label" class="mb-1.5">Information</x-text>
                         <textarea readonly rows="2"
                             class="w-full p-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800/50 outline-none">{{ optional($transaction->client)->information }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Information -->
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <x-text variant="heading">Transaction Information</x-text>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <x-text variant="label" class="mb-1.5">No Invoice</x-text>
+                        <input type="text" value="{{ $transaction->trx_id }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Transaction Type</x-text>
+                        <input type="text" value="{{ ucwords(str_replace('_', ' ', $transaction->transaction_type)) }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Transaction Date</x-text>
+                        <input type="text" value="{{ $transaction->created_at->format('Y-m-d H:i') }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Last Update</x-text>
+                        <input type="text" value="{{ $transaction->updated_at->format('Y-m-d H:i') }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Item Status</x-text>
+                        <input type="text" value="{{ ucwords(str_replace('_', ' ', $transaction->item_status)) }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
+                    </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5">Payment Status</x-text>
+                        <input type="text" value="{{ ucwords($transaction->payment_status) }}" readonly
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
                     </div>
                 </div>
             </div>
@@ -166,6 +197,58 @@
             </div>
         </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Payment History -->
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden flex flex-col max-h-96">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+                    <x-text variant="heading">Payment History</x-text>
+                </div>
+
+                <div class="overflow-y-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="uppercase bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400">
+                            <tr>
+                                <th class="px-4 py-3">Date</th>
+                                <th class="px-3 py-3">Bank</th>
+                                <th class="px-3 py-3 text-right">Amount (IDR)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                            @forelse($transaction->payments as $payment)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
+                                    <td class="px-4 py-3 text-gray-900 dark:text-white">{{ $payment->payment_date->format('Y-m-d H:i') }}</td>
+                                    <td class="px-3 py-3 text-gray-900 dark:text-white">{{ $payment->bank_name }}</td>
+                                    <td class="px-3 py-3 text-right font-bold text-gray-900 dark:text-white">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">No payment records found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Log Tracking -->
+            <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden flex flex-col max-h-96">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20">
+                    <x-text variant="heading">Log Tracking</x-text>
+                </div>
+                <div class="p-4 overflow-y-auto space-y-3">
+                    @forelse($transaction->logs as $log)
+                        <div class="flex flex-col border-b border-gray-100 dark:border-gray-800 pb-3 last:border-0 last:pb-0">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $log->created_at->format('Y-m-d H:i:s') }}</span>
+                            <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $log->action }}</span>
+                            <span class="text-xs text-gray-600 dark:text-gray-400">by {{ optional($log->user)->name ?? 'System' }}</span>
+                        </div>
+                    @empty
+                        <div class="text-center text-xs text-gray-400 dark:text-gray-500 py-4">No logs available.</div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
         <!-- Payment Modal -->
         <div x-cloak x-show="paymentModalOpen"
             class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
@@ -177,6 +260,11 @@
                     @csrf
                     <div class="space-y-4">
                         <div>
+                            <x-text variant="label" class="mb-1.5">Payment Date</x-text>
+                            <input type="datetime-local" name="payment_date" value="{{ now()->format('Y-m-d\TH:i') }}" required
+                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                        </div>
+                        <div>
                             <x-text variant="label" class="mb-1.5">Bank Name</x-text>
                             <input type="text" name="bank_name" required placeholder="e.g BCA"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
@@ -187,15 +275,11 @@
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
                         </div>
                         <div>
-                            <x-text variant="label" class="mb-1.5">Account Name</x-text>
-                            <input type="text" name="account_name" required
+                            <x-text variant="label" class="mb-1.5">Amount (IDR)</x-text>
+                            <input type="number" name="amount" value="{{ (int) max(0, $transaction->grand_total - $transaction->payments()->sum('amount')) }}"
+                                required min="1" max="{{ max(0, $transaction->grand_total - $transaction->payments()->sum('amount')) }}"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
-                        </div>
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Transfer Amount</x-text>
-                            <input type="number" name="transfer_amount" value="{{ (int) $transaction->grand_total }}"
-                                required min="0"
-                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
+                            <p class="text-xs text-gray-500 mt-1">Remaining: {{ number_format(max(0, $transaction->grand_total - $transaction->payments()->sum('amount')), 0, ',', '.') }}</p>
                         </div>
 
                         <div class="flex justify-end gap-2 pt-4">
@@ -211,45 +295,12 @@
             </div>
         </div>
 
-        <!-- Status Modal -->
-        <div x-cloak x-show="statusModalOpen"
-            class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
-            <div @click.away="statusModalOpen = false"
-                class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-sm p-6 overflow-hidden">
-                <x-text variant="heading" class="mb-4">Update Status</x-text>
-
-                <form action="{{ route('transactions.status', $transaction->id) }}" method="POST">
-                    @csrf
-                    <div class="space-y-4">
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Change Status</x-text>
-                            <select name="status"
-                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none">
-                                <option value="on progress" {{ $transaction->status === 'on progress' ? 'selected' : '' }}>On Progress</option>
-                                <option value="done" {{ $transaction->status === 'done' ? 'selected' : '' }}>Done</option>
-                            </select>
-                        </div>
-
-                        <div class="flex justify-end gap-2 pt-4">
-                            <x-button type="button" @click="statusModalOpen = false" variant="outline" size="sm">
-                                Cancel
-                            </x-button>
-                            <x-button type="submit" variant="primary" size="sm">
-                                Update Status
-                            </x-button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('transactionDetail', () => ({
                 paymentModalOpen: false,
-                statusModalOpen: false,
             }));
         });
     </script>

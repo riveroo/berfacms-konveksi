@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Konveksi hub | Solusi Apparel & Seragam Premium</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+    @php $appearance = \App\Models\AppearanceSetting::first(); @endphp
+    <link rel="icon" type="image/png" href="{{ $appearance && $appearance->favicon ? asset('storage/' . $appearance->favicon) : asset('images/favicon.png') }}">
 
     <!-- SEO -->
     <meta name="description"

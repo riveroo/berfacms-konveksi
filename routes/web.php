@@ -120,6 +120,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/pre-orders/{id}/reject', [PreOrderController::class, 'reject'])->name('pre-orders.reject');
     Route::post('/admin/pre-orders/{id}/accept', [PreOrderController::class, 'accept'])->name('pre-orders.accept');
 
+    Route::get('/admin/appearance', [\App\Http\Controllers\AppearanceController::class, 'index'])->name('admin.appearance.index');
+    Route::post('/admin/appearance', [\App\Http\Controllers\AppearanceController::class, 'update'])->name('admin.appearance.update');
+
     Route::get('/coming-soon', function () {
         return view('coming-soon');
     })->name('coming-soon');

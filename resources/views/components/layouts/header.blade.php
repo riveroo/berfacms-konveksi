@@ -5,13 +5,18 @@
     <div class="container mx-auto px-6 flex items-center justify-between">
         <!-- Logo -->
         <a href="{{ url('/') }}" class="flex items-center gap-2 group">
-            <div
-                class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl transition-transform group-hover:scale-110 shadow-lg shadow-indigo-600/20">
-                K
-            </div>
-            <span class="font-outfit text-xl font-black tracking-tight transition-colors text-slate-900">
-                Konveksi <span class="text-indigo-500">hub</span>
-            </span>
+            @php $appearance = \App\Models\AppearanceSetting::first(); @endphp
+            @if($appearance && $appearance->header_logo)
+                <img src="{{ asset('storage/' . $appearance->header_logo) }}" alt="Konveksi Hub" class="h-10 w-auto">
+            @else
+                <div
+                    class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl transition-transform group-hover:scale-110 shadow-lg shadow-indigo-600/20">
+                    K
+                </div>
+                <span class="font-outfit text-xl font-black tracking-tight transition-colors text-slate-900">
+                    Konveksi <span class="text-indigo-500">hub</span>
+                </span>
+            @endif
         </a>
 
         <!-- Desktop Nav -->
@@ -44,8 +49,13 @@
         x-transition:leave-end="opacity-0 translate-x-full"
         class="fixed inset-0 z-[60] bg-white lg:hidden flex flex-col p-8">
         <div class="flex items-center justify-between mb-12">
-            <span class="font-outfit text-2xl font-black tracking-tight">Konveksi <span
-                    class="text-indigo-500">hub</span></span>
+            @php $appearance = \App\Models\AppearanceSetting::first(); @endphp
+            @if($appearance && $appearance->header_logo)
+                <img src="{{ asset('storage/' . $appearance->header_logo) }}" alt="Konveksi Hub" class="h-10 w-auto">
+            @else
+                <span class="font-outfit text-2xl font-black tracking-tight">Konveksi <span
+                        class="text-indigo-500">hub</span></span>
+            @endif
             <button @click="mobileMenu = false" class="p-2 text-slate-400 hover:text-slate-900">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">

@@ -116,9 +116,10 @@ class AdminPanelProvider extends PanelProvider
                 // Page Editor links
                 \Filament\Navigation\NavigationItem::make('Appearance')
                     ->group('Page Editor')
-                    ->url(fn(): string => route('coming-soon'))
+                    ->url(fn(): string => route('admin.appearance.index'))
                     ->icon('heroicon-o-cog')
-                    ->visible(fn() => canAccessMenu('/coming-soon'))
+                    ->isActiveWhen(fn() => request()->routeIs('admin.appearance.*'))
+                    ->visible(fn() => canAccessMenu('admin/appearance'))
                     ->sort(2),
             ])
             ->renderHook(
