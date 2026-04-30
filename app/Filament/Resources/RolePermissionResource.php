@@ -41,7 +41,8 @@ class RolePermissionResource extends Resource
             'Sales' => [
                 ['name' => 'Orders', 'route' => 'admin/transactions'],
                 ['name' => 'Pre Order', 'route' => 'admin/pre-orders'],
-                ['name' => 'Sales Report', 'route' => 'admin/transactions/report'],
+                ['name' => 'Sales Dashboard', 'route' => 'admin/transactions/report'],
+                ['name' => 'Sales Report', 'route' => 'admin/sales-report'],
             ],
             'Inventory' => [
                 ['name' => 'Items', 'route' => 'admin/items'],

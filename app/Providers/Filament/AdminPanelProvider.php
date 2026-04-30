@@ -78,13 +78,20 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('pre-orders.*'))
                     ->visible(fn() => canAccessMenu('admin/pre-orders'))
                     ->sort(2),
-                \Filament\Navigation\NavigationItem::make('Sales Report')
+                \Filament\Navigation\NavigationItem::make('Sales Dashboard')
                     ->group('Sales')
                     ->url(fn(): string => route('transactions.report'))
-                    ->icon('heroicon-o-chart-bar')
+                    ->icon('heroicon-o-chart-pie')
                     ->isActiveWhen(fn() => request()->routeIs('transactions.report'))
                     ->visible(fn() => canAccessMenu('admin/transactions/report'))
                     ->sort(3),
+                \Filament\Navigation\NavigationItem::make('Sales Report')
+                    ->group('Sales')
+                    ->url(fn(): string => route('sales-report.index'))
+                    ->icon('heroicon-o-document-chart-bar')
+                    ->isActiveWhen(fn() => request()->routeIs('sales-report.*'))
+                    ->visible(fn() => canAccessMenu('admin/sales-report'))
+                    ->sort(4),
 
                 // Inventory Links (Coming soon except Overview)
                 \Filament\Navigation\NavigationItem::make('Inventory Overview')
