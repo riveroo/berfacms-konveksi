@@ -17,14 +17,15 @@ class InventoryImportService
         DB::beginTransaction();
         try {
             foreach ($rows as $index => $row) {
-                $itemCode = $row['item_code'] ?? ($row['item_name'] ?? null);
-                $stockQty = $row['stock_qty'] ?? null;
+                // Maatwebsite Excel converts "ITEM-ID" heading to "item_id"
+                $itemCode = $row['item_id'] ?? ($row['item_code'] ?? ($row['item_name'] ?? null));
+                $stockQty = $row['stock'] ?? ($row['stock_qty'] ?? null);
 
                 if (empty($itemCode) || !is_numeric($stockQty)) {
                     $this->failedCount++;
                     $this->failedRows[] = [
                         'row' => $index + 2, 
-                        'reason' => 'Missing item_code/item_name or invalid stock_qty'
+                        'reason' => 'Missing ITEM-ID or invalid Stock'
                     ];
                     continue;
                 }

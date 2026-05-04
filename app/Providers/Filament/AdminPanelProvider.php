@@ -101,24 +101,9 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('inventory.overview'))
                     ->visible(fn() => canAccessMenu('/inventory/overview'))
                     ->sort(2),
-                \Filament\Navigation\NavigationItem::make('Stock In')
-                    ->group('Inventory')
-                    ->url(fn(): string => route('coming-soon'))
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->visible(fn() => canAccessMenu('/coming-soon'))
-                    ->sort(3),
-                \Filament\Navigation\NavigationItem::make('Stock Out')
-                    ->group('Inventory')
-                    ->url(fn(): string => route('coming-soon'))
-                    ->icon('heroicon-o-arrow-up-tray')
-                    ->visible(fn() => canAccessMenu('/coming-soon'))
-                    ->sort(4),
-                \Filament\Navigation\NavigationItem::make('Adjustment')
-                    ->group('Inventory')
-                    ->url(fn(): string => route('coming-soon'))
-                    ->icon('heroicon-o-adjustments-horizontal')
-                    ->visible(fn() => canAccessMenu('/coming-soon'))
-                    ->sort(5),
+
+
+
 
                 // Page Editor links
                 \Filament\Navigation\NavigationItem::make('Appearance')

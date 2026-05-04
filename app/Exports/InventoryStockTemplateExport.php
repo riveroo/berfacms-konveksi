@@ -2,24 +2,24 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromArray;
+use App\Models\Item;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class InventoryStockTemplateExport implements FromArray, WithHeadings, ShouldAutoSize
+class InventoryStockTemplateExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
     public function headings(): array
     {
         return [
-            'item_code',
-            'stock_qty'
+            'ITEM-ID',
+            'Item Name',
+            'Stock'
         ];
     }
 
-    public function array(): array
+    public function collection()
     {
-        return [
-            ['ITEM001', 100],
-        ];
+        return Item::select('item_code', 'item_name', 'stock')->get();
     }
 }
