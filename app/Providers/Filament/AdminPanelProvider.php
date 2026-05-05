@@ -101,6 +101,14 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('inventory.overview'))
                     ->visible(fn() => canAccessMenu('/inventory/overview'))
                     ->sort(2),
+                \Filament\Navigation\NavigationItem::make('Production')
+                    ->group('Inventory')
+                    ->url(fn(): string => route('production.index'))
+                    ->icon('heroicon-o-wrench-screwdriver')
+                    ->isActiveWhen(fn() => request()->routeIs('production.*'))
+                    ->visible(fn() => true)
+                    ->sort(6),
+
 
 
 

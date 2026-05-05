@@ -103,4 +103,28 @@ class StockMovementService
             }
         }
     }
+
+    public function decrementMaterialStock($itemId, $quantity)
+    {
+        $item = Item::findOrFail($itemId);
+        if ($item->stock < $quantity) {
+            throw new Exception("Stock not sufficient for material: {$item->item_name}");
+        }
+        $item->decrement('stock', $quantity);
+    }
+
+    public function incrementProductStock($variantId, $sizeOptionId, $quantity)
+    {
+        $stock = Stock::where('variant_id', $variantId)
+            ->where('size_option_id', $sizeOptionId)
+            ->first();
+        
+        if ($stock) {
+            $stock->increment('stock', $quantity);
+        } else {
+            // If stock record doesn't exist, we might need to create one if that's the logic
+            // But usually we assume variants have stock records.
+            throw new Exception("Stock record not found for variant ID: {$variantId}");
+        }
+    }
 }

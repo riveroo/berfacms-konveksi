@@ -134,6 +134,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/inventory/overview/export', [\App\Http\Controllers\InventoryOverviewController::class, 'export'])->name('inventory.overview.export');
     Route::get('/inventory/overview/template', [\App\Http\Controllers\InventoryOverviewController::class, 'downloadTemplate'])->name('inventory.overview.template');
     Route::post('/inventory/overview/import', [\App\Http\Controllers\InventoryOverviewController::class, 'import'])->name('inventory.overview.import');
+
+    Route::get('/admin/production', [\App\Http\Controllers\ProductionController::class, 'index'])->name('production.index');
+    Route::get('/admin/production/create', [\App\Http\Controllers\ProductionController::class, 'create'])->name('production.create');
+    Route::get('/admin/production/{id}', [\App\Http\Controllers\ProductionController::class, 'show'])->name('production.show');
+    Route::post('/admin/production', [\App\Http\Controllers\ProductionController::class, 'store'])->name('production.store');
 });
 
 

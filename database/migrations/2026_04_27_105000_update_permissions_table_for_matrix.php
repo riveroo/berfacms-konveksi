@@ -13,19 +13,33 @@ return new class extends Migration
         \Illuminate\Support\Facades\DB::table('permissions')->delete();
         
         Schema::table('permissions', function (Blueprint $table) {
-            $table->dropColumn('name');
-            $table->string('menu_name');
-            $table->boolean('can_read')->default(false);
-            $table->boolean('can_add')->default(false);
-            $table->boolean('can_edit')->default(false);
-            $table->boolean('can_delete')->default(false);
+            if (Schema::hasColumn('permissions', 'name')) {
+                $table->dropColumn('name');
+            }
+            if (!Schema::hasColumn('permissions', 'menu_name')) {
+                $table->string('menu_name');
+            }
+            if (!Schema::hasColumn('permissions', 'can_read')) {
+                $table->boolean('can_read')->default(false);
+            }
+            if (!Schema::hasColumn('permissions', 'can_add')) {
+                $table->boolean('can_add')->default(false);
+            }
+            if (!Schema::hasColumn('permissions', 'can_edit')) {
+                $table->boolean('can_edit')->default(false);
+            }
+            if (!Schema::hasColumn('permissions', 'can_delete')) {
+                $table->boolean('can_delete')->default(false);
+            }
         });
 
-        Schema::create('role_permissions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('role_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('permission_id')->constrained()->cascadeOnDelete();
-        });
+        if (!Schema::hasTable('role_permissions')) {
+            Schema::create('role_permissions', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('role_id')->constrained()->cascadeOnDelete();
+                $table->foreignId('permission_id')->constrained()->cascadeOnDelete();
+            });
+        }
     }
 
     public function down(): void

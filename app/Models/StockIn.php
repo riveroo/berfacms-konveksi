@@ -13,6 +13,7 @@ class StockIn extends Model
     protected $fillable = [
         'trx_date',
         'item_type',
+        'production_id',
         'product_id',
         'variant_id',
         'size_option_id',
