@@ -46,10 +46,17 @@ class RolePermissionResource extends Resource
             ],
             'Inventory' => [
                 ['name' => 'Items', 'route' => 'admin/items'],
-                ['name' => 'Inventory Overview', 'route' => '/inventory/overview'],
-                ['name' => 'Stock In', 'route' => '/coming-soon'],
-                ['name' => 'Stock Out', 'route' => '/coming-soon'],
-                ['name' => 'Adjustment', 'route' => '/coming-soon'],
+                ['name' => 'Inventory Overview', 'route' => 'inventory/overview'],
+                ['name' => 'Stock In', 'route' => 'admin/stock-in'],
+                ['name' => 'Stock Out', 'route' => 'admin/stock-out'],
+                ['name' => 'Adjustment', 'route' => 'admin/adjustment'],
+                ['name' => 'Production', 'route' => 'admin/production'],
+            ],
+            'Accounting' => [
+                ['name' => 'C.O.A (Chart Of Accounts)', 'route' => 'admin/coa'],
+                ['name' => 'Transaction Template', 'route' => '/coming-soon'],
+                ['name' => 'Journal', 'route' => '/coming-soon'],
+                ['name' => 'General Ledger', 'route' => '/coming-soon'],
             ],
             'Master Data' => [
                 ['name' => 'Product Type', 'route' => 'admin/product-types'],

@@ -34,13 +34,18 @@ class CheckMenuPermission
             'admin/transactions',
             'admin/pre-orders',
             'admin/items',
-            '/inventory/overview',
-            '/coming-soon',
+            'inventory/overview',
+            'admin/stock-in',
+            'admin/stock-out',
+            'admin/adjustment',
+            'admin/production',
             'admin/product-types',
             'admin/size-options',
             'admin/units',
             'admin/accounts',
             'admin/role-permissions',
+            'admin/coa',
+            'coming-soon',
         ];
 
         foreach ($mappedRoutes as $route) {

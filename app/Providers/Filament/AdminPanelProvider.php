@@ -51,6 +51,7 @@ class AdminPanelProvider extends PanelProvider
                 \Filament\Navigation\NavigationGroup::make()->label('Catalog')->icon('heroicon-o-shopping-bag'),
                 \Filament\Navigation\NavigationGroup::make()->label('Sales')->icon('heroicon-o-banknotes'),
                 \Filament\Navigation\NavigationGroup::make()->label('Inventory')->icon('heroicon-o-inbox-stack'),
+                \Filament\Navigation\NavigationGroup::make()->label('Accounting')->icon('heroicon-o-calculator'),
                 \Filament\Navigation\NavigationGroup::make()->label('Master Data')->icon('heroicon-o-folder-open'),
                 \Filament\Navigation\NavigationGroup::make()->label('User Management')->icon('heroicon-o-users'),
             ])
@@ -99,15 +100,41 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn(): string => route('inventory.overview'))
                     ->icon('heroicon-o-presentation-chart-line')
                     ->isActiveWhen(fn() => request()->routeIs('inventory.overview'))
-                    ->visible(fn() => canAccessMenu('/inventory/overview'))
+                    ->visible(fn() => canAccessMenu('inventory/overview'))
                     ->sort(2),
                 \Filament\Navigation\NavigationItem::make('Production')
                     ->group('Inventory')
                     ->url(fn(): string => route('production.index'))
                     ->icon('heroicon-o-wrench-screwdriver')
                     ->isActiveWhen(fn() => request()->routeIs('production.*'))
-                    ->visible(fn() => true)
+                    ->visible(fn() => canAccessMenu('admin/production'))
                     ->sort(6),
+                
+                // Accounting Links
+                \Filament\Navigation\NavigationItem::make('C.O.A (Chart Of Accounts)')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('filament.admin.resources.coa.index'))
+                    ->icon('heroicon-o-list-bullet')
+                    ->visible(fn() => canAccessMenu('admin/coa'))
+                    ->sort(1),
+                \Filament\Navigation\NavigationItem::make('Transaction Template')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('coming-soon'))
+                    ->icon('heroicon-o-square-3-stack-3d')
+                    ->visible(fn() => canAccessMenu('/coming-soon'))
+                    ->sort(2),
+                \Filament\Navigation\NavigationItem::make('Journal')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('coming-soon'))
+                    ->icon('heroicon-o-book-open')
+                    ->visible(fn() => canAccessMenu('/coming-soon'))
+                    ->sort(3),
+                \Filament\Navigation\NavigationItem::make('General Ledger')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('coming-soon'))
+                    ->icon('heroicon-o-table-cells')
+                    ->visible(fn() => canAccessMenu('/coming-soon'))
+                    ->sort(4),
 
 
 

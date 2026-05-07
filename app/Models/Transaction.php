@@ -50,4 +50,10 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionLog::class)->orderBy('created_at', 'desc');
     }
+
+    public function journalEntry()
+    {
+        return $this->hasOne(JournalEntry::class, 'reference_id')
+            ->where('reference_type', 'transaction');
+    }
 }
