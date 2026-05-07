@@ -45,6 +45,7 @@ class CheckMenuPermission
             'admin/accounts',
             'admin/role-permissions',
             'admin/coa',
+            'admin/cash-book',
             'coming-soon',
         ];
 

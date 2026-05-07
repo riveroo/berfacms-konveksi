@@ -11,16 +11,16 @@ class OrderManagementSeeder extends Seeder
     public function run(): void
     {
         $clients = [
-            ['client_name' => 'Budi Santoso', 'phone_number' => '081234567890', 'information' => 'Pelanggan tetap'],
-            ['client_name' => 'Siti Rahayu', 'phone_number' => '082345678901', 'information' => null],
-            ['client_name' => 'Ahmad Fauzi', 'phone_number' => '083456789012', 'information' => 'Langganan setiap bulan'],
-            ['client_name' => 'Dewi Kusuma', 'phone_number' => '084567890123', 'information' => null],
-            ['client_name' => 'Rizky Pratama', 'phone_number' => '085678901234', 'information' => 'Reseller'],
-            ['client_name' => 'Mega Wati', 'phone_number' => '086789012345', 'information' => null],
-            ['client_name' => 'Hendra Wijaya', 'phone_number' => '087890123456', 'information' => 'VIP Client'],
-            ['client_name' => 'Novita Sari', 'phone_number' => '088901234567', 'information' => null],
-            ['client_name' => 'Salim Abdullah', 'phone_number' => '089012345678', 'information' => 'Grosir'],
-            ['client_name' => 'Rini Susanti', 'phone_number' => '089123456789', 'information' => null],
+            ['client_name' => 'Budi Santoso', 'type' => 'customer', 'email' => 'budi@example.com', 'phone_number' => '081234567890', 'information' => 'Pelanggan tetap'],
+            ['client_name' => 'Siti Rahayu', 'type' => 'customer', 'email' => 'siti@example.com', 'phone_number' => '082345678901', 'information' => null],
+            ['client_name' => 'Ahmad Fauzi', 'type' => 'customer', 'email' => 'ahmad@example.com', 'phone_number' => '083456789012', 'information' => 'Langganan setiap bulan'],
+            ['client_name' => 'Dewi Kusuma', 'type' => 'customer', 'email' => 'dewi@example.com', 'phone_number' => '084567890123', 'information' => null],
+            ['client_name' => 'Rizky Pratama', 'type' => 'customer', 'email' => 'rizky@example.com', 'phone_number' => '085678901234', 'information' => 'Reseller'],
+            ['client_name' => 'Megah Konveksi', 'type' => 'supplier', 'email' => 'megah@supplier.com', 'phone_number' => '086789012345', 'information' => 'Supplier Kain'],
+            ['client_name' => 'Hendra Wijaya', 'type' => 'customer', 'email' => 'hendra@example.com', 'phone_number' => '087890123456', 'information' => 'VIP Client'],
+            ['client_name' => 'Novita Sari', 'type' => 'customer', 'email' => 'novita@example.com', 'phone_number' => '088901234567', 'information' => null],
+            ['client_name' => 'Salim Textiles', 'type' => 'vendor', 'email' => 'salim@vendor.com', 'phone_number' => '089012345678', 'information' => 'Vendor Kancing'],
+            ['client_name' => 'Rini Susanti', 'type' => 'customer', 'email' => 'rini@example.com', 'phone_number' => '089123456789', 'information' => null],
         ];
 
         foreach ($clients as $data) {

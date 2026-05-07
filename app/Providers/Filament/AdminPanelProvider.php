@@ -11,6 +11,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Filament\Enums\ThemeMode;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -117,6 +118,13 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-list-bullet')
                     ->visible(fn() => canAccessMenu('admin/coa'))
                     ->sort(1),
+                \Filament\Navigation\NavigationItem::make('Cash Book')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('cash-book.index'))
+                    ->icon('heroicon-o-currency-dollar')
+                    ->isActiveWhen(fn() => request()->routeIs('cash-book.*'))
+                    ->visible(fn() => canAccessMenu('admin/cash-book'))
+                    ->sort(2),
                 \Filament\Navigation\NavigationItem::make('Transaction Template')
                     ->group('Accounting')
                     ->url(fn(): string => route('coming-soon'))

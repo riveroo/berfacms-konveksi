@@ -24,4 +24,10 @@ class JournalEntry extends Model
     {
         return $this->hasMany(JournalDetail::class);
     }
+
+    public function cashTransaction()
+    {
+        return $this->belongsTo(CashTransaction::class, 'reference_id')
+            ->where('reference_type', 'cash_transaction');
+    }
 }

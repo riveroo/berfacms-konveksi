@@ -139,6 +139,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/production/create', [\App\Http\Controllers\ProductionController::class, 'create'])->name('production.create');
     Route::get('/admin/production/{id}', [\App\Http\Controllers\ProductionController::class, 'show'])->name('production.show');
     Route::post('/admin/production', [\App\Http\Controllers\ProductionController::class, 'store'])->name('production.store');
+
+    // Cash Book Module
+    Route::get('/admin/cash-book', [\App\Http\Controllers\CashBookController::class, 'index'])->name('cash-book.index');
+    Route::get('/admin/cash-book/create', [\App\Http\Controllers\CashBookController::class, 'create'])->name('cash-book.create');
+    Route::post('/admin/cash-book', [\App\Http\Controllers\CashBookController::class, 'store'])->name('cash-book.store');
+    Route::get('/admin/cash-book/{cashBook}/edit', [\App\Http\Controllers\CashBookController::class, 'edit'])->name('cash-book.edit');
+    Route::put('/admin/cash-book/{cashBook}', [\App\Http\Controllers\CashBookController::class, 'update'])->name('cash-book.update');
+    Route::get('/admin/cash-book/{cashBook}', [\App\Http\Controllers\CashBookController::class, 'show'])->name('cash-book.show');
+    Route::delete('/admin/cash-book/{cashBook}', [\App\Http\Controllers\CashBookController::class, 'destroy'])->name('cash-book.destroy');
 });
 
 

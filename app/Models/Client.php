@@ -9,6 +9,8 @@ class Client extends Model
 {
     protected $fillable = [
         'client_name',
+        'type',
+        'email',
         'phone_number',
         'information',
     ];
@@ -16,5 +18,10 @@ class Client extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function cashTransactions(): HasMany
+    {
+        return $this->hasMany(CashTransaction::class);
     }
 }

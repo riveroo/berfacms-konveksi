@@ -14,6 +14,7 @@ class Account extends Model
         'code',
         'name',
         'type',
+        'subtype',
         'parent_id',
         'is_active',
     ];
@@ -35,5 +36,15 @@ class Account extends Model
     public function journalDetails()
     {
         return $this->hasMany(JournalDetail::class);
+    }
+
+    public function cashTransactions()
+    {
+        return $this->hasMany(CashTransaction::class, 'account_id');
+    }
+
+    public function counterCashTransactions()
+    {
+        return $this->hasMany(CashTransaction::class, 'counter_account_id');
     }
 }
