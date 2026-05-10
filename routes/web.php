@@ -213,6 +213,33 @@ Route::get('/run-seeder', function () {
     }
 });
 
+Route::get('/clear-config', function () {
+    try {
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+        return 'Config, Route, View, and Cache cleared successfully!';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
+Route::get('/clear-session', function () {
+    try {
+        // Clear all files in storage/framework/sessions
+        $files = glob(storage_path('framework/sessions/*'));
+        foreach ($files as $file) {
+            if (is_file($file) && !str_contains($file, '.gitignore')) {
+                unlink($file);
+            }
+        }
+        return 'Session files cleared successfully!';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
 Route::fallback(function () {
     return response()->view('errors.custom', [
         'code' => 404,
