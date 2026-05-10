@@ -1,4 +1,7 @@
-
+    <script>
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    </script>
     <div class="flex h-screen w-full font-sans antialiased text-gray-900 bg-white">
         <!-- Left Side: Branding / Background -->
         <div class="hidden lg:flex w-1/2 bg-blue-600 items-center justify-center p-12 relative overflow-hidden">
