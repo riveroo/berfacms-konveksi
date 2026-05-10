@@ -25,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
             if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'off') {
                 $_SERVER['HTTPS'] = 'on';
             }
+
+            // Force session cookie to be secure
+            config(['session.secure' => true]);
         }
     }
 }
