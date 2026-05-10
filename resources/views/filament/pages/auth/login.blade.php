@@ -1,3 +1,4 @@
+<div>
     <script>
         try {
             document.documentElement.classList.remove('dark');
@@ -54,3 +55,4 @@
         </div>
     </div>
     @livewireScripts
+</div>
