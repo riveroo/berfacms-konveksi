@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
     {
         if (config('app.env') !== 'local') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+            
+            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'off') {
+                $_SERVER['HTTPS'] = 'on';
+            }
         }
     }
 }
