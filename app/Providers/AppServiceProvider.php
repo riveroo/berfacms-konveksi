@@ -21,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if (config('app.env') !== 'local') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
+            \Illuminate\Support\Facades\URL::forceRootUrl('https://demokonveksi.berfacms.my.id');
             
             if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'off') {
                 $_SERVER['HTTPS'] = 'on';

@@ -14,7 +14,7 @@ return [
     */
 
     'class_namespace' => 'App\\Livewire',
-    'asset_url' => env('APP_URL', 'https://demokonveksi.berfacms.my.id'),
+    'asset_url' => null,
 
     /*
     |---------------------------------------------------------------------------
