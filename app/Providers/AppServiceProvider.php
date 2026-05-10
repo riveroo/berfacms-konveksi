@@ -28,6 +28,15 @@ class AppServiceProvider extends ServiceProvider
 
             // Force session cookie to be secure
             config(['session.secure' => true]);
+
+            // Force Livewire to use the correct secure URL
+            \Livewire\Livewire::setUpdateRoute(function ($handle) {
+                return \Illuminate\Support\Facades\Route::post('/livewire/update', $handle)
+                    ->middleware(['web']);
+            });
+            \Livewire\Livewire::setScriptRoute(function ($handle) {
+                return \Illuminate\Support\Facades\Route::get('/livewire/livewire.js', $handle);
+            });
         }
     }
 }
