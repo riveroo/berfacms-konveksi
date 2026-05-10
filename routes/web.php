@@ -68,6 +68,10 @@ Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login');
 
+Route::post('/admin/login', function () {
+    return redirect('/admin/login');
+});
+
 // require __DIR__.'/auth.php';
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
