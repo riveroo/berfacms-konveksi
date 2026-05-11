@@ -18,11 +18,17 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RbacSeeder::class,
             SupplierSeeder::class,
+            AccountSeeder::class,
             ItemSeeder::class,
             ProductSeeder::class,
+            TransactionTemplateSeeder::class,
             OrderManagementSeeder::class,
             TransactionDetailSeeder::class,
+            TransactionEnhancementSeeder::class,
+            TransactionPaymentSeeder::class,
             PreOrderSeeder::class,
+            ProductionSeeder::class,
+            CashTransactionSeeder::class,
             LandingReviewSeeder::class,
         ]);
     }
