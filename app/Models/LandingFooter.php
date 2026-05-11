@@ -18,4 +18,23 @@ class LandingFooter extends Model
         'shopee_url',
         'facebook_url',
     ];
+
+    public function getFormattedWaNumberAttribute()
+    {
+        $waNumber = preg_replace('/[^0-9]/', '', $this->phone);
+        if (str_starts_with($waNumber, '0')) {
+            $waNumber = '62' . substr($waNumber, 1);
+        }
+        return $waNumber;
+    }
+
+    public function getWaLink($message = '')
+    {
+        $number = $this->formatted_wa_number;
+        $link = "https://wa.me/{$number}";
+        if ($message) {
+            $link .= "?text=" . urlencode($message);
+        }
+        return $link;
+    }
 }

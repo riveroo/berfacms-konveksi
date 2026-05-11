@@ -204,9 +204,12 @@
                         YANG ANDA CARI?</h2>
                     <p class="text-indigo-100 text-lg mb-10 max-w-xl mx-auto">Klik tombol di bawah ini untuk memulai
                         pemesanan via WhatsApp atau melihat detail produk lebih lanjut.</p>
+                    @php
+                        $footer = \App\Models\LandingFooter::first();
+                        $waLink = $footer ? $footer->getWaLink("Halo, saya ingin menanyakan stok produk.") : "https://wa.me/6281907666620";
+                    @endphp
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-
-                        <a href="https://wa.me/6281907666620" target="_blank"
+                        <a href="{{ $waLink }}" target="_blank"
                             class="inline-flex items-center justify-center gap-3 px-12 h-16 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold rounded-2xl text-lg shadow-xl shadow-green-500/20 transition-all transform hover:-translate-y-1">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                                 <path

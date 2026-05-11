@@ -45,7 +45,8 @@
         @php
             $trxId = session('checkout_success_trx_id');
             $invoiceUrl = url('/invoice/' . $trxId);
-            $phone = "6281907666620"; // Ganti dengan nomor WhatsApp admin valid
+            $footer = \App\Models\LandingFooter::first();
+            $phone = $footer ? $footer->formatted_wa_number : "6281907666620"; 
             $message = urlencode("Saya sudah melakukan pesanan dengan invoice berikut: " . $invoiceUrl);
             $whatsappUrl = "https://wa.me/{$phone}?text=" . $message;
         @endphp
