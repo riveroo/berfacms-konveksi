@@ -195,6 +195,24 @@ Route::get('/build-assets', function () {
     }
 });
 
+Route::get('/emergency-migrate', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Emergency Migration Berhasil! <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+})->withoutMiddleware([\Illuminate\Session\Middleware\StartSession::class, \Illuminate\View\Middleware\ShareErrorsFromSession::class, \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class]);
+
+Route::get('/run-migration', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migration Berhasil! <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Terjadi Error saat Migration: ' . $e->getMessage();
+    }
+});
+
 Route::get('/run-seeder', function () {
     try {
         // Opsi A: Menjalankan DatabaseSeeder utama
