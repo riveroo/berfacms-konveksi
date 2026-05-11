@@ -67,26 +67,61 @@
                     </div>
                 @endif
 
-                <div class="space-y-4">
+                <div class="space-y-4" x-data="sortableList('updateHeroOrder')">
                     @foreach($heroes as $hero)
-                        <div class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
-                            <div class="w-40 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-                                <img src="{{ asset('storage/' . $hero['image']) }}" class="w-full h-full object-cover">
+                        <div data-id="{{ $hero['id'] }}" class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white shadow-sm relative group" wire:loading.class="opacity-50 pointer-events-none" wire:target="saveHero, updateHero">
+                            <!-- Drag Handle -->
+                            <div class="drag-handle cursor-grab active:cursor-grabbing p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Drag to reorder">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
                             </div>
-                            <div class="flex-grow">
-                                <div class="text-sm font-medium text-gray-900">Sort Order: {{ $hero['sort_order'] }}</div>
-                                <div class="text-xs text-gray-500 mt-1 truncate max-w-xs">
-                                    Link: <a href="{{ $hero['link'] }}" target="_blank" class="text-primary-600 hover:underline">{{ $hero['link'] ?: 'None' }}</a>
+
+                            @if($editHeroId === $hero['id'])
+                                <!-- Edit Mode -->
+                                <div class="flex-grow flex flex-col gap-3">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-32 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                            <img src="{{ asset('storage/' . $hero['image']) }}" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-grow">
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Upload New Image (Leave empty to keep current)</label>
+                                            <input type="file" wire:model="editHeroImage" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-gray-300 rounded p-1 bg-white">
+                                            @error('editHeroImage') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Redirect Link</label>
+                                        <input type="url" wire:model="editHeroLink" class="w-full rounded border-gray-300 text-sm focus:ring-primary-500 focus:border-primary-500 py-1.5 px-3">
+                                        @error('editHeroLink') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button wire:click="updateHero" wire:loading.attr="disabled" class="bg-primary-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-primary-500 disabled:opacity-50">Save</button>
+                                        <button wire:click="cancelEditHero" wire:loading.attr="disabled" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-medium hover:bg-gray-300 disabled:opacity-50">Cancel</button>
+                                        <div wire:loading wire:target="editHeroImage" class="text-xs text-primary-600 ml-2 mt-1">Uploading...</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-3 shrink-0">
-                                <button wire:click="toggleHeroActive({{ $hero['id'] }})" class="px-3 py-1.5 rounded-lg text-xs font-medium {{ $hero['is_active'] ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                                    {{ $hero['is_active'] ? 'Active' : 'Inactive' }}
-                                </button>
-                                <button wire:click="deleteHero({{ $hero['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                            </div>
+                            @else
+                                <!-- Display Mode -->
+                                <div class="w-40 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                    <img src="{{ asset('storage/' . $hero['image']) }}" class="w-full h-full object-cover">
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="text-sm font-medium text-gray-900">Sort Order: {{ $hero['sort_order'] }}</div>
+                                    <div class="text-xs text-gray-500 mt-1 truncate max-w-xs">
+                                        Link: <a href="{{ $hero['link'] }}" target="_blank" class="text-primary-600 hover:underline">{{ $hero['link'] ?: 'None' }}</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button wire:click="toggleHeroActive({{ $hero['id'] }})" wire:loading.attr="disabled" class="px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-50 {{ $hero['is_active'] ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                                        {{ $hero['is_active'] ? 'Active' : 'Inactive' }}
+                                    </button>
+                                    <button wire:click="editHero({{ $hero['id'] }})" wire:loading.attr="disabled" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50" title="Edit">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    </button>
+                                    <button wire:click="deleteHero({{ $hero['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:loading.attr="disabled" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50" title="Delete">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -138,17 +173,57 @@
                     </div>
                 @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" x-data="sortableList('updateValueOrder')">
                     @foreach($values as $value)
-                        <div class="border border-gray-200 rounded-xl p-5 relative hover:border-primary-300 transition-colors bg-white">
-                            <button wire:click="deleteValue({{ $value['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" class="absolute top-3 right-3 p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                            <div class="w-16 h-16 bg-gray-50 rounded-xl overflow-hidden mb-4 border border-gray-100">
-                                <img src="{{ asset('storage/' . $value['image']) }}" class="w-full h-full object-cover">
+                        <div data-id="{{ $value['id'] }}" class="border border-gray-200 rounded-xl p-5 relative hover:border-primary-300 transition-colors bg-white group" wire:loading.class="opacity-50 pointer-events-none" wire:target="saveValue, updateValue">
+                            <!-- Drag Handle -->
+                            <div class="drag-handle absolute top-3 left-3 cursor-grab active:cursor-grabbing p-1.5 text-gray-400 hover:text-gray-600 transition-colors" title="Drag to reorder">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
                             </div>
-                            <h4 class="font-bold text-gray-900 text-lg mb-2">{{ $value['title'] }}</h4>
-                            <p class="text-sm text-gray-600 line-clamp-3">{{ $value['description'] }}</p>
+                            
+                            @if($editValueId === $value['id'])
+                                <!-- Edit Mode -->
+                                <div class="mt-8 flex flex-col gap-3">
+                                    <div class="w-16 h-16 bg-gray-50 rounded-xl overflow-hidden border border-gray-100 shrink-0">
+                                        <img src="{{ asset('storage/' . $value['image']) }}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">New Image (Optional)</label>
+                                        <input type="file" wire:model="editValueImage" class="w-full text-xs text-gray-500 border border-gray-300 rounded p-1">
+                                        @error('editValueImage') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Title</label>
+                                        <input type="text" wire:model="editValueTitle" class="w-full rounded border-gray-300 text-sm py-1.5 px-3">
+                                        @error('editValueTitle') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
+                                        <textarea wire:model="editValueDescription" rows="3" class="w-full rounded border-gray-300 text-sm py-1.5 px-3"></textarea>
+                                        @error('editValueDescription') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="flex gap-2 mt-2">
+                                        <button wire:click="updateValue" wire:loading.attr="disabled" class="bg-primary-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-primary-500 disabled:opacity-50">Save</button>
+                                        <button wire:click="cancelEditValue" wire:loading.attr="disabled" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-medium hover:bg-gray-300 disabled:opacity-50">Cancel</button>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Display Mode -->
+                                <div class="absolute top-3 right-3 flex gap-1">
+                                    <button wire:click="editValue({{ $value['id'] }})" wire:loading.attr="disabled" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50" title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    </button>
+                                    <button wire:click="deleteValue({{ $value['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:loading.attr="disabled" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50" title="Delete">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                                <div class="w-16 h-16 bg-gray-50 rounded-xl overflow-hidden mb-4 mt-6 border border-gray-100">
+                                    <img src="{{ asset('storage/' . $value['image']) }}" class="w-full h-full object-cover">
+                                </div>
+                                <h4 class="font-bold text-gray-900 text-lg mb-2">{{ $value['title'] }}</h4>
+                                <p class="text-sm text-gray-600 line-clamp-3">{{ $value['description'] }}</p>
+                                <div class="text-xs text-gray-400 mt-2">Sort: {{ $value['sort_order'] }}</div>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -339,9 +414,14 @@
                     </div>
                 @endif
 
-                <div class="space-y-3">
+                <div class="space-y-3" x-data="sortableList('updatePopularProductOrder')">
                     @foreach($popularProducts as $pop)
-                        <div class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white">
+                        <div data-id="{{ $pop['id'] }}" class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors bg-white shadow-sm relative group">
+                            <!-- Drag Handle -->
+                            <div class="drag-handle cursor-grab active:cursor-grabbing p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Drag to reorder">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
+                            </div>
+                            
                             <div class="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
                                 @if(isset($pop['product']['thumbnail']) && $pop['product']['thumbnail'])
                                     <img src="{{ asset('storage/' . $pop['product']['thumbnail']) }}" class="w-full h-full object-cover">
@@ -353,9 +433,10 @@
                             </div>
                             <div class="flex-grow">
                                 <div class="text-sm font-bold text-gray-900">{{ $pop['product']['product_name'] ?? 'Unknown Product' }}</div>
+                                <div class="text-xs text-gray-400 mt-1">Sort: {{ $pop['sort_order'] }}</div>
                             </div>
                             <div class="flex items-center gap-3 shrink-0">
-                                <button wire:click="deletePopularProduct({{ $pop['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                <button wire:click="deletePopularProduct({{ $pop['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:loading.attr="disabled" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             </div>
@@ -487,17 +568,56 @@
                     </div>
                 @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-data="sortableList('updateReviewOrder')">
                     @foreach($reviews as $review)
-                        <div class="border border-gray-200 rounded-xl p-5 relative hover:border-primary-300 transition-colors bg-white">
-                            <button wire:click="deleteReview({{ $review['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" class="absolute top-3 right-3 p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                            <p class="text-sm text-gray-700 mb-4 pr-6 italic">"{{ $review['review_text'] }}"</p>
-                            <div class="flex flex-col">
-                                <span class="font-bold text-gray-900 text-sm">{{ $review['reviewer_name'] }}</span>
-                                <span class="text-xs text-gray-500">{{ $review['client_name'] }}</span>
+                        <div data-id="{{ $review['id'] }}" class="border border-gray-200 rounded-xl p-5 relative hover:border-primary-300 transition-colors bg-white group" wire:loading.class="opacity-50 pointer-events-none" wire:target="saveReview, updateReview">
+                            <!-- Drag Handle -->
+                            <div class="drag-handle absolute top-3 left-3 cursor-grab active:cursor-grabbing p-1.5 text-gray-400 hover:text-gray-600 transition-colors" title="Drag to reorder">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
                             </div>
+
+                            @if($editReviewId === $review['id'])
+                                <!-- Edit Mode -->
+                                <div class="mt-8 flex flex-col gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Review Text</label>
+                                        <textarea wire:model="editReviewText" rows="3" class="w-full rounded border-gray-300 text-sm py-1.5 px-3"></textarea>
+                                        @error('editReviewText') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Reviewer Name</label>
+                                            <input type="text" wire:model="editReviewerName" class="w-full rounded border-gray-300 text-sm py-1.5 px-3">
+                                            @error('editReviewerName') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-700 mb-1">Client Name</label>
+                                            <input type="text" wire:model="editClientName" class="w-full rounded border-gray-300 text-sm py-1.5 px-3">
+                                            @error('editClientName') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 mt-2">
+                                        <button wire:click="updateReview" wire:loading.attr="disabled" class="bg-primary-600 text-white px-3 py-1.5 rounded text-xs font-medium hover:bg-primary-500 disabled:opacity-50">Save</button>
+                                        <button wire:click="cancelEditReview" wire:loading.attr="disabled" class="bg-gray-200 text-gray-700 px-3 py-1.5 rounded text-xs font-medium hover:bg-gray-300 disabled:opacity-50">Cancel</button>
+                                    </div>
+                                </div>
+                            @else
+                                <!-- Display Mode -->
+                                <div class="absolute top-3 right-3 flex gap-1">
+                                    <button wire:click="editReview({{ $review['id'] }})" wire:loading.attr="disabled" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50" title="Edit">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    </button>
+                                    <button wire:click="deleteReview({{ $review['id'] }})" onclick="confirm('Are you sure?') || event.stopImmediatePropagation()" wire:loading.attr="disabled" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50" title="Delete">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                                <p class="text-sm text-gray-700 mb-4 pr-16 mt-6 italic">"{{ $review['review_text'] }}"</p>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-gray-900 text-sm">{{ $review['reviewer_name'] }}</span>
+                                    <span class="text-xs text-gray-500">{{ $review['client_name'] }}</span>
+                                </div>
+                                <div class="text-xs text-gray-400 mt-3 border-t border-gray-100 pt-2">Sort: {{ $review['sort_order'] }}</div>
+                            @endif
                         </div>
                     @endforeach
                 </div>
@@ -577,6 +697,32 @@
                 </form>
             </div>
         </div>
-
     </div>
+
+    <!-- SortableJS and Alpine Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('sortableList', (updateMethod) => ({
+                init() {
+                    if (typeof Sortable !== 'undefined') {
+                        new Sortable(this.$el, {
+                            animation: 150,
+                            handle: '.drag-handle',
+                            ghostClass: 'opacity-50',
+                            onEnd: (evt) => {
+                                // Get all item IDs in the new order
+                                let items = Array.from(this.$el.children);
+                                let ids = items.map(item => item.getAttribute('data-id')).filter(id => id);
+                                
+                                if (ids.length > 0) {
+                                    this.$wire[updateMethod](ids);
+                                }
+                            }
+                        });
+                    }
+                }
+            }));
+        });
+    </script>
 </x-filament-panels::page>

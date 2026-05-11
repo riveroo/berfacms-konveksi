@@ -207,6 +207,61 @@ class LandingPageSettings extends Page
         }
     }
 
+    // Edit Hero states
+    public $editHeroId = null;
+    public $editHeroImage;
+    public $editHeroLink;
+
+    public function editHero($id)
+    {
+        $hero = LandingHero::find($id);
+        if ($hero) {
+            $this->editHeroId = $hero->id;
+            $this->editHeroLink = $hero->link;
+            $this->editHeroImage = null; // Reset image upload
+        }
+    }
+
+    public function cancelEditHero()
+    {
+        $this->editHeroId = null;
+        $this->editHeroLink = null;
+        $this->editHeroImage = null;
+    }
+
+    public function updateHero()
+    {
+        $hero = LandingHero::find($this->editHeroId);
+        if (!$hero) return;
+
+        $this->validate([
+            'editHeroImage' => 'nullable|image|max:2048',
+            'editHeroLink' => 'nullable|url',
+        ]);
+
+        if ($this->editHeroImage) {
+            $hero->image = $this->editHeroImage->store('landing-heroes', 'public');
+        }
+        $hero->link = $this->editHeroLink;
+        $hero->save();
+
+        $this->cancelEditHero();
+        $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Hero updated successfully')
+            ->success()
+            ->send();
+    }
+
+    public function updateHeroOrder($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            LandingHero::where('id', $id)->update(['sort_order' => $index + 1]);
+        }
+        $this->loadData();
+    }
+
     // Value Methods
     public function saveValue()
     {
@@ -248,6 +303,66 @@ class LandingPageSettings extends Page
             ->title('Value card deleted')
             ->success()
             ->send();
+    }
+
+    // Edit Value states
+    public $editValueId = null;
+    public $editValueImage;
+    public $editValueTitle;
+    public $editValueDescription;
+
+    public function editValue($id)
+    {
+        $value = LandingValue::find($id);
+        if ($value) {
+            $this->editValueId = $value->id;
+            $this->editValueTitle = $value->title;
+            $this->editValueDescription = $value->description;
+            $this->editValueImage = null; // Reset image upload
+        }
+    }
+
+    public function cancelEditValue()
+    {
+        $this->editValueId = null;
+        $this->editValueTitle = null;
+        $this->editValueDescription = null;
+        $this->editValueImage = null;
+    }
+
+    public function updateValue()
+    {
+        $value = LandingValue::find($this->editValueId);
+        if (!$value) return;
+
+        $this->validate([
+            'editValueImage' => 'nullable|image|max:2048',
+            'editValueTitle' => 'required|string|max:255',
+            'editValueDescription' => 'required|string',
+        ]);
+
+        if ($this->editValueImage) {
+            $value->image = $this->editValueImage->store('landing-values', 'public');
+        }
+        $value->title = $this->editValueTitle;
+        $value->description = $this->editValueDescription;
+        $value->save();
+
+        $this->cancelEditValue();
+        $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Value card updated successfully')
+            ->success()
+            ->send();
+    }
+
+    public function updateValueOrder($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            LandingValue::where('id', $id)->update(['sort_order' => $index + 1]);
+        }
+        $this->loadData();
     }
 
     // Logo Methods
@@ -385,6 +500,14 @@ class LandingPageSettings extends Page
             ->send();
     }
 
+    public function updatePopularProductOrder($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            LandingPopularProduct::where('id', $id)->update(['sort_order' => $index + 1]);
+        }
+        $this->loadData();
+    }
+
     // Banner CTA Methods
     public function toggleBannerActive()
     {
@@ -483,6 +606,64 @@ class LandingPageSettings extends Page
             ->title('Review deleted')
             ->success()
             ->send();
+    }
+
+    // Edit Review states
+    public $editReviewId = null;
+    public $editReviewText;
+    public $editReviewerName;
+    public $editClientName;
+
+    public function editReview($id)
+    {
+        $review = LandingReview::find($id);
+        if ($review) {
+            $this->editReviewId = $review->id;
+            $this->editReviewText = $review->review_text;
+            $this->editReviewerName = $review->reviewer_name;
+            $this->editClientName = $review->client_name;
+        }
+    }
+
+    public function cancelEditReview()
+    {
+        $this->editReviewId = null;
+        $this->editReviewText = null;
+        $this->editReviewerName = null;
+        $this->editClientName = null;
+    }
+
+    public function updateReview()
+    {
+        $review = LandingReview::find($this->editReviewId);
+        if (!$review) return;
+
+        $this->validate([
+            'editReviewText' => 'required|string',
+            'editReviewerName' => 'required|string|max:255',
+            'editClientName' => 'required|string|max:255',
+        ]);
+
+        $review->review_text = $this->editReviewText;
+        $review->reviewer_name = $this->editReviewerName;
+        $review->client_name = $this->editClientName;
+        $review->save();
+
+        $this->cancelEditReview();
+        $this->loadData();
+
+        \Filament\Notifications\Notification::make()
+            ->title('Review updated successfully')
+            ->success()
+            ->send();
+    }
+
+    public function updateReviewOrder($orderedIds)
+    {
+        foreach ($orderedIds as $index => $id) {
+            LandingReview::where('id', $id)->update(['sort_order' => $index + 1]);
+        }
+        $this->loadData();
     }
 
     // Footer Methods
