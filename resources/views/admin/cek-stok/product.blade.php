@@ -142,8 +142,10 @@
                                 <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-gray-100">
                                     {{ $variant->variant_code ?: '-' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300">
-                                    {{ optional($variant->product)->product_name }}
+                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
+                                    <a href="{{ url('/admin/products/' . $variant->product_id) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                        {{ optional($variant->product)->product_name }}
+                                    </a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
                                     {{ $variant->variant_name }}
