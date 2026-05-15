@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $product->product_name }} - KonveksiHub</title>
     @php $appearance = \App\Models\AppearanceSetting::first(); @endphp
-    <link rel="icon" type="image/png" href="{{ $appearance && $appearance->favicon ? asset('storage/' . $appearance->favicon) : asset('images/favicon.png') }}">
+    <link rel="icon" type="image/png"
+        href="{{ $appearance && $appearance->favicon ? asset('storage/' . $appearance->favicon) : asset('images/favicon.png') }}">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,6 +57,7 @@
     </div>
 
     @php
+        $defaultVariant = $product->variants->count() > 0 ? $product->variants->random() : null;
         $images = [];
         if ($product->thumbnail) {
             $images[] = Storage::url($product->thumbnail);
@@ -118,7 +120,8 @@
 
             <!-- ========== LEFT: Product Images ========== -->
             <div class="lg:col-span-5 space-y-4 min-w-0">
-                <div class="w-full overflow-hidden aspect-square bg-gray-50 rounded-2xl border border-gray-100 relative group">
+                <div
+                    class="w-full overflow-hidden aspect-square bg-gray-50 rounded-2xl border border-gray-100 relative group">
                     <img id="mainImage" src="{{ $images[0] ?? '' }}" alt="{{ $product->product_name }}"
                         class="absolute inset-0 w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
                 </div>
@@ -160,7 +163,9 @@
                 <!-- Price -->
                 <div class="mb-6">
                     <span id="dynamicPrice" class="text-2xl sm:text-3xl font-extrabold text-rose-500 font-outfit">
-                        @if($minPrice == $maxPrice)
+                        @if($minPrice == 0 && $maxPrice == 0)
+                            Pre Order
+                        @elseif($minPrice == $maxPrice)
                             Rp{{ number_format($minPrice, 0, ',', '.') }}
                         @else
                             Rp{{ number_format($minPrice, 0, ',', '.') }}
@@ -186,8 +191,48 @@
                             class="text-gray-600 leading-relaxed break-words flex-1 min-w-[200px]">{{ $product->description ?: 'Bahan kualitas premium yang cocok untuk berbagai situasi.' }}</span>
                     </div>
 
-                    <!-- Ukuran -->
+                    <!-- Warna -->
                     <div class="flex flex-wrap gap-2 items-start">
+                        <span
+                            class="text-gray-400 w-24 shrink-0 pt-2 font-bold uppercase tracking-wider text-[10px]">Warna
+                            :</span>
+                        <div class="flex flex-wrap gap-3 flex-1">
+                            @foreach($product->variants->pluck('color')->filter()->unique() as $color)
+                                <button type="button"
+                                    @click="selectedColor = '{{ $color }}'; selectedVariant = null; updateUI()"
+                                    title="{{ $color }}"
+                                    :class="selectedColor === '{{ $color }}' ? 'ring-2 ring-emerald-500 ring-offset-2 scale-110' : 'hover:scale-110 border-gray-200'"
+                                    class="w-8 h-8 rounded-full border transition-all focus:outline-none shrink-0"
+                                    style="background-color: {{ strtolower($color) }}">
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Varian -->
+                    <div class="flex flex-wrap gap-2 items-center" x-show="selectedColor" x-cloak>
+                        <span class="text-gray-400 w-24 shrink-0 font-bold uppercase tracking-wider text-[10px]">Varian
+                            :</span>
+                        <div class="flex-1 max-w-xs relative">
+                            <select x-model="selectedVariant" @change="onVariantChange()"
+                                class="w-full h-10 pl-4 pr-10 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-gray-50/50 appearance-none outline-none">
+                                <option value="null" disabled>Pilih Varian</option>
+                                <template x-for="v in availableVariants" :key="v.id">
+                                    <option :value="v.id" x-text="v.variant_name"></option>
+                                </template>
+                            </select>
+                            <div
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ukuran -->
+                    <div class="flex flex-wrap gap-2 items-start" x-show="selectedVariant" x-cloak>
                         <span
                             class="text-gray-400 w-24 shrink-0 pt-2.5 font-bold uppercase tracking-wider text-[10px]">Ukuran
                             :</span>
@@ -204,53 +249,6 @@
                             @empty
                                 <span class="text-sm text-gray-400 italic font-medium">One size</span>
                             @endforelse
-                        </div>
-                    </div>
-
-                    <!-- Warna -->
-                    <div class="flex flex-wrap gap-2 items-start">
-                        <span
-                            class="text-gray-400 w-24 shrink-0 pt-2.5 font-bold uppercase tracking-wider text-[10px]">Warna
-                            :</span>
-                        <div class="flex flex-wrap gap-2 flex-1">
-                            @foreach($product->variants as $variant)
-                                <button type="button"
-                                    @click="pickColor({{ $variant->id }}, '{{ $variant->image ? Storage::url($variant->image) : '' }}')"
-                                    data-variant-id="{{ $variant->id }}"
-                                    :class="selectedVariant == {{ $variant->id }} ? 'border-emerald-500 text-emerald-600 bg-emerald-50 ring-2 ring-emerald-500/10' : 'border-gray-200 text-gray-700 hover:border-emerald-300'"
-                                    class="color-btn px-4 h-10 border rounded-xl text-sm font-bold transition-all focus:outline-none flex gap-3 items-center break-words">
-                                    <span class="w-4 h-4 rounded-full border border-gray-200 shadow-sm shrink-0"
-                                        style="background-color: {{ strtolower($variant->color) }}"></span>
-                                    <span class="whitespace-nowrap">{{ $variant->variant_name }}</span>
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Kuantitas -->
-                    <div class="flex flex-wrap gap-2 items-center">
-                        <span
-                            class="text-gray-400 w-24 shrink-0 font-bold uppercase tracking-wider text-[10px]">Kuantitas
-                            :</span>
-                        <div
-                            class="flex items-center border border-gray-200 rounded-xl h-10 overflow-hidden bg-gray-50/50">
-                            <button @click="adjustQty(-1)"
-                                class="w-10 h-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-white transition-all active:scale-90 shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M20 12H4" />
-                                </svg>
-                            </button>
-                            <input id="qtyInput" type="text" value="1"
-                                class="w-12 h-full text-center text-sm font-black text-gray-800 bg-transparent border-none focus:ring-0"
-                                readonly>
-                            <button @click="adjustQty(1)"
-                                class="w-10 h-full flex items-center justify-center text-gray-400 hover:text-indigo-600 hover:bg-white transition-all active:scale-90 shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M12 4v16m8-8H4" />
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -274,15 +272,7 @@
                         </svg>
                         <span class="text-[10px] font-bold mt-1 uppercase tracking-tighter">Share</span>
                     </button>
-                    <button type="button"
-                        class="flex flex-col items-center justify-center p-3 rounded-2xl text-gray-500 hover:text-rose-500 hover:bg-rose-50 transition-all active:scale-90 border border-transparent hover:border-rose-100"
-                        title="Like">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                        <span class="text-[10px] font-bold mt-1 uppercase tracking-tighter">Like</span>
-                    </button>
+
                 </div>
 
             </div>
@@ -303,25 +293,25 @@
                 }
             @endphp
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto max-h-[500px] overflow-y-auto border border-gray-200 rounded-xl scrollbar-thin scrollbar-thumb-gray-200">
                 <table class="w-full text-sm text-center border-collapse min-w-max">
-                    <thead class="bg-gray-50/50 text-gray-500 uppercase text-[10px] font-bold tracking-widest">
+                    <thead class="bg-gray-50 text-gray-500 uppercase text-[10px] font-bold tracking-widest sticky top-0 z-20 shadow-sm">
                         <tr>
                             <th rowspan="2"
-                                class="border-b border-r border-gray-200 px-6 py-4 align-middle bg-white w-48 text-left">
+                                class="border-b border-r border-gray-200 px-6 py-4 align-middle bg-gray-50 w-48 text-left sticky left-0 z-30">
                                 Varian</th>
                             @if($tableSizes->count() > 0)
                                 <th colspan="{{ $tableSizes->count() }}"
-                                    class="border-b border-gray-200 px-6 py-3 bg-white">Size</th>
+                                    class="border-b border-gray-200 px-6 py-3 bg-gray-50">Size</th>
                             @else
-                                <th class="border-b border-gray-200 px-6 py-3 bg-white">Size</th>
+                                <th class="border-b border-gray-200 px-6 py-3 bg-gray-50">Size</th>
                             @endif
                         </tr>
                         <tr>
                             @forelse ($tableSizes as $size)
-                                <th class="border-b border-r border-gray-200 px-4 py-3 bg-white">{{ $size->name }}</th>
+                                <th class="border-b border-r border-gray-200 px-4 py-3 bg-gray-50">{{ $size->name }}</th>
                             @empty
-                                <th class="border-b border-gray-200 px-4 py-3 bg-white">-</th>
+                                <th class="border-b border-gray-200 px-4 py-3 bg-gray-50">-</th>
                             @endforelse
                         </tr>
                     </thead>
@@ -329,7 +319,7 @@
                         @foreach ($product->variants as $variant)
                             <tr class="hover:bg-gray-50/50 transition-colors group">
                                 <td
-                                    class="border-r border-b border-gray-200 px-6 py-4 text-left bg-white font-bold group-hover:bg-gray-50 transition-colors">
+                                    class="border-r border-b border-gray-200 px-6 py-4 text-left bg-white font-bold group-hover:bg-gray-50 transition-colors sticky left-0 z-10">
                                     <div class="flex items-center gap-4">
                                         <span class="w-4 h-4 rounded-full border border-gray-100 shadow-sm"
                                             style="background-color: {{ strtolower($variant->color) }};"></span>
@@ -343,7 +333,7 @@
                                     @endphp
                                     <td
                                         class="border-r border-b border-gray-200 px-4 py-4 {{ $stock && $stock->stock <= 5 ? 'text-rose-500 font-black' : '' }}">
-                                        {{ $stock ? $stock->stock : 0 }}
+                                        {{ $stock ? (int) $stock->stock : 0 }}
                                     </td>
                                 @empty
                                     <td class="border-r border-b border-gray-200 px-4 py-4 text-gray-300">0</td>
@@ -422,10 +412,11 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('productDetail', () => ({
-                selectedVariant: {{ $defaultVariantId ?? 'null' }},
-                selectedSize: {{ $defaultSizeId ?? 'null' }},
+                selectedColor: '{{ $defaultVariant ? $defaultVariant->color : '' }}',
+                selectedVariant: {{ $defaultVariant ? $defaultVariant->id : 'null' }},
+                selectedSize: null,
                 productData: @json($productDataArray),
-                defaultPriceRange: `@if($minPrice == $maxPrice) Rp{{ number_format($minPrice, 0, ',', '.') }} @else Rp{{ number_format($minPrice, 0, ',', '.') }} <span class="text-lg text-gray-300 font-light mx-1">-</span> Rp{{ number_format($maxPrice, 0, ',', '.') }} @endif`,
+                defaultPriceRange: `@if($minPrice == 0 && $maxPrice == 0) Pre Order @elseif($minPrice == $maxPrice) Rp{{ number_format($minPrice, 0, ',', '.') }} @else Rp{{ number_format($minPrice, 0, ',', '.') }} <span class="text-lg text-gray-300 font-light mx-1">-</span> Rp{{ number_format($maxPrice, 0, ',', '.') }} @endif`,
                 isLoading: false,
                 toast: {
                     show: false,
@@ -434,15 +425,22 @@
                 },
 
                 init() {
-                    this.updateUI();
-
-                    // Auto set image if variant is pre-selected
                     if (this.selectedVariant) {
                         const variant = this.productData.find(v => v.id == this.selectedVariant);
                         if (variant && variant.image_url) {
                             setMainImage(null, variant.image_url);
                         }
+                        if (variant && variant.stocks.length > 0) {
+                            const availableStock = variant.stocks.find(s => s.stock > 0);
+                            if (availableStock) this.selectedSize = availableStock.size_option_id;
+                        }
                     }
+                    this.updateUI();
+                },
+
+                get availableVariants() {
+                    if (!this.selectedColor) return [];
+                    return this.productData.filter(v => v.color === this.selectedColor);
                 },
 
                 formatRupiah(number) {
@@ -454,11 +452,12 @@
                     this.updateUI();
                 },
 
-                pickColor(id, image) {
-                    this.selectedVariant = id;
-                    if (image) {
-                        setMainImage(null, image);
+                onVariantChange() {
+                    const variant = this.productData.find(v => v.id == this.selectedVariant);
+                    if (variant && variant.image_url) {
+                        setMainImage(null, variant.image_url);
                     }
+                    this.selectedSize = null;
                     this.updateUI();
                 },
 
@@ -473,9 +472,13 @@
                         const stockItem = variant ? variant.stocks.find(s => s.size_option_id == this.selectedSize) : null;
 
                         if (stockItem && stockItem.stock > 0) {
-                            priceEl.innerHTML = this.formatRupiah(stockItem.price);
+                            if (stockItem.price == 0) {
+                                priceEl.innerHTML = 'Pre Order';
+                            } else {
+                                priceEl.innerHTML = this.formatRupiah(stockItem.price);
+                            }
                             noticeEl.classList.remove('hidden');
-                            if (stockValueEl) stockValueEl.innerText = 'Sisa Stok: ' + stockItem.stock;
+                            if (stockValueEl) stockValueEl.innerText = 'Sisa Stok: ' + parseInt(stockItem.stock);
                         } else {
                             priceEl.innerHTML = this.defaultPriceRange;
                             noticeEl.classList.remove('hidden');
@@ -486,7 +489,6 @@
                         noticeEl.classList.add('hidden');
                     }
 
-                    // Handle internal button states highlighting
                     document.querySelectorAll('.size-btn').forEach(btn => {
                         const sId = parseInt(btn.getAttribute('data-size-id'));
                         let hasStock = false;
@@ -496,29 +498,6 @@
                                 const s = v.stocks.find(s => s.size_option_id == sId);
                                 if (s && s.stock > 0) hasStock = true;
                             }
-                        } else {
-                            hasStock = this.productData.some(v => v.stocks.some(s => s.size_option_id == sId && s.stock > 0));
-                        }
-
-                        if (!hasStock) {
-                            btn.classList.add('opacity-40', 'cursor-not-allowed', 'bg-gray-50');
-                        } else {
-                            btn.classList.remove('opacity-40', 'cursor-not-allowed', 'bg-gray-50');
-                        }
-                    });
-
-                    document.querySelectorAll('.color-btn').forEach(btn => {
-                        const vId = parseInt(btn.getAttribute('data-variant-id'));
-                        let hasStock = false;
-                        if (this.selectedSize) {
-                            const v = this.productData.find(v => v.id == vId);
-                            if (v) {
-                                const s = v.stocks.find(s => s.size_option_id == this.selectedSize);
-                                if (s && s.stock > 0) hasStock = true;
-                            }
-                        } else {
-                            const v = this.productData.find(v => v.id == vId);
-                            if (v && v.stocks.some(s => s.stock > 0)) hasStock = true;
                         }
 
                         if (!hasStock) {
@@ -580,8 +559,6 @@
 
                 async addToCart() {
                     this.isLoading = true;
-                    const qtyInput = document.getElementById('qtyInput');
-                    const qty = qtyInput ? qtyInput.value : 1;
                     try {
                         const response = await fetch('{{ route('cart.add') }}', {
                             method: 'POST',
@@ -593,7 +570,7 @@
                                 product_id: {{ $product->id }},
                                 variant_id: this.selectedVariant,
                                 size_option_id: this.selectedSize,
-                                quantity: parseInt(qty)
+                                quantity: 1
                             })
                         });
 
@@ -610,22 +587,6 @@
                     } finally {
                         this.isLoading = false;
                     }
-                },
-
-                adjustQty(amount) {
-                    const input = document.getElementById('qtyInput');
-                    if (!input) return;
-                    let val = parseInt(input.value) + amount;
-                    if (val < 1) val = 1;
-
-                    // Check stock limit
-                    if (this.selectedVariant && this.selectedSize) {
-                        const variant = this.productData.find(v => v.id == this.selectedVariant);
-                        const stockItem = variant ? variant.stocks.find(s => s.size_option_id == this.selectedSize) : null;
-                        if (stockItem && val > stockItem.stock) val = stockItem.stock;
-                    }
-
-                    input.value = val;
                 }
             }));
         });
