@@ -172,7 +172,7 @@
                                     @endphp
                                     <td
                                         class="px-4 py-4 whitespace-nowrap text-center text-gray-700 dark:text-gray-300 border-l border-gray-50 dark:border-gray-800/50 {{ $stockItem && $stockItem->stock > 0 ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-600' }}">
-                                        {{ $stockItem ? $stockItem->stock : '-' }}
+                                        {{ $stockItem ? (int)$stockItem->stock : '-' }}
                                     </td>
                                 @endforeach
                             </tr>

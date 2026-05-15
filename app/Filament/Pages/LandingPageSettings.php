@@ -265,8 +265,8 @@ class LandingPageSettings extends Page
     // Value Methods
     public function saveValue()
     {
-        if (count($this->values) >= 3) {
-            $this->addError('newValue', 'Maximum 3 value cards allowed.');
+        if (count($this->values) >= 5) {
+            $this->addError('newValue', 'Maximum 5 value cards allowed.');
             return;
         }
 

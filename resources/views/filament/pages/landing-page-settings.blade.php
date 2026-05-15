@@ -133,13 +133,13 @@
             <button @click="open = open === 'value' ? null : 'value'" class="w-full flex items-center justify-between p-6 bg-white hover:bg-gray-50 transition-colors focus:outline-none">
                 <div class="flex flex-col items-start text-left">
                     <h2 class="text-xl font-bold text-gray-900">Our Value Section</h2>
-                    <p class="text-sm text-gray-500 mt-1">Manage up to 3 value proposition cards.</p>
+                    <p class="text-sm text-gray-500 mt-1">Manage up to 5 value proposition cards.</p>
                 </div>
                 <svg class="w-6 h-6 text-gray-400 transform transition-transform duration-300" :class="{'rotate-180': open === 'value'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
 
             <div x-show="open === 'value'" x-collapse class="px-6 pb-6 border-t border-gray-100 pt-4">
-                @if(count($values) < 3)
+                @if(count($values) < 5)
                     <form wire:submit.prevent="saveValue" class="bg-gray-50 rounded-lg p-5 mb-6 border border-gray-200">
                         <h3 class="font-semibold text-gray-700 mb-4">Add New Value Card</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -169,7 +169,7 @@
                     </form>
                 @else
                     <div class="bg-blue-50 text-blue-700 p-4 rounded-lg mb-6 border border-blue-100 text-sm">
-                        Maximum 3 value cards reached. Delete an existing card to add a new one.
+                        Maximum 5 value cards reached. Delete an existing card to add a new one.
                     </div>
                 @endif
 

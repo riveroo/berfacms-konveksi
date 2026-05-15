@@ -1,5 +1,6 @@
-    <section id="beranda" class="relative w-full aspect-[24/10] overflow-hidden bg-slate-900">
-        <div class="absolute inset-0 z-0 w-full h-full" 
+<section id="beranda" class="py-6 sm:py-10 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="relative w-full aspect-[16/9] md:aspect-[24/10] overflow-hidden bg-slate-900 rounded-[2rem] shadow-2xl"
             x-data='{ 
                 current: 0, 
                 slides: {!! \App\Models\LandingHero::where("is_active", true)->orderBy("sort_order")->limit(5)->get()->map(fn($h) => ["image" => asset("storage/" . $h->image), "link" => $h->link])->toJson() !!} 
@@ -61,4 +62,5 @@
                 </div>
             </template>
         </div>
-    </section>
+    </div>
+</section>

@@ -13,9 +13,11 @@ class PublicStockController extends Controller
     {
         $search = $request->query('search');
         $typeId = $request->query('type_id');
+        $productId = $request->query('product_id');
 
         $sizes = SizeOption::ordered()->get();
         $productTypes = ProductType::orderBy('name')->get();
+        $products = Product::where('is_active', true)->orderBy('product_name')->get();
 
         $query = \App\Models\Variant::with(['product', 'productType', 'stocks'])
             ->whereHas('product', function($q) {
@@ -31,6 +33,10 @@ class PublicStockController extends Controller
             $query->where('product_type_id', $typeId);
         }
 
+        if ($productId) {
+            $query->where('product_id', $productId);
+        }
+
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('product', function ($q2) use ($search) {
@@ -43,6 +49,6 @@ class PublicStockController extends Controller
 
         $variants = $query->paginate(25)->withQueryString();
 
-        return view('public.stock', compact('sizes', 'variants', 'productTypes', 'search', 'typeId'));
+        return view('public.stock', compact('sizes', 'variants', 'productTypes', 'products', 'search', 'typeId', 'productId'));
     }
 }

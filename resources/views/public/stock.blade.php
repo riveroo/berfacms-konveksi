@@ -77,6 +77,54 @@
                             class="w-full pl-12 pr-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
                     </div>
 
+                    <!-- Filter Produk (Searchable Dropdown) -->
+                    <div class="relative min-w-[280px]" x-data="{ 
+                        open: false, 
+                        search: '', 
+                        selectedId: '{{ $productId }}',
+                        selectedName: '{{ $products->firstWhere('id', $productId)?->product_name ?? 'Pilih Produk' }}',
+                        products: {{ $products->map(fn($p) => ['id' => $p->id, 'name' => $p->product_name])->toJson() }}
+                    }" @click.away="open = false">
+                        <button type="button" @click="open = !open" 
+                            class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-left flex justify-between items-center group">
+                            <span x-text="selectedName" class="truncate text-slate-700"></span>
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-all" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        
+                        <input type="hidden" name="product_id" :value="selectedId">
+
+                        <div x-show="open" x-cloak 
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-1"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+                            <div class="p-3 border-b border-slate-50 bg-slate-50/50">
+                                <input type="text" x-model="search" placeholder="Cari nama produk..." 
+                                    class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm outline-none transition-all">
+                            </div>
+                            <div class="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
+                                <button type="button" @click="selectedId = ''; selectedName = 'Semua Produk'; open = false" 
+                                    class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition-colors text-sm flex items-center justify-between"
+                                    :class="selectedId === '' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-600'">
+                                    <span>Semua Produk</span>
+                                    <template x-if="selectedId === ''">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    </template>
+                                </button>
+                                <template x-for="product in products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))" :key="product.id">
+                                    <button type="button" @click="selectedId = product.id; selectedName = product.name; open = false" 
+                                        class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition-colors text-sm flex items-center justify-between"
+                                        :class="selectedId == product.id ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-600'">
+                                        <span x-text="product.name"></span>
+                                        <template x-if="selectedId == product.id">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </template>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="relative min-w-[240px]">
                         <select name="type_id"
                             class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium appearance-none">
@@ -154,7 +202,7 @@
                                     @foreach($sizes as $size)
                                         @php
                                             $stockItem = $variant->stocks->firstWhere('size_option_id', $size->id);
-                                            $qty = $stockItem ? $stockItem->stock : 0;
+                                            $qty = $stockItem ? (int)$stockItem->stock : 0;
                                         @endphp
                                         <td class="px-4 py-4 whitespace-nowrap text-center border-l border-slate-50">
                                             @if($qty == 0)
