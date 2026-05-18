@@ -126,6 +126,20 @@
                                 </div>
 
                                 <div class="p-4 flex flex-col flex-1 bg-white relative z-20">
+                                    <!-- Color Palette Swatches -->
+                                    @php
+                                        $productColors = $product->variants->pluck('color')->filter()->unique();
+                                    @endphp
+                                    @if($productColors->isNotEmpty())
+                                        <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                                            @foreach($productColors as $color)
+                                                <span class="w-3 h-3 rounded-full border border-gray-200 shadow-sm shrink-0" 
+                                                      style="background-color: {{ strtolower($color) }};" 
+                                                      title="{{ $color }}"></span>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
                                     <h3
                                         class="text-sm font-semibold text-gray-800 line-clamp-2 leading-snug mb-2 transition-colors group-hover:text-indigo-600">
                                         {{ $product->product_name }}
