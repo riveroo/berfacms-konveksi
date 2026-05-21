@@ -137,9 +137,6 @@ class TransactionController extends Controller
             $result = $createTransactionService->execute($request->all());
             
             $redirectUrl = route('transactions.detail', $result['transaction']->id);
-            if ($request->transaction_type === 'pre_order' && $result['preOrder']) {
-                $redirectUrl = route('pre-orders.detail', $result['preOrder']->id);
-            }
 
             return response()->json([
                 'success' => true,

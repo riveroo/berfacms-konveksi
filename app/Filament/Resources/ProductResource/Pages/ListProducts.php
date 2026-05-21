@@ -23,6 +23,7 @@ class ListProducts extends ListRecords
             Actions\Action::make('download_template')
                 ->label('Download Template')
                 ->icon('heroicon-o-document-arrow-down')
+                ->visible(fn () => canAccessMenu('admin/import-export'))
                 ->action(function () {
                     return Excel::download(new ProductTemplateExport, 'product_template.xlsx');
                 }),
@@ -30,6 +31,7 @@ class ListProducts extends ListRecords
             Actions\Action::make('import_excel')
                 ->label('Import Excel')
                 ->icon('heroicon-o-document-arrow-up')
+                ->visible(fn () => canAccessMenu('admin/import-export'))
                 ->form([
                     FileUpload::make('file')
                         ->label('Excel File')

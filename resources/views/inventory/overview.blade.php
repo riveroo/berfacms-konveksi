@@ -6,6 +6,7 @@
                     <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Inventory Overview</h2>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Items inventory report and stock status</p>
                 </div>
+                @if (canAccessMenu('admin/import-export'))
                 <div class="flex flex-col sm:flex-row items-center gap-3">
                     <x-button href="{{ route('inventory.overview.export', request()->all()) }}" variant="outline"
                         class="w-full sm:w-auto">
@@ -68,6 +69,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
 
             <form method="GET" action="{{ route('inventory.overview') }}"

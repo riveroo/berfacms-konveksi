@@ -67,6 +67,7 @@ class RolePermissionResource extends Resource
             'User Management' => [
                 ['name' => 'Account', 'route' => 'admin/accounts'],
                 ['name' => 'Roles & Permission', 'route' => 'admin/role-permissions'],
+                ['name' => 'Import / Export', 'route' => 'admin/import-export'],
             ],
         ];
     }

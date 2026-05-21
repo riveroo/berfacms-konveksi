@@ -5,6 +5,7 @@
                 <x-text variant="title">Cek Stok Product</x-text>
                 <x-text variant="muted" class="mt-1">Laporan stok per varian dan ukuran</x-text>
             </div>
+            @if (canAccessMenu('admin/import-export'))
             <div class="flex flex-col sm:flex-row items-center gap-3">
                 <x-button href="{{ route('cek-stok.export') }}" variant="outline" class="w-full sm:w-auto">
                     <svg class="w-4 h-4 text-green-600 dark:text-green-500" fill="none" stroke="currentColor"
@@ -66,6 +67,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
 
         <form method="GET" action="{{ route('cek-stok.product') }}"
