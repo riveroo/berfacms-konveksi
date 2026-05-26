@@ -75,70 +75,12 @@ class ProductResource extends Resource
                         ])->columnSpan(['default' => 3, 'md' => 1]),
                     ]),
 
-                Forms\Components\Repeater::make('variants')
-                    ->relationship('variants')
+                Forms\Components\Section::make('Variants')
                     ->schema([
-                        Forms\Components\Grid::make(4)->schema([
-                            Forms\Components\TextInput::make('variant_name')
-                                ->required()
-                                ->maxLength(255),
-                            Forms\Components\TextInput::make('variant_code')
-                                ->label('Variant Code')
-                                ->maxLength(100),
-                            Forms\Components\ColorPicker::make('color')
-                                ->hex()
-                                ->required(),
-                            Forms\Components\Select::make('product_type_id')
-                                ->relationship('productType', 'name')
-                                ->label('Product Type')
-                                ->required(),
-                        ]),
-                        Forms\Components\FileUpload::make('image')
-                            ->image()
-                            ->maxSize(2048)
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
-                            ->disk('public')
-                            ->directory('variant-images')
-                            ->visibility('public')
-                            ->openable()
-                            ->downloadable(),
-                        Forms\Components\Section::make('Stocks & Pricing')
-                            ->schema([
-                                \Awcodes\TableRepeater\Components\TableRepeater::make('stocks')
-                                    ->relationship('stocks')
-                                    ->hiddenLabel()
-                                    ->headers([
-                                        \Awcodes\TableRepeater\Header::make('size_option_id')->label('Size')->markAsRequired(),
-                                        \Awcodes\TableRepeater\Header::make('stock')->markAsRequired(),
-                                        \Awcodes\TableRepeater\Header::make('price')->markAsRequired(),
-                                    ])
-                                    ->schema([
-                                        Forms\Components\Select::make('size_option_id')
-                                            ->relationship('sizeOption', 'name')
-                                            ->label('Size')
-                                            ->required(),
-                                        Forms\Components\TextInput::make('stock')
-                                            ->required()
-                                            ->numeric()
-                                            ->default(0)
-                                            ->minValue(0),
-                                        Forms\Components\TextInput::make('price')
-                                            ->required()
-                                            ->numeric()
-                                            ->default(0)
-                                            ->minValue(0)
-                                            ->prefix('Rp'),
-                                    ])
-                                    ->addActionLabel('Add Stock')
-                                    ->deletable(true)
-                                    ->columnSpanFull(),
-                            ])
-                            ->collapsible()
-                            ->compact(),
+                        \Filament\Forms\Components\Livewire::make(\App\Livewire\ProductVariantsManager::class)
+                            ->key('product-variants-manager'),
                     ])
-                    ->columns(1)
-                    ->addActionLabel('Add Variant')
-                    ->deletable(true)
+                    ->hidden(fn (string $operation) => $operation === 'create')
                     ->columnSpanFull(),
             ]);
     }

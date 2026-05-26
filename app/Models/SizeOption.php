@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SizeOption extends Model
 {
-    protected $fillable = ['name', 'order'];
+    protected $fillable = ['name', 'order', 'status'];
 
     public function scopeOrdered($query)
     {
