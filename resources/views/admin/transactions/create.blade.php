@@ -140,24 +140,34 @@
                                         <div class="font-medium text-gray-900 dark:text-white" x-text="item.product_name"></div>
                                     </td>
                                     <td class="px-4 py-4">
-                                        <div class="text-gray-600 dark:text-gray-400" x-text="item.variant_name"></div>
-                                        <div class="text-xs text-gray-500 mt-0.5" x-text="'Size ' + item.size_name"></div>
+                                        <div class="text-gray-600 dark:text-gray-400 font-medium" x-text="item.variant_name"></div>
+                                        <div class="text-xs text-indigo-500 font-bold mt-0.5" x-text="'Size ' + item.size_name"></div>
                                     </td>
-                                    <td class="px-4 py-4 text-right text-gray-600 dark:text-gray-400" x-text="formatRupiah(item.price)"></td>
-                                    <td class="px-4 py-4 text-center">
-                                        <div class="font-bold text-gray-900 dark:text-white" x-text="item.qty"></div>
-                                        <div x-show="errors['items.'+index+'.qty']" class="text-xs text-rose-500 mt-1 font-medium whitespace-nowrap" x-text="errors['items.'+index+'.qty'][0]"></div>
+                                    <td class="px-4 py-4 text-right text-gray-600 dark:text-gray-450 font-mono font-bold" x-text="formatRupiah(item.price)"></td>
+                                    
+                                    <!-- QTY Input -->
+                                    <td class="px-4 py-4 text-center min-w-[100px]">
+                                        <input type="number" x-model.number="item.qty" @input="validateQty(index)" min="1"
+                                            class="w-20 h-9 px-2 text-center text-sm font-extrabold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/30 outline-none transition">
+                                        <div x-show="errors['items.'+index+'.qty']" class="text-xs text-rose-500 mt-1 font-medium" x-text="errors['items.'+index+'.qty'][0]"></div>
                                     </td>
-                                    <td class="px-4 py-4 text-right text-rose-500 font-medium" x-text="item.discount > 0 ? '-' + formatRupiah(item.discount) : '-'"></td>
-                                    <td class="px-4 py-4 text-right font-bold text-gray-900 dark:text-white" x-text="formatRupiah((item.price * item.qty) - item.discount)"></td>
+
+                                    <!-- Discount Input -->
+                                    <td class="px-4 py-4 text-right min-w-[130px]">
+                                        <div class="relative inline-block">
+                                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">Rp</span>
+                                            <input type="number" x-model.number="item.discount" @input="validateDiscount(index)" min="0"
+                                                class="w-28 h-9 pl-7 pr-1.5 text-right text-sm font-bold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/30 outline-none transition">
+                                        </div>
+                                    </td>
+
+                                    <!-- Subtotal -->
+                                    <td class="px-4 py-4 text-right font-extrabold text-indigo-650 dark:text-indigo-400 font-mono" x-text="formatRupiah((item.price - item.discount) * item.qty)"></td>
+                                    
+                                    <!-- Action -->
                                     <td class="px-4 py-4 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button @click="editItem(index)" class="text-indigo-500 hover:text-indigo-700 p-1.5 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 rounded-md transition tooltip" title="Edit">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
-                                                </svg>
-                                            </button>
-                                            <button @click="removeItem(index)" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 rounded-md transition tooltip" title="Remove">
+                                        <div class="flex items-center justify-center">
+                                            <button type="button" @click="removeItem(index)" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 rounded-md transition tooltip" title="Remove">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -184,10 +194,6 @@
                     
                     <!-- Left Side Actions -->
                     <div class="w-full md:w-auto mt-6 md:mt-0 order-2 md:order-1 flex gap-3 flex-col sm:flex-row pt-4 md:pt-0">
-                        <x-button type="button" @click="submitOrder('{{ route('transactions.create') }}')"
-                            variant="secondary" x-bind:disabled="items.length === 0" class="justify-center h-11 px-5">
-                            Create Order + New Order
-                        </x-button>
                         <x-button type="button" @click="submitOrder('{{ route('transactions.index') }}')"
                             variant="primary" x-bind:disabled="items.length === 0" class="justify-center h-11 px-6">
                             Create Order
@@ -223,117 +229,152 @@
         <div x-cloak x-show="clientModalOpen"
             class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
             <div @click.away="clientModalOpen = false"
-                class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-sm p-6 overflow-hidden">
-                <x-text variant="heading" class="mb-4">Search Customer</x-text>
-
-                <div class="space-y-4">
-                    <div>
-                        <x-text variant="label" class="mb-1.5">Phone Number</x-text>
-                        <input type="text" x-model="searchPhone" @keydown.enter="checkClient"
-                            placeholder="Enter exact phone..."
-                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                    </div>
-
-                    <div class="flex justify-end gap-2 pt-2">
-                        <x-button type="button" @click="clientModalOpen = false" variant="outline" size="sm">
-                            Cancel
-                        </x-button>
-                        <x-button type="button" @click="checkClient" variant="primary" size="sm">
-                            Check Account
-                        </x-button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Product Modal -->
-        <div x-cloak x-show="productModalOpen"
-            class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
-            <div @click.away="productModalOpen = false; resetProductForm()"
-                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6 overflow-hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <x-text variant="heading" x-text="editIndex !== null ? 'Edit Product' : 'Add Product'">Add Product</x-text>
-                    <button @click="productModalOpen = false; resetProductForm()" class="text-gray-400 hover:text-gray-600 transition">
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-sm p-6 flex flex-col max-h-[90vh]">
+                <div class="flex justify-between items-center mb-4">
+                    <x-text variant="heading">Search Customer</x-text>
+                    <button type="button" @click="clientModalOpen = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
 
-                <div class="space-y-5">
+                <div class="space-y-4 flex-1 overflow-hidden flex flex-col">
                     <div>
-                        <x-text variant="label" class="mb-1.5">Product</x-text>
-                        <select x-model="selectedProductId"
-                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none">
-                            <option value="">-- Select Product --</option>
-                            <template x-for="product in products" :key="product.id">
-                                <option :value="product.id" x-text="product.product_name"></option>
+                        <x-text variant="label" class="mb-1.5">Search Name or Phone Number</x-text>
+                        <div class="relative">
+                            <input type="text" x-model="searchQuery" 
+                                placeholder="Type name or phone..."
+                                class="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Search Results (Searchable Dropdown list) -->
+                    <div class="flex-1 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-700/50 bg-gray-50 dark:bg-gray-900/50">
+                        <template x-for="client in filteredClients" :key="client.id">
+                            <button type="button" @click="selectExistingClient(client)"
+                                class="w-full text-left px-4 py-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition flex justify-between items-center group">
+                                <div class="space-y-0.5">
+                                    <div class="text-sm font-semibold text-gray-850 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" x-text="client.client_name"></div>
+                                    <div class="text-xs text-gray-500 font-mono" x-text="client.phone_number"></div>
+                                </div>
+                                <span class="text-[10px] bg-gray-200/70 dark:bg-gray-800 text-gray-605 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-650 dark:group-hover:text-indigo-300 transition">Select</span>
+                            </button>
+                        </template>
+                        <div x-show="filteredClients.length === 0" class="p-6 text-center text-xs text-gray-450 dark:text-gray-500">
+                            No customers match your search.
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-150 dark:border-gray-700 pt-3 flex flex-col gap-2">
+                        <x-button type="button" @click="proceedAsNewCustomer" variant="indigo" class="w-full h-10 flex items-center justify-center gap-1.5">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            Create New Customer
+                        </x-button>
+                        
+                        <x-button type="button" @click="clientModalOpen = false" variant="outline" class="w-full h-10">
+                            Close
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Add Product Modal -->
+        <div x-cloak x-show="productModalOpen"
+            class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+            <div @click.away="productModalOpen = false; resetProductForm()"
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-4xl p-6 flex flex-col max-h-[90vh] overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <x-text variant="heading">Search & Add Products</x-text>
+                    <button type="button" @click="productModalOpen = false; resetProductForm()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Filter Section (Dropdown & Search Variant) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-150 dark:border-gray-700/50">
+                    <div>
+                        <x-text variant="label" class="mb-1.5 ml-0.5">Filter by Product Name</x-text>
+                        <select x-model="filterProduct" class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 outline-none cursor-pointer">
+                            <option value="">All Products</option>
+                            <template x-for="p in products" :key="p.id">
+                                <option :value="p.id" x-text="p.product_name"></option>
                             </template>
                         </select>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Variant</x-text>
-                            <select x-model="selectedVariantId" :disabled="!availableVariants.length"
-                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none disabled:opacity-50">
-                                <option value="">-- Select Variant --</option>
-                                <template x-for="variant in availableVariants" :key="variant.id">
-                                    <option :value="variant.id" x-text="variant.variant_name"></option>
-                                </template>
-                            </select>
-                        </div>
-
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Size</x-text>
-                            <select x-model="selectedSizeId" :disabled="!availableSizes.length"
-                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none disabled:opacity-50">
-                                <option value="">-- Size --</option>
-                                <template x-for="size in availableSizes" :key="size.id">
-                                    <option :value="size.id" x-text="size.name"></option>
-                                </template>
-                            </select>
-                        </div>
+                    <div>
+                        <x-text variant="label" class="mb-1.5 ml-0.5">Search Variant Name</x-text>
+                        <input type="text" x-model="filterVariant" placeholder="Type variant name..." 
+                            class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 outline-none">
                     </div>
+                </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Price (Rp)</x-text>
-                            <div class="w-full h-10 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold"
-                                x-text="formatRupiah(currentPrice)"></div>
-                        </div>
-                        
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Subtotal (Rp)</x-text>
-                            <input type="text" :value="formatRupiah(itemSubtotal)" readonly
-                                class="w-full h-10 px-3 text-sm font-bold rounded-lg border border-gray-200 dark:border-gray-700 bg-indigo-50/50 dark:bg-gray-800 text-indigo-700 dark:text-gray-300 outline-none cursor-not-allowed">
-                        </div>
-                    </div>
+                <!-- Selectable Products Table -->
+                <div class="flex-1 overflow-y-auto border border-gray-200 dark:border-gray-750 rounded-lg bg-gray-50/50 dark:bg-gray-900/10">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs uppercase bg-gray-100 dark:bg-gray-800/80 text-gray-500 dark:text-gray-400 sticky top-0 shadow-sm z-10">
+                            <tr>
+                                <th class="px-4 py-3 text-center w-12">
+                                    <input type="checkbox" @change="toggleSelectAll($event)" class="rounded border-gray-300 dark:border-gray-700 text-indigo-650 focus:ring-indigo-500 focus:ring-2">
+                                </th>
+                                <th class="px-4 py-3">Product Name</th>
+                                <th class="px-4 py-3">Variant Name</th>
+                                <th class="px-4 py-3">Product Type</th>
+                                <th class="px-4 py-3 text-center">Size</th>
+                                <th class="px-4 py-3 text-center">Stock</th>
+                                <th class="px-4 py-3 text-right">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-850">
+                            <template x-for="item in filteredSelectableItems" :key="item.stock_id">
+                                <tr class="hover:bg-indigo-50/30 dark:hover:bg-gray-850/50 transition">
+                                    <td class="px-4 py-3 text-center">
+                                        <input type="checkbox" x-model="item.selected" 
+                                            :disabled="transactionType === 'direct_order' && item.stock <= 0"
+                                            class="rounded border-gray-300 dark:border-gray-700 text-indigo-650 focus:ring-indigo-500 focus:ring-2 disabled:opacity-30 disabled:cursor-not-allowed">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-gray-900 dark:text-white" x-text="item.product_name"></td>
+                                    <td class="px-4 py-3 text-gray-650 dark:text-gray-300" x-text="item.variant_name"></td>
+                                    <td class="px-4 py-3 text-gray-500 dark:text-gray-455" x-text="item.product_type_name"></td>
+                                    <td class="px-4 py-3 text-center font-bold text-indigo-600 dark:text-indigo-400" x-text="item.size_name"></td>
+                                    <td class="px-4 py-3 text-center font-bold">
+                                        <span class="px-2 py-0.5 rounded-full text-xs"
+                                            :class="{
+                                                'bg-green-100 text-green-800 dark:bg-green-950/40 dark:text-green-300': item.stock > 10,
+                                                'bg-amber-100 text-amber-800 dark:bg-amber-955/40 dark:text-amber-300': item.stock > 0 && item.stock <= 10,
+                                                'bg-red-100 text-red-800 dark:bg-red-950/40 dark:text-red-300': item.stock <= 0
+                                            }"
+                                            x-text="item.stock"></span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right font-mono font-bold text-gray-900 dark:text-gray-100" x-text="formatRupiah(item.price)"></td>
+                                </tr>
+                            </template>
+                            <tr x-show="filteredSelectableItems.length === 0">
+                                <td colspan="7" class="px-4 py-12 text-center text-gray-400 dark:text-gray-500">
+                                    No products matching search filters.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Quantity</x-text>
-                            <input type="number" x-model="inputQty" min="1" :max="currentStock"
-                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                            <p x-cloak x-show="selectedSizeId && currentStock > 0" class="text-xs text-gray-500 mt-1">Available Stock: <span x-text="currentStock"></span></p>
-                            <p x-cloak x-show="selectedSizeId && currentStock === 0" class="text-xs text-red-500 mt-1">Out of Stock</p>
-                            <p x-cloak x-show="inputQty > currentStock && currentStock > 0" class="text-xs text-red-500 mt-1">Quantity exceeds available stock</p>
-                        </div>
-                        <div>
-                            <x-text variant="label" class="mb-1.5">Discount total (Rp)</x-text>
-                            <input type="number" x-model="inputDiscount" min="0"
-                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
-                        </div>
-                    </div>
-
-                    <div class="pt-4 flex justify-end gap-2">
-                        <x-button type="button" @click="productModalOpen = false; resetProductForm()" variant="outline">
-                            Cancel
-                        </x-button>
-                        <x-button type="button" @click="addItem" variant="primary" x-bind:disabled="!selectedSizeId || inputQty > currentStock || currentStock === 0">
-                            <span x-text="editIndex !== null ? 'Update Item' : 'Add to List'"></span>
-                        </x-button>
-                    </div>
+                <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3 mt-4">
+                    <x-button type="button" @click="productModalOpen = false; resetProductForm()" variant="outline" class="h-10 px-5">
+                        Cancel
+                    </x-button>
+                    <x-button type="button" @click="addSelectedItems" variant="indigo" class="h-10 px-6">
+                        Add Selected Items
+                    </x-button>
                 </div>
             </div>
         </div>
@@ -348,7 +389,7 @@
                 products: @json($products),
 
                 // Client info state
-                searchPhone: '',
+                searchQuery: '',
                 clientPhone: '',
                 clientName: '',
                 clientInfo: '',
@@ -356,28 +397,45 @@
                 clientFound: false,
                 clientModalOpen: false,
 
-                checkClient() {
-                    if (this.searchPhone.trim() === '') {
-                        this.clientFound = false;
-                    } else {
-                        let found = this.clients.find(c => c.phone_number === this.searchPhone);
-                        if (found) {
-                            this.clientName = found.client_name;
-                            this.clientInfo = found.information || '';
-                            this.clientFound = true;
-                        } else {
-                            this.clientName = '';
-                            this.clientInfo = '';
-                            this.clientFound = false;
-                        }
+                get filteredClients() {
+                    if (!this.searchQuery.trim()) {
+                        return this.clients;
                     }
-                    this.clientPhone = this.searchPhone;
+                    const query = this.searchQuery.toLowerCase();
+                    return this.clients.filter(c => 
+                        (c.client_name && c.client_name.toLowerCase().includes(query)) ||
+                        (c.phone_number && c.phone_number.includes(query))
+                    );
+                },
+
+                selectExistingClient(client) {
+                    this.clientPhone = client.phone_number;
+                    this.clientName = client.client_name;
+                    this.clientInfo = client.information || '';
+                    this.clientFound = true;
+                    this.clientFormVisible = true;
+                    this.clientModalOpen = false;
+                },
+
+                proceedAsNewCustomer() {
+                    const query = this.searchQuery.trim();
+                    this.clientPhone = '';
+                    this.clientName = '';
+                    this.clientInfo = '';
+                    
+                    if (/^\+?[0-9\s\-]+$/.test(query)) {
+                        this.clientPhone = query;
+                    } else {
+                        this.clientName = query;
+                    }
+                    
+                    this.clientFound = false;
                     this.clientFormVisible = true;
                     this.clientModalOpen = false;
                 },
 
                 resetClient() {
-                    this.searchPhone = '';
+                    this.searchQuery = '';
                     this.clientPhone = '';
                     this.clientName = '';
                     this.clientInfo = '';
@@ -387,51 +445,142 @@
 
                 // Product info state
                 productModalOpen: false,
-                editIndex: null,
-                selectedProductId: '',
-                selectedVariantId: '',
-                selectedSizeId: '',
-                inputQty: 1,
-                inputDiscount: 0,
+                filterProduct: '',
+                filterVariant: '',
+                selectableItems: [],
+                transactionType: '{{ request('type', 'direct_order') }}',
 
-                get selectedProduct() {
-                    return this.products.find(p => p.id == this.selectedProductId);
+                init() {
+                    let list = [];
+                    this.products.forEach(p => {
+                        p.variants.forEach(v => {
+                            v.stocks.forEach(s => {
+                                list.push({
+                                    stock_id: s.id,
+                                    product_id: p.id,
+                                    variant_id: v.id,
+                                    size_option_id: s.size_option_id,
+                                    product_name: p.product_name,
+                                    variant_name: v.variant_name,
+                                    product_type_name: v.product_type ? v.product_type.name : '-',
+                                    size_name: s.size_option ? s.size_option.name : '-',
+                                    stock: s.stock,
+                                    price: parseFloat(s.price),
+                                    selected: false
+                                });
+                            });
+                        });
+                    });
+                    this.selectableItems = list;
                 },
-                get availableVariants() {
-                    return this.selectedProduct ? this.selectedProduct.variants : [];
+
+                get filteredSelectableItems() {
+                    let list = this.selectableItems;
+                    if (this.filterProduct) {
+                        list = list.filter(item => item.product_id == this.filterProduct);
+                    }
+                    if (this.filterVariant.trim()) {
+                        let q = this.filterVariant.toLowerCase();
+                        list = list.filter(item => 
+                            (item.variant_name && item.variant_name.toLowerCase().includes(q))
+                        );
+                    }
+                    return list;
                 },
-                get selectedVariant() {
-                    return this.availableVariants.find(v => v.id == this.selectedVariantId);
+
+                toggleSelectAll(event) {
+                    let checked = event.target.checked;
+                    this.filteredSelectableItems.forEach(item => {
+                        if (this.transactionType !== 'direct_order' || item.stock > 0) {
+                            item.selected = checked;
+                        }
+                    });
                 },
-                get availableSizes() {
-                    if (!this.selectedVariant) return [];
-                    return this.selectedVariant.stocks.map(s => s.size_option).filter(s => s);
+
+                addSelectedItems() {
+                    let addedCount = 0;
+                    this.selectableItems.forEach(item => {
+                        if (item.selected) {
+                            let existing = this.items.find(i => 
+                                i.product_id == item.product_id && 
+                                i.variant_id == item.variant_id && 
+                                i.size_option_id == item.size_option_id
+                            );
+                            if (!existing) {
+                                this.items.push({
+                                    product_id: item.product_id,
+                                    variant_id: item.variant_id,
+                                    size_option_id: item.size_option_id,
+                                    product_name: item.product_name,
+                                    variant_name: item.variant_name,
+                                    size_name: item.size_name,
+                                    qty: 1,
+                                    price: item.price,
+                                    discount: 0
+                                });
+                                addedCount++;
+                            }
+                            item.selected = false;
+                        }
+                    });
+                    
+                    if (addedCount === 0) {
+                        alert('Please select at least one new item to add.');
+                        return;
+                    }
+                    
+                    this.resetProductForm();
+                    this.productModalOpen = false;
                 },
-                get currentPrice() {
-                    if (!this.selectedVariant || !this.selectedSizeId) return 0;
-                    let stock = this.selectedVariant.stocks.find(s => s.size_option_id == this.selectedSizeId);
-                    return stock ? stock.price : 0;
+
+                validateQty(index) {
+                    let item = this.items[index];
+                    if (item.qty === '' || item.qty === null || isNaN(item.qty)) {
+                        return;
+                    }
+                    if (item.qty < 1) {
+                        item.qty = 1;
+                    }
+                    
+                    if (this.transactionType === 'direct_order') {
+                        let maxStock = 0;
+                        let matched = this.selectableItems.find(s => 
+                            s.product_id == item.product_id && 
+                            s.variant_id == item.variant_id && 
+                            s.size_option_id == item.size_option_id
+                        );
+                        if (matched) {
+                            maxStock = matched.stock;
+                        }
+                        
+                        if (item.qty > maxStock) {
+                            alert('Quantity cannot exceed available stock (' + maxStock + ') for Direct Orders.');
+                            item.qty = maxStock > 0 ? maxStock : 1;
+                        }
+                    }
                 },
-                get currentStock() {
-                    if (!this.selectedVariant || !this.selectedSizeId) return 0;
-                    let stock = this.selectedVariant.stocks.find(s => s.size_option_id == this.selectedSizeId);
-                    return stock ? stock.stock : 0;
-                },
-                get itemSubtotal() {
-                    let price = parseFloat(this.currentPrice) || 0;
-                    let qty = parseInt(this.inputQty) || 0;
-                    let disc = parseFloat(this.inputDiscount) || 0;
-                    let sub = (price * qty) - disc;
-                    return sub > 0 ? sub : 0;
+
+                validateDiscount(index) {
+                    let item = this.items[index];
+                    if (item.discount === '' || item.discount === null || isNaN(item.discount)) {
+                        return;
+                    }
+                    if (item.discount < 0) {
+                        item.discount = 0;
+                    }
+                    if (item.discount > item.price) {
+                        alert('Discount cannot exceed the selling price.');
+                        item.discount = item.price;
+                    }
                 },
 
                 items: [],
                 errors: {},
                 overallDiscount: 0,
 
-                // Computed subtotals
+                // Computed subtotals (using the requested formula: subtotal = (price - disc) * QTY)
                 get subtotal() {
-                    return this.items.reduce((sum, item) => sum + ((item.price * item.qty) - item.discount), 0);
+                    return this.items.reduce((sum, item) => sum + ((item.price - item.discount) * item.qty), 0);
                 },
 
                 get grandTotal() {
@@ -440,66 +589,11 @@
                 },
 
                 resetProductForm() {
-                    this.selectedProductId = '';
-                    this.selectedVariantId = '';
-                    this.selectedSizeId = '';
-                    this.inputQty = 1;
-                    this.inputDiscount = 0;
-                    this.editIndex = null;
-                },
-
-                editItem(index) {
-                    this.editIndex = index;
-                    let item = this.items[index];
-                    
-                    this.selectedProductId = item.product_id;
-                    setTimeout(() => {
-                        this.selectedVariantId = item.variant_id;
-                        setTimeout(() => {
-                            this.selectedSizeId = item.size_option_id;
-                        }, 50);
-                    }, 50);
-                    
-                    this.inputQty = item.qty;
-                    this.inputDiscount = item.discount;
-                    
-                    // Open Modal
-                    this.productModalOpen = true;
-                },
-
-                addItem() {
-                    if (!this.selectedProductId || !this.selectedVariantId || !this.selectedSizeId || this.inputQty < 1) {
-                        alert('Please select product, variant, size and enter a valid quantity.');
-                        return;
-                    }
-
-                    let product = this.selectedProduct;
-                    let variant = this.selectedVariant;
-                    let size = this.availableSizes.find(s => s.id == this.selectedSizeId);
-                    let price = this.currentPrice;
-
-                    // Compute the item
-                    let itemObj = {
-                        product_id: product.id,
-                        variant_id: variant.id,
-                        size_option_id: size.id,
-                        product_name: product.product_name,
-                        variant_name: variant.variant_name,
-                        size_name: size.name,
-                        qty: parseInt(this.inputQty),
-                        price: parseFloat(price),
-                        discount: parseFloat(this.inputDiscount || 0)
-                    };
-
-                    if (this.editIndex !== null) {
-                        this.items[this.editIndex] = itemObj;
-                        this.editIndex = null;
-                    } else {
-                        this.items.push(itemObj);
-                    }
-
-                    this.resetProductForm();
-                    this.productModalOpen = false;
+                    this.filterProduct = '';
+                    this.filterVariant = '';
+                    this.selectableItems.forEach(item => {
+                        item.selected = false;
+                    });
                 },
 
                 removeItem(index) {

@@ -114,7 +114,7 @@ class TransactionController extends Controller
     public function create()
     {
         $clients = \App\Models\Client::all();
-        $products = \App\Models\Product::with(['variants.stocks.sizeOption'])->get();
+        $products = \App\Models\Product::with(['variants.stocks.sizeOption', 'variants.productType'])->get();
         return view('admin.transactions.create', compact('clients', 'products'));
     }
 

@@ -34,7 +34,23 @@ class ItemResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
-                    ->default(fn () => 'ITM-' . strtoupper(\Illuminate\Support\Str::random(5))),
+                    ->default(function () {
+                        $lastItem = \App\Models\Item::where('item_id', 'like', 'ITM-%')
+                            ->latest('id')
+                            ->first();
+                        
+                        $nextNumber = 1;
+                        if ($lastItem) {
+                            $parts = explode('-', $lastItem->item_id);
+                            if (isset($parts[1]) && is_numeric($parts[1])) {
+                                $nextNumber = (int)$parts[1] + 1;
+                            }
+                        }
+                        
+                        return 'ITM-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+                    })
+                    ->disabled()
+                    ->dehydrated(true),
                 Forms\Components\TextInput::make('item_name')
                     ->required()
                     ->maxLength(255),
@@ -66,8 +82,6 @@ class ItemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('item_id')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('item_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('item_code')
@@ -100,11 +114,46 @@ class ItemResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function (Tables\Actions\DeleteAction $action, Item $record) {
+                        if (
+                            \DB::table('stock_ins')->where('item_id', $record->id)->exists() ||
+                            \DB::table('stock_outs')->where('item_id', $record->id)->exists() ||
+                            \DB::table('stock_adjustments')->where('item_id', $record->id)->exists() ||
+                            \DB::table('production_materials')->where('item_id', $record->id)->exists()
+                        ) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Cannot Delete Item')
+                                ->body("The item \"{$record->item_name}\" cannot be deleted because it is in use by transactions or production.")
+                                ->danger()
+                                ->send();
+
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Tables\Actions\DeleteBulkAction $action, \Illuminate\Support\Collection $records) {
+                            foreach ($records as $record) {
+                                if (
+                                    \DB::table('stock_ins')->where('item_id', $record->id)->exists() ||
+                                    \DB::table('stock_outs')->where('item_id', $record->id)->exists() ||
+                                    \DB::table('stock_adjustments')->where('item_id', $record->id)->exists() ||
+                                    \DB::table('production_materials')->where('item_id', $record->id)->exists()
+                                ) {
+                                    \Filament\Notifications\Notification::make()
+                                        ->title('Cannot Delete Selected Items')
+                                        ->body("One or more of the selected items cannot be deleted because they are in use by transactions or production.")
+                                        ->danger()
+                                        ->send();
+
+                                    $action->cancel();
+                                    return;
+                                }
+                            }
+                        }),
                 ]),
             ]);
     }

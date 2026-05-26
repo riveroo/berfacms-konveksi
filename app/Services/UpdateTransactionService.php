@@ -72,12 +72,14 @@ class UpdateTransactionService
             $itemsDiscount = 0;
             
             foreach ($data['items'] as $item) {
-                $totalPrice += ($item['price'] * $item['qty']);
-                $itemsDiscount += ($item['discount'] ?? 0);
+                $discount = $item['discount'] ?? 0;
+                $subtotal = ($item['price'] - $discount) * $item['qty'];
+                $totalPrice += $subtotal;
+                $itemsDiscount += ($discount * $item['qty']);
             }
             
             $overallDiscount = $data['overall_discount'] ?? 0;
-            $grandTotal = $totalPrice - ($itemsDiscount + $overallDiscount);
+            $grandTotal = $totalPrice - $overallDiscount;
 
             $transaction->client_id = $client->id;
             $transaction->total_price = $totalPrice;
@@ -112,7 +114,7 @@ class UpdateTransactionService
                     'price' => $item['price'],
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
-                    'subtotal' => ($item['price'] * $item['qty']) - ($item['discount'] ?? 0),
+                    'subtotal' => ($item['price'] - ($item['discount'] ?? 0)) * $item['qty'],
                 ]);
 
                 // Reduce stock again if direct_order

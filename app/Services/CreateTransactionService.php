@@ -52,12 +52,14 @@ class CreateTransactionService
             $itemsDiscount = 0;
             
             foreach ($data['items'] as $item) {
-                $totalPrice += ($item['price'] * $item['qty']);
-                $itemsDiscount += ($item['discount'] ?? 0);
+                $discount = $item['discount'] ?? 0;
+                $subtotal = ($item['price'] - $discount) * $item['qty'];
+                $totalPrice += $subtotal;
+                $itemsDiscount += ($discount * $item['qty']);
             }
             
             $overallDiscount = $data['overall_discount'] ?? 0;
-            $grandTotal = $totalPrice - ($itemsDiscount + $overallDiscount);
+            $grandTotal = $totalPrice - $overallDiscount;
 
             $transaction = Transaction::create([
                 'trx_id' => 'TRX-' . strtoupper(uniqid()),
@@ -96,7 +98,7 @@ class CreateTransactionService
                     'price' => $item['price'],
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
-                    'subtotal' => ($item['price'] * $item['qty']) - ($item['discount'] ?? 0),
+                    'subtotal' => ($item['price'] - ($item['discount'] ?? 0)) * $item['qty'],
                 ]);
 
                 if ($preOrder) {
@@ -108,7 +110,7 @@ class CreateTransactionService
                         'price' => $item['price'],
                         'quantity' => $item['qty'],
                         'discount' => $item['discount'] ?? 0,
-                        'subtotal' => ($item['price'] * $item['qty']) - ($item['discount'] ?? 0),
+                        'subtotal' => ($item['price'] - ($item['discount'] ?? 0)) * $item['qty'],
                     ]);
                 }
 
