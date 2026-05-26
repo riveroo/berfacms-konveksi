@@ -65,6 +65,14 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(fn() => canAccessMenu('cek-stok/product'))
                     ->sort(2),
 
+                \Filament\Navigation\NavigationItem::make('Product Pricing')
+                    ->group('Catalog')
+                    ->url(fn(): string => route('admin.product-pricing'))
+                    ->icon('heroicon-o-currency-dollar')
+                    ->isActiveWhen(fn() => request()->routeIs('admin.product-pricing'))
+                    ->visible(fn() => canAccessMenu('admin/product-pricing'))
+                    ->sort(3),
+
                 // Sales links
                 \Filament\Navigation\NavigationItem::make('Orders')
                     ->group('Sales')

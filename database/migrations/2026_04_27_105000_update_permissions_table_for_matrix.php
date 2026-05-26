@@ -12,26 +12,39 @@ return new class extends Migration
         
         \Illuminate\Support\Facades\DB::table('permissions')->delete();
         
-        Schema::table('permissions', function (Blueprint $table) {
-            if (Schema::hasColumn('permissions', 'name')) {
-                $table->dropColumn('name');
-            }
-            if (!Schema::hasColumn('permissions', 'menu_name')) {
+        if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
+            Schema::dropIfExists('permissions');
+            Schema::create('permissions', function (Blueprint $table) {
+                $table->id();
                 $table->string('menu_name');
-            }
-            if (!Schema::hasColumn('permissions', 'can_read')) {
                 $table->boolean('can_read')->default(false);
-            }
-            if (!Schema::hasColumn('permissions', 'can_add')) {
                 $table->boolean('can_add')->default(false);
-            }
-            if (!Schema::hasColumn('permissions', 'can_edit')) {
                 $table->boolean('can_edit')->default(false);
-            }
-            if (!Schema::hasColumn('permissions', 'can_delete')) {
                 $table->boolean('can_delete')->default(false);
-            }
-        });
+                $table->timestamps();
+            });
+        } else {
+            Schema::table('permissions', function (Blueprint $table) {
+                if (Schema::hasColumn('permissions', 'name')) {
+                    $table->dropColumn('name');
+                }
+                if (!Schema::hasColumn('permissions', 'menu_name')) {
+                    $table->string('menu_name');
+                }
+                if (!Schema::hasColumn('permissions', 'can_read')) {
+                    $table->boolean('can_read')->default(false);
+                }
+                if (!Schema::hasColumn('permissions', 'can_add')) {
+                    $table->boolean('can_add')->default(false);
+                }
+                if (!Schema::hasColumn('permissions', 'can_edit')) {
+                    $table->boolean('can_edit')->default(false);
+                }
+                if (!Schema::hasColumn('permissions', 'can_delete')) {
+                    $table->boolean('can_delete')->default(false);
+                }
+            });
+        }
 
         if (!Schema::hasTable('role_permissions')) {
             Schema::create('role_permissions', function (Blueprint $table) {

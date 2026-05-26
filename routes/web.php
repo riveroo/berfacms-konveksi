@@ -96,6 +96,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cek-stok/barang', [CekStokController::class, 'barang'])->name('cek-stok.barang');
 });
 
+use App\Http\Controllers\ProductPricingController;
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/product-pricing', [ProductPricingController::class, 'index'])->name('admin.product-pricing');
+    Route::post('/admin/product-pricing/update/{id}', [ProductPricingController::class, 'update'])->name('admin.product-pricing.update');
+    Route::get('/admin/product-pricing/export', [ProductPricingController::class, 'downloadTemplate'])->name('admin.product-pricing.export');
+    Route::post('/admin/product-pricing/import', [ProductPricingController::class, 'importPricing'])->name('admin.product-pricing.import');
+});
+
 use App\Http\Controllers\TransactionController;
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('transactions.index');

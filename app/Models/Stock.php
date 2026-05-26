@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stock extends Model
 {
-    protected $fillable = ['variant_id', 'size_option_id', 'stock', 'price'];
+    protected $fillable = ['variant_id', 'size_option_id', 'stock', 'cogs', 'price'];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'cogs' => 'decimal:2',
     ];
 
     public function variant()

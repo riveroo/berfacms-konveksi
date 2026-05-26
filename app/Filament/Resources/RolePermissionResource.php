@@ -37,6 +37,7 @@ class RolePermissionResource extends Resource
             'Catalog' => [
                 ['name' => 'Products', 'route' => 'admin/products'],
                 ['name' => 'Product Inventory', 'route' => 'cek-stok/product'],
+                ['name' => 'Product Pricing', 'route' => 'admin/product-pricing'],
             ],
             'Sales' => [
                 ['name' => 'Orders', 'route' => 'admin/transactions'],

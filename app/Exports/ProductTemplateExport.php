@@ -12,14 +12,10 @@ class ProductTemplateExport implements FromArray, WithHeadings
         return [
             [
                 'Product Sample', 
-                'Description of sample', 
                 'Red Variant', 
                 'V-001', 
                 '#FF0000', 
-                '30s', 
-                'L', 
-                50, 
-                150000
+                '30s'
             ],
         ];
     }
@@ -28,14 +24,10 @@ class ProductTemplateExport implements FromArray, WithHeadings
     {
         return [
             'product_name',
-            'description',
             'variant_name',
             'variant_code',
             'color',
             'product_type',
-            'size',
-            'stock',
-            'price',
         ];
     }
 }

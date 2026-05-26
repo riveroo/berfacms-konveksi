@@ -22,8 +22,12 @@ class ProductVariantsManager extends Component
     public $variants = [];
 
     // Modal state
-    public bool $isModalOpen = false;
     public ?int $editingVariantId = null;
+    
+    // Error modal state for delete validation
+    public bool $isErrorModalOpen = false;
+    public string $errorMessage = '';
+    public array $variantUsages = [];
 
     // Form fields
     public $variantCode = '';
@@ -180,9 +184,45 @@ class ProductVariantsManager extends Component
             ->send();
     }
 
+    public function checkVariantUsage($variantId)
+    {
+        $usages = [];
+
+        if (\DB::table('transaction_details')->where('variant_id', $variantId)->exists()) {
+            $usages[] = 'Detail Transaksi (Sales / Orders)';
+        }
+        if (\DB::table('pre_order_details')->where('variant_id', $variantId)->exists()) {
+            $usages[] = 'Detail Pre Order';
+        }
+        if (\DB::table('stock_ins')->where('variant_id', $variantId)->exists()) {
+            $usages[] = 'Riwayat Stock In';
+        }
+        if (\DB::table('stock_outs')->where('variant_id', $variantId)->exists()) {
+            $usages[] = 'Riwayat Stock Out';
+        }
+        if (\DB::table('stock_adjustments')->where('variant_id', $variantId)->exists()) {
+            $usages[] = 'Riwayat Stock Adjustment';
+        }
+        if (\DB::table('production_products')->where('variant_id', $variantId)->exists()) {
+            $usages[] = 'Riwayat Produksi';
+        }
+
+        return $usages;
+    }
+
     public function deleteVariant($variantId)
     {
         if ($this->isReadOnly) return;
+
+        // Check if the variant is in use
+        $usages = $this->checkVariantUsage($variantId);
+
+        if (!empty($usages)) {
+            $variant = Variant::findOrFail($variantId);
+            $msg = "Varian \"{$variant->variant_name}\" (Kode: {$variant->variant_code}) tidak dapat dihapus karena telah digunakan dalam riwayat transaksi atau modul sistem lainnya (" . implode(', ', $usages) . ").";
+            $this->js("alert('" . addslashes($msg) . "')");
+            return;
+        }
 
         \DB::transaction(function () use ($variantId) {
             $variant = Variant::findOrFail($variantId);

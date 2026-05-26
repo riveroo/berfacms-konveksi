@@ -29,6 +29,7 @@ class CheckMenuPermission
             'admin/appearance',
             'admin/products',
             'cek-stok/product',
+            'admin/product-pricing',
             'admin/sales-report',
             'admin/transactions/report',
             'admin/transactions',
