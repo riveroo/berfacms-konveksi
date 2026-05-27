@@ -167,6 +167,13 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-table-cells')
                     ->visible(fn() => canAccessMenu('/coming-soon'))
                     ->sort(7),
+                \Filament\Navigation\NavigationItem::make('Profit & Loss')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('reports.profit-loss'))
+                    ->icon('heroicon-o-document-chart-bar')
+                    ->isActiveWhen(fn() => request()->routeIs('reports.profit-loss'))
+                    ->visible(fn() => canAccessMenu('admin/reports/profit-loss'))
+                    ->sort(8),
 
 
 

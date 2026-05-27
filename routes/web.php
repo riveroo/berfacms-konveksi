@@ -164,6 +164,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/journal/export', [\App\Http\Controllers\JournalController::class, 'exportPdf'])
         ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
         ->name('journal.export');
+
+    // Profit & Loss Report Module
+    Route::get('/admin/reports/profit-loss', [\App\Http\Controllers\ProfitLossController::class, 'index'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('reports.profit-loss');
+    Route::get('/admin/reports/profit-loss/drilldown', [\App\Http\Controllers\ProfitLossController::class, 'drilldown'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('reports.profit-loss.drilldown');
+    Route::get('/admin/reports/profit-loss/export-pdf', [\App\Http\Controllers\ProfitLossController::class, 'exportPdf'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('reports.profit-loss.export-pdf');
+    Route::get('/admin/reports/profit-loss/export-excel', [\App\Http\Controllers\ProfitLossController::class, 'exportExcel'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('reports.profit-loss.export-excel');
 });
 
 

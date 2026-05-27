@@ -60,6 +60,7 @@ class RolePermissionResource extends Resource
                 ['name' => 'Cash Book', 'route' => 'admin/cash-book'],
                 ['name' => 'Transaction Template', 'route' => '/coming-soon'],
                 ['name' => 'Journal', 'route' => 'admin/journal'],
+                ['name' => 'Profit & Loss', 'route' => 'admin/reports/profit-loss'],
                 ['name' => 'General Ledger', 'route' => '/coming-soon'],
             ],
             'Master Data' => [

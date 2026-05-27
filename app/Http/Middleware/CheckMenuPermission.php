@@ -50,6 +50,8 @@ class CheckMenuPermission
             'admin/bank-transfers',
             'admin/cash-book',
             'admin/journal',
+            'admin/reports/profit-loss',
+            'admin/reports/profit-loss/drilldown',
             'coming-soon',
         ];
 
