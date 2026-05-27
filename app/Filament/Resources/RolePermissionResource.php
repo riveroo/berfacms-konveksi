@@ -55,9 +55,11 @@ class RolePermissionResource extends Resource
             ],
             'Accounting' => [
                 ['name' => 'C.O.A (Chart Of Accounts)', 'route' => 'admin/coa'],
+                ['name' => 'Opening Balance', 'route' => 'admin/opening-balance'],
+                ['name' => 'Bank Transfers', 'route' => 'admin/bank-transfers'],
                 ['name' => 'Cash Book', 'route' => 'admin/cash-book'],
                 ['name' => 'Transaction Template', 'route' => '/coming-soon'],
-                ['name' => 'Journal', 'route' => '/coming-soon'],
+                ['name' => 'Journal', 'route' => 'admin/journal'],
                 ['name' => 'General Ledger', 'route' => '/coming-soon'],
             ],
             'Master Data' => [

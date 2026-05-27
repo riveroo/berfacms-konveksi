@@ -31,8 +31,8 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Transaction Type</label>
                         <select name="type" x-model="type" required class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                            <option value="in">Money In</option>
-                            <option value="out">Money Out</option>
+                            <option value="money_in">Money In</option>
+                            <option value="money_out">Money Out</option>
                         </select>
                     </div>
 
@@ -65,7 +65,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" x-text="type === 'in' ? 'Category (Income Source)' : 'Category (Expense/Dest)'"></label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" x-text="type === 'money_in' || type === 'in' ? 'Category (Income Source)' : (type === 'transfer' ? 'Destination Account (Cash/Bank)' : 'Category (Expense/Source)')"></label>
                         <select name="counter_account_id" id="counter_account_id" x-model="counterId" required class="searchable-select">
                             <option value="">Select Category</option>
                             @foreach($categories as $category)
@@ -101,18 +101,24 @@
                 </h4>
                 
                 <p class="text-gray-600 dark:text-gray-300 mb-3">You are about to record a 
-                    <strong x-text="type === 'in' ? 'Money In' : 'Money Out'" class="text-gray-900 dark:text-white"></strong> 
+                    <strong x-text="type === 'money_in' || type === 'in' ? 'Money In' : (type === 'transfer' ? 'Transfer' : 'Money Out')" class="text-gray-900 dark:text-white"></strong> 
                     transaction of <strong class="text-gray-900 dark:text-white" x-text="'Rp ' + formatRupiah(amount)"></strong>.
                 </p>
 
                 <div class="bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-800 p-4 font-mono text-sm space-y-2">
-                    <template x-if="type === 'in'">
+                    <template x-if="type === 'money_in' || type === 'in'">
                         <div>
                             <div class="flex justify-between"><span><span x-text="accountName"></span> (Cash/Bank)</span> <span class="text-success-600">IN  ← <span x-text="formatRupiah(amount)"></span></span></div>
                             <div class="flex justify-between"><span><span x-text="counterName"></span> (Category)</span> <span class="text-gray-500">OUT → <span x-text="formatRupiah(amount)"></span></span></div>
                         </div>
                     </template>
-                    <template x-if="type === 'out'">
+                    <template x-if="type === 'transfer'">
+                        <div>
+                            <div class="flex justify-between"><span><span x-text="accountName"></span> (Destination)</span> <span class="text-success-600">DEBIT  ← <span x-text="formatRupiah(amount)"></span></span></div>
+                            <div class="flex justify-between"><span><span x-text="counterName"></span> (Source)</span> <span class="text-danger-600">CREDIT → <span x-text="formatRupiah(amount)"></span></span></div>
+                        </div>
+                    </template>
+                    <template x-if="type === 'money_out' || type === 'out'">
                         <div>
                             <div class="flex justify-between"><span><span x-text="counterName"></span> (Category)</span> <span class="text-gray-500">IN  ← <span x-text="formatRupiah(amount)"></span></span></div>
                             <div class="flex justify-between"><span><span x-text="accountName"></span> (Cash/Bank)</span> <span class="text-danger-600">OUT → <span x-text="formatRupiah(amount)"></span></span></div>
@@ -123,8 +129,8 @@
             </div>
 
             <div class="flex justify-end gap-3">
-                <a href="{{ route('cash-book.index') }}" class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">Cancel</a>
-                <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-500">Save Transaction</button>
+                <x-button href="{{ route('cash-book.index') }}" variant="outline">Cancel</x-button>
+                <x-button type="submit" variant="primary">Save Transaction</x-button>
             </div>
         </form>
     </div>
@@ -165,7 +171,7 @@
 
         document.addEventListener('alpine:init', () => {
             Alpine.data('cashBookForm', () => ({
-                type: 'out',
+                type: 'money_out',
                 date: new Date().toISOString().split('T')[0],
                 amount: '',
                 accountId: '',

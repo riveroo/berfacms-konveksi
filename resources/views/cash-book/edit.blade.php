@@ -123,8 +123,8 @@
             </div>
 
             <div class="flex justify-end gap-3">
-                <a href="{{ route('cash-book.index') }}" class="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">Cancel</a>
-                <button type="submit" class="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-500">Update Transaction</button>
+                <x-button href="{{ route('cash-book.index') }}" variant="outline">Cancel</x-button>
+                <x-button type="submit" variant="primary">Update Transaction</x-button>
             </div>
         </form>
     </div>

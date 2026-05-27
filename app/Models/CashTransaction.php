@@ -47,6 +47,6 @@ class CashTransaction extends Model
     public function journalEntry()
     {
         return $this->hasOne(JournalEntry::class, 'reference_id')
-            ->where('reference_type', 'cash_transaction');
+            ->where('reference_type', 'cashbook');
     }
 }

@@ -36,14 +36,36 @@ class CashBookController extends Controller
 
         $transactions = $query->paginate(15);
 
-        // Summary
-        $summaryQuery = CashTransaction::query();
+        // Summary calculations
+        $totalIn = 0;
+        $totalOut = 0;
+
         if ($request->has('account_id') && $request->account_id) {
-            $summaryQuery->where('account_id', $request->account_id);
+            $accId = $request->account_id;
+            
+            // Money In to this account:
+            // 1. type = money_in and account_id = $accId
+            // 2. type = transfer and account_id = $accId (destination)
+            $totalIn = CashTransaction::where(function($q) use ($accId) {
+                $q->whereIn('type', ['money_in', 'in'])->where('account_id', $accId);
+            })->orWhere(function($q) use ($accId) {
+                $q->where('type', 'transfer')->where('account_id', $accId);
+            })->sum('amount');
+
+            // Money Out from this account:
+            // 1. type = money_out and account_id = $accId
+            // 2. type = transfer and counter_account_id = $accId (source)
+            $totalOut = CashTransaction::where(function($q) use ($accId) {
+                $q->whereIn('type', ['money_out', 'out'])->where('account_id', $accId);
+            })->orWhere(function($q) use ($accId) {
+                $q->where('type', 'transfer')->where('counter_account_id', $accId);
+            })->sum('amount');
+        } else {
+            // General overview (overall cashflow sum)
+            $totalIn = CashTransaction::whereIn('type', ['money_in', 'in'])->sum('amount');
+            $totalOut = CashTransaction::whereIn('type', ['money_out', 'out'])->sum('amount');
         }
-        
-        $totalIn = (clone $summaryQuery)->where('type', 'in')->sum('amount');
-        $totalOut = (clone $summaryQuery)->where('type', 'out')->sum('amount');
+
         $balance = $totalIn - $totalOut;
 
         $accounts = Account::whereIn('subtype', ['cash', 'bank'])->where('is_active', true)->get();
@@ -53,8 +75,8 @@ class CashBookController extends Controller
 
     public function create()
     {
-        $accounts = Account::whereIn('subtype', ['cash', 'bank'])->where('is_active', true)->get();
-        $categories = Account::whereNotIn('subtype', ['cash', 'bank'])->where('is_active', true)->get();
+        $accounts = Account::where('type', 'asset')->where('is_active', true)->get();
+        $categories = Account::where('is_active', true)->get();
         $clients = Client::orderBy('client_name')->get();
 
         return view('cash-book.create', compact('accounts', 'categories', 'clients'));
@@ -65,7 +87,7 @@ class CashBookController extends Controller
         $request->validate([
             'date' => 'required|date',
             'description' => 'required|string',
-            'type' => 'required|in:in,out,transfer',
+            'type' => 'required|in:money_in,money_out,transfer',
             'amount' => 'required|numeric|min:0.01',
             'account_id' => 'required|exists:accounts,id',
             'counter_account_id' => 'required|exists:accounts,id|different:account_id',
@@ -73,51 +95,12 @@ class CashBookController extends Controller
             'receive_from' => 'nullable|string',
         ]);
 
-        DB::beginTransaction();
-        try {
-            // Transfer logic: create OUT from source, IN to destination
-            if ($request->type === 'transfer') {
-                // Out from Source
-                $txOut = CashTransaction::create([
-                    'date' => $request->date,
-                    'description' => $request->description . ' (Transfer Out)',
-                    'type' => 'out',
-                    'amount' => $request->amount,
-                    'account_id' => $request->account_id,
-                    'counter_account_id' => $request->counter_account_id,
-                    'reference_type' => 'transfer',
-                    'client_id' => $request->client_id,
-                    'receive_from' => $request->receive_from,
-                ]);
+        return DB::transaction(function () use ($request) {
+            $tx = CashTransaction::create($request->all());
+            $this->generateJournal($tx);
 
-                // In to Destination
-                $txIn = CashTransaction::create([
-                    'date' => $request->date,
-                    'description' => $request->description . ' (Transfer In)',
-                    'type' => 'in',
-                    'amount' => $request->amount,
-                    'account_id' => $request->counter_account_id, // destination
-                    'counter_account_id' => $request->account_id, // source
-                    'reference_type' => 'transfer',
-                    'reference_id' => $txOut->id,
-                    'client_id' => $request->client_id,
-                    'receive_from' => $request->receive_from,
-                ]);
-                $txOut->update(['reference_id' => $txIn->id]);
-
-                $this->generateJournal($txOut);
-                
-            } else {
-                $tx = CashTransaction::create($request->all());
-                $this->generateJournal($tx);
-            }
-
-            DB::commit();
             return redirect()->route('cash-book.index')->with('success', 'Transaction saved.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage())->withInput();
-        }
+        });
     }
 
     public function show(CashTransaction $cashBook)
@@ -128,11 +111,11 @@ class CashBookController extends Controller
 
     public function edit(CashTransaction $cashBook)
     {
-        if ($cashBook->reference_type === 'transfer') {
+        if ($cashBook->type === 'transfer') {
             return back()->with('error', 'Transfers cannot be edited directly yet. Delete and recreate.');
         }
 
-        $accounts = Account::whereIn('subtype', ['cash', 'bank'])->where('is_active', true)->get();
+        $accounts = Account::where('type', 'asset')->where('is_active', true)->get();
         $categories = Account::whereNotIn('subtype', ['cash', 'bank'])->where('is_active', true)->get();
         $clients = Client::orderBy('client_name')->get();
 
@@ -144,7 +127,7 @@ class CashBookController extends Controller
         $request->validate([
             'date' => 'required|date',
             'description' => 'required|string',
-            'type' => 'required|in:in,out',
+            'type' => 'required|in:money_in,money_out,transfer',
             'amount' => 'required|numeric|min:0.01',
             'account_id' => 'required|exists:accounts,id',
             'counter_account_id' => 'required|exists:accounts,id|different:account_id',
@@ -152,8 +135,7 @@ class CashBookController extends Controller
             'receive_from' => 'nullable|string',
         ]);
 
-        DB::beginTransaction();
-        try {
+        return DB::transaction(function () use ($request, $cashBook) {
             $cashBook->update($request->all());
 
             // Delete old journal
@@ -164,34 +146,21 @@ class CashBookController extends Controller
             // Generate new journal
             $this->generateJournal($cashBook);
 
-            DB::commit();
             return redirect()->route('cash-book.index')->with('success', 'Transaction updated.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage())->withInput();
-        }
+        });
     }
 
     public function destroy(CashTransaction $cashBook)
     {
-        DB::beginTransaction();
-        try {
-            if ($cashBook->reference_type === 'transfer' && $cashBook->reference_id) {
-                CashTransaction::where('id', $cashBook->reference_id)->delete();
-            }
-
+        return DB::transaction(function () use ($cashBook) {
             if ($cashBook->journalEntry) {
                 $cashBook->journalEntry()->delete();
             }
 
             $cashBook->delete();
 
-            DB::commit();
             return redirect()->route('cash-book.index')->with('success', 'Transaction deleted.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage());
-        }
+        });
     }
 
     private function generateJournal(CashTransaction $tx)
@@ -199,35 +168,62 @@ class CashBookController extends Controller
         $journal = JournalEntry::create([
             'date' => $tx->date,
             'description' => $tx->description,
-            'reference_type' => 'cash_transaction',
+            'reference_type' => 'cashbook',
             'reference_id' => $tx->id,
         ]);
 
-        if ($tx->type === 'in') {
+        if ($tx->type === 'money_in' || $tx->type === 'in') {
             JournalDetail::create([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $tx->account_id,
                 'debit' => $tx->amount,
                 'credit' => 0,
+                'created_at' => $tx->date,
+                'updated_at' => $tx->date,
             ]);
             JournalDetail::create([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $tx->counter_account_id,
                 'debit' => 0,
                 'credit' => $tx->amount,
+                'created_at' => $tx->date,
+                'updated_at' => $tx->date,
             ]);
-        } else {
+        } elseif ($tx->type === 'transfer') {
             JournalDetail::create([
                 'journal_entry_id' => $journal->id,
-                'account_id' => $tx->counter_account_id,
+                'account_id' => $tx->account_id, // destination account
                 'debit' => $tx->amount,
                 'credit' => 0,
+                'created_at' => $tx->date,
+                'updated_at' => $tx->date,
             ]);
+            JournalDetail::create([
+                'journal_entry_id' => $journal->id,
+                'account_id' => $tx->counter_account_id, // source account
+                'debit' => 0,
+                'credit' => $tx->amount,
+                'created_at' => $tx->date,
+                'updated_at' => $tx->date,
+            ]);
+        } elseif ($tx->type === 'money_out' || $tx->type === 'out') {
+            // CREDIT (cash/bank)
             JournalDetail::create([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $tx->account_id,
                 'debit' => 0,
                 'credit' => $tx->amount,
+                'created_at' => $tx->date,
+                'updated_at' => $tx->date,
+            ]);
+            // DEBIT (expense/account)
+            JournalDetail::create([
+                'journal_entry_id' => $journal->id,
+                'account_id' => $tx->counter_account_id,
+                'debit' => $tx->amount,
+                'credit' => 0,
+                'created_at' => $tx->date,
+                'updated_at' => $tx->date,
             ]);
         }
     }

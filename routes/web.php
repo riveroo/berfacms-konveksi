@@ -107,7 +107,7 @@ Route::middleware(['auth'])->group(function () {
 use App\Http\Controllers\TransactionController;
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    Route::get('/admin/transactions/report', [\App\Http\Controllers\SalesReportController::class, 'index'])->name('transactions.report');
+    Route::get('/admin/transactions/report', [TransactionController::class, 'report'])->name('transactions.report');
     Route::get('/admin/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('/admin/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('/admin/transactions/{id}', [TransactionController::class, 'detail'])->name('transactions.detail');
@@ -156,6 +156,14 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/admin/cash-book/{cashBook}', [\App\Http\Controllers\CashBookController::class, 'update'])->name('cash-book.update');
     Route::get('/admin/cash-book/{cashBook}', [\App\Http\Controllers\CashBookController::class, 'show'])->name('cash-book.show');
     Route::delete('/admin/cash-book/{cashBook}', [\App\Http\Controllers\CashBookController::class, 'destroy'])->name('cash-book.destroy');
+
+    // Journal Module
+    Route::get('/admin/journal', [\App\Http\Controllers\JournalController::class, 'index'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('journal.index');
+    Route::get('/admin/journal/export', [\App\Http\Controllers\JournalController::class, 'exportPdf'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('journal.export');
 });
 
 

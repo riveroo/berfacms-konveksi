@@ -8,12 +8,12 @@
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage cash in and cash out transactions.</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <a href="{{ route('cash-book.create') }}" class="inline-flex items-center justify-center font-medium tracking-tight rounded-lg px-4 py-2 bg-primary-600 text-white hover:bg-primary-500 focus:bg-primary-700 w-full sm:w-auto">
+                    <x-button href="{{ route('cash-book.create') }}" variant="primary">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
                         Record Transaction
-                    </a>
+                    </x-button>
                 </div>
             </div>
 
@@ -84,8 +84,8 @@
                                 <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">No</th>
                                 <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Date</th>
                                 <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Description</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-right text-success-600">Money In</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-right text-danger-600">Money Out</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-right text-success-600">Debit</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-right text-danger-600">Credit</th>
                                 <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Account</th>
                                 <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Category</th>
                                 <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Customer</th>
@@ -102,10 +102,10 @@
                                     </a>
                                 </td>
                                 <td class="px-4 py-4 text-sm text-right font-medium text-success-600">
-                                    {{ $tx->type === 'in' ? 'Rp ' . number_format($tx->amount, 0, ',', '.') : '-' }}
+                                    {{ in_array($tx->type, ['in', 'money_in', 'transfer']) ? 'Rp ' . number_format($tx->amount, 0, ',', '.') : '-' }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-right font-medium text-danger-600">
-                                    {{ $tx->type === 'out' ? 'Rp ' . number_format($tx->amount, 0, ',', '.') : '-' }}
+                                    {{ in_array($tx->type, ['out', 'money_out', 'transfer']) ? 'Rp ' . number_format($tx->amount, 0, ',', '.') : '-' }}
                                 </td>
                                 <td class="px-4 py-4 text-sm text-gray-900 dark:text-white font-medium">{{ $tx->account->name }}</td>
                                 <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-300">{{ $tx->counterAccount->name ?? '-' }}</td>

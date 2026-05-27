@@ -124,33 +124,49 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Accounting')
                     ->url(fn(): string => route('filament.admin.resources.coa.index'))
                     ->icon('heroicon-o-list-bullet')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.coa.*'))
                     ->visible(fn() => canAccessMenu('admin/coa'))
                     ->sort(1),
+                \Filament\Navigation\NavigationItem::make('Opening Balance')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('filament.admin.resources.opening-balance.index'))
+                    ->icon('heroicon-o-scale')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.opening-balance.*'))
+                    ->visible(fn() => canAccessMenu('admin/opening-balance'))
+                    ->sort(2),
+                \Filament\Navigation\NavigationItem::make('Bank Transfers')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('filament.admin.resources.bank-transfers.index'))
+                    ->icon('heroicon-o-arrow-path-rounded-square')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.resources.bank-transfers.*'))
+                    ->visible(fn() => canAccessMenu('admin/bank-transfers'))
+                    ->sort(3),
                 \Filament\Navigation\NavigationItem::make('Cash Book')
                     ->group('Accounting')
                     ->url(fn(): string => route('cash-book.index'))
                     ->icon('heroicon-o-currency-dollar')
                     ->isActiveWhen(fn() => request()->routeIs('cash-book.*'))
                     ->visible(fn() => canAccessMenu('admin/cash-book'))
-                    ->sort(2),
+                    ->sort(4),
                 \Filament\Navigation\NavigationItem::make('Transaction Template')
                     ->group('Accounting')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-square-3-stack-3d')
                     ->visible(fn() => canAccessMenu('/coming-soon'))
-                    ->sort(2),
+                    ->sort(5),
                 \Filament\Navigation\NavigationItem::make('Journal')
                     ->group('Accounting')
-                    ->url(fn(): string => route('coming-soon'))
+                    ->url(fn(): string => route('journal.index'))
                     ->icon('heroicon-o-book-open')
-                    ->visible(fn() => canAccessMenu('/coming-soon'))
-                    ->sort(3),
+                    ->isActiveWhen(fn() => request()->routeIs('journal.*'))
+                    ->visible(fn() => canAccessMenu('admin/journal'))
+                    ->sort(6),
                 \Filament\Navigation\NavigationItem::make('General Ledger')
                     ->group('Accounting')
                     ->url(fn(): string => route('coming-soon'))
                     ->icon('heroicon-o-table-cells')
                     ->visible(fn() => canAccessMenu('/coming-soon'))
-                    ->sort(4),
+                    ->sort(7),
 
 
 
