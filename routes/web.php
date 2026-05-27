@@ -107,7 +107,9 @@ Route::middleware(['auth'])->group(function () {
 use App\Http\Controllers\TransactionController;
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    Route::get('/admin/transactions/report', [TransactionController::class, 'report'])->name('transactions.report');
+    Route::get('/admin/transactions/report', [TransactionController::class, 'report'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('transactions.report');
     Route::get('/admin/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('/admin/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('/admin/transactions/{id}', [TransactionController::class, 'detail'])->name('transactions.detail');

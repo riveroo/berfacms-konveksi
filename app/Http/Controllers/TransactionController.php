@@ -53,9 +53,90 @@ class TransactionController extends Controller
         return view('admin.transactions.index', compact('transactions'));
     }
 
-    public function report()
+    public function report(Request $request)
     {
-        return view('admin.transactions.report');
+        $startDateInput = $request->input('start_date');
+        $endDateInput = $request->input('end_date');
+
+        $startDate = $startDateInput ? \Carbon\Carbon::parse($startDateInput)->startOfDay() : now()->startOfMonth();
+        $endDate = $endDateInput ? \Carbon\Carbon::parse($endDateInput)->endOfDay() : now()->endOfMonth();
+
+        // 1. Overview Metrics
+        $totalRevenue = Transaction::where('status', '!=', 'cancelled')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->sum('grand_total');
+
+        $totalProductsSold = \App\Models\TransactionDetail::whereHas('transaction', function ($q) use ($startDate, $endDate) {
+            $q->where('status', '!=', 'cancelled')->whereBetween('created_at', [$startDate, $endDate]);
+        })->sum('quantity');
+
+        $avgOrderValue = Transaction::where('status', '!=', 'cancelled')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->avg('grand_total') ?: 0;
+
+        // 2. Daily Sales Trend
+        $dailyStats = Transaction::select(
+                \DB::raw('DATE(created_at) as date'),
+                \DB::raw('SUM(grand_total) as total')
+            )
+            ->where('status', '!=', 'cancelled')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $trendLabels = [];
+        $trendData = [];
+        foreach ($dailyStats as $stat) {
+            $trendLabels[] = \Carbon\Carbon::parse($stat->date)->format('d M');
+            $trendData[] = floatval($stat->total);
+        }
+        if (empty($trendLabels)) {
+            $trendLabels[] = now()->format('d M');
+            $trendData[] = 0;
+        }
+
+        // 3. Top Selling Products
+        $topProducts = \App\Models\TransactionDetail::select(
+                'product_id',
+                \DB::raw('SUM(quantity) as total_qty'),
+                \DB::raw('SUM(subtotal) as total_revenue')
+            )
+            ->whereHas('transaction', function ($q) use ($startDate, $endDate) {
+                $q->where('status', '!=', 'cancelled')->whereBetween('created_at', [$startDate, $endDate]);
+            })
+            ->with('product')
+            ->groupBy('product_id')
+            ->orderBy('total_qty', 'desc')
+            ->take(5)
+            ->get();
+
+        // 4. Top Customers (Spenders)
+        $topCustomers = Transaction::select(
+                'client_id',
+                \DB::raw('COUNT(id) as total_orders'),
+                \DB::raw('SUM(grand_total) as total_spending')
+            )
+            ->where('status', '!=', 'cancelled')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereNotNull('client_id')
+            ->with('client')
+            ->groupBy('client_id')
+            ->orderBy('total_spending', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('admin.transactions.report', [
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'totalRevenue' => $totalRevenue,
+            'totalProductsSold' => $totalProductsSold,
+            'avgOrderValue' => $avgOrderValue,
+            'trendLabels' => $trendLabels,
+            'trendData' => $trendData,
+            'topProducts' => $topProducts,
+            'topCustomers' => $topCustomers,
+        ]);
     }
 
     public function detail($id)

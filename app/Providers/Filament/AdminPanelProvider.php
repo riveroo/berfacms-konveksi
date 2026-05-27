@@ -62,6 +62,7 @@ class AdminPanelProvider extends PanelProvider
                     ->group('Catalog')
                     ->url(fn(): string => route('cek-stok.product'))
                     ->icon('heroicon-o-clipboard-document-list')
+                    ->isActiveWhen(fn() => request()->routeIs('cek-stok.product'))
                     ->visible(fn() => canAccessMenu('cek-stok/product'))
                     ->sort(2),
 
