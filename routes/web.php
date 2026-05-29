@@ -180,6 +180,22 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/reports/profit-loss/export-excel', [\App\Http\Controllers\ProfitLossController::class, 'exportExcel'])
         ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
         ->name('reports.profit-loss.export-excel');
+
+    // General Ledger Module Exports
+    Route::get('/admin/general-ledger/export-excel', [\App\Http\Controllers\GeneralLedgerController::class, 'exportExcel'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('admin.general-ledger.export-excel');
+    Route::get('/admin/general-ledger/export-pdf', [\App\Http\Controllers\GeneralLedgerController::class, 'exportPdf'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('admin.general-ledger.export-pdf');
+
+    // Balance Sheet Module Exports
+    Route::get('/admin/balance-sheet/export-excel', [\App\Http\Controllers\BalanceSheetController::class, 'exportExcel'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('admin.balance-sheet.export-excel');
+    Route::get('/admin/balance-sheet/export-pdf', [\App\Http\Controllers\BalanceSheetController::class, 'exportPdf'])
+        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
+        ->name('admin.balance-sheet.export-pdf');
 });
 
 

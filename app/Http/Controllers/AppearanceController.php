@@ -22,6 +22,9 @@ class AppearanceController extends Controller
         $request->validate([
             'header_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'favicon' => 'nullable|image|mimes:png,ico|max:1024',
+            'bank_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'bank_account_number' => 'nullable|string|max:255',
+            'bank_account_name' => 'nullable|string|max:255',
         ]);
 
         $appearance = AppearanceSetting::first();
@@ -42,6 +45,16 @@ class AppearanceController extends Controller
             }
             $appearance->favicon = $request->file('favicon')->store('appearance', 'public');
         }
+
+        if ($request->hasFile('bank_logo')) {
+            if ($appearance->bank_logo) {
+                Storage::disk('public')->delete($appearance->bank_logo);
+            }
+            $appearance->bank_logo = $request->file('bank_logo')->store('appearance', 'public');
+        }
+
+        $appearance->bank_account_number = $request->bank_account_number;
+        $appearance->bank_account_name = $request->bank_account_name;
 
         $appearance->save();
 

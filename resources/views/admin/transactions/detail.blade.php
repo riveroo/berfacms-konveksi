@@ -18,9 +18,14 @@
                     </span>
                 </div>
             </div>
-            <x-button variant="outline" href="{{ route('transactions.index') }}">
-                Back to List
-            </x-button>
+            <div class="flex items-center gap-2">
+                <x-button variant="primary" href="{{ route('invoice.show', $transaction->trx_id) }}" target="_blank">
+                    Invoice
+                </x-button>
+                <x-button variant="outline" href="{{ route('transactions.index') }}">
+                    Back to List
+                </x-button>
+            </div>
         </div>
 
         @if(session('success'))

@@ -59,10 +59,10 @@ class RolePermissionResource extends Resource
                 ['name' => 'Opening Balance', 'route' => 'admin/opening-balance'],
                 ['name' => 'Bank Transfers', 'route' => 'admin/bank-transfers'],
                 ['name' => 'Cash Book', 'route' => 'admin/cash-book'],
-                ['name' => 'Transaction Template', 'route' => '/coming-soon'],
                 ['name' => 'Journal', 'route' => 'admin/journal'],
+                ['name' => 'Balance Sheet', 'route' => 'admin/balance-sheet'],
+                ['name' => 'General Ledger', 'route' => 'admin/general-ledger'],
                 ['name' => 'Profit & Loss', 'route' => 'admin/reports/profit-loss'],
-                ['name' => 'General Ledger', 'route' => '/coming-soon'],
             ],
             'Master Data' => [
                 ['name' => 'Product Type', 'route' => 'admin/product-types'],

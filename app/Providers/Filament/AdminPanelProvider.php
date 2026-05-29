@@ -156,12 +156,6 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('cash-book.*'))
                     ->visible(fn() => canAccessMenu('admin/cash-book'))
                     ->sort(4),
-                \Filament\Navigation\NavigationItem::make('Transaction Template')
-                    ->group('Accounting')
-                    ->url(fn(): string => route('coming-soon'))
-                    ->icon('heroicon-o-square-3-stack-3d')
-                    ->visible(fn() => canAccessMenu('/coming-soon'))
-                    ->sort(5),
                 \Filament\Navigation\NavigationItem::make('Journal')
                     ->group('Accounting')
                     ->url(fn(): string => route('journal.index'))
@@ -171,9 +165,10 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(6),
                 \Filament\Navigation\NavigationItem::make('General Ledger')
                     ->group('Accounting')
-                    ->url(fn(): string => route('coming-soon'))
+                    ->url(fn(): string => route('filament.admin.pages.general-ledger'))
                     ->icon('heroicon-o-table-cells')
-                    ->visible(fn() => canAccessMenu('/coming-soon'))
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.general-ledger'))
+                    ->visible(fn() => canAccessMenu('admin/general-ledger'))
                     ->sort(7),
                 \Filament\Navigation\NavigationItem::make('Profit & Loss')
                     ->group('Accounting')
@@ -182,6 +177,13 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('reports.profit-loss'))
                     ->visible(fn() => canAccessMenu('admin/reports/profit-loss'))
                     ->sort(8),
+                \Filament\Navigation\NavigationItem::make('Balance Sheet')
+                    ->group('Accounting')
+                    ->url(fn(): string => route('filament.admin.pages.balance-sheet'))
+                    ->icon('heroicon-o-book-open')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.balance-sheet'))
+                    ->visible(fn() => canAccessMenu('admin/balance-sheet'))
+                    ->sort(9),
 
 
 
