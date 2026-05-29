@@ -83,7 +83,7 @@ class UpdateTransactionService
 
             $transaction->client_id = $client->id;
             $transaction->total_price = $totalPrice;
-            $transaction->total_discount = $itemsDiscount + $overallDiscount;
+            $transaction->total_discount = $overallDiscount;
             $transaction->grand_total = $grandTotal > 0 ? $grandTotal : 0;
             
             $transaction->transaction_type = $newType;

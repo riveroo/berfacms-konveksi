@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,13 +15,14 @@
             margin: 0;
             padding: 20px;
         }
+
         .invoice-container {
             max-width: 800px;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
         }
-        
+
         /* Floating / Print controls */
         .no-print-bar {
             display: flex;
@@ -32,6 +34,7 @@
             margin-bottom: 20px;
             border: 1px solid #e5e7eb;
         }
+
         .print-btn {
             background-color: #4f46e5;
             color: #fff;
@@ -46,6 +49,7 @@
             gap: 6px;
             transition: background-color 0.2s;
         }
+
         .print-btn:hover {
             background-color: #4338ca;
         }
@@ -57,16 +61,19 @@
             align-items: flex-start;
             margin-bottom: 5px;
         }
+
         .faktur-box {
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
         .faktur-label {
             font-size: 11px;
             font-weight: normal;
             color: #111;
         }
+
         .faktur-number-container {
             border: 1px solid #111;
             padding: 4px 15px;
@@ -76,14 +83,17 @@
             font-family: 'Courier New', Courier, monospace;
             background-color: #fff;
         }
+
         .logo-container {
             text-align: right;
         }
+
         .logo-img {
             max-height: 48px;
             width: auto;
             display: block;
         }
+
         .logo-fallback {
             font-size: 20px;
             font-weight: 900;
@@ -99,9 +109,11 @@
             margin-top: 5px;
             margin-bottom: 8px;
         }
+
         .outstanding-label {
             font-style: italic;
         }
+
         .outstanding-value {
             color: #ff0000;
             font-size: 16px;
@@ -121,14 +133,17 @@
             border-collapse: collapse;
             margin-bottom: 15px;
         }
+
         .metadata-table td {
             padding: 3px 0;
             vertical-align: top;
             font-size: 11px;
         }
+
         .meta-bold {
             font-weight: bold;
         }
+
         .meta-red {
             color: #ff0000;
             font-weight: bold;
@@ -140,6 +155,7 @@
             border-collapse: collapse;
             margin-bottom: 10px;
         }
+
         .items-table th {
             font-weight: bold;
             font-style: italic;
@@ -149,17 +165,21 @@
             font-size: 10px;
             text-align: left;
         }
+
         .items-table td {
             padding: 6px 4px;
             border-bottom: 1px solid #ddd;
             font-size: 10px;
         }
+
         .items-table tr:last-child td {
             border-bottom: 1.5px solid #111;
         }
+
         .text-center {
             text-align: center;
         }
+
         .text-right {
             text-align: right;
         }
@@ -169,39 +189,47 @@
             width: 100%;
             margin-top: 5px;
         }
+
         .footer-grid td {
             vertical-align: top;
         }
+
         .note-text {
             color: #ff0000;
             font-weight: bold;
             font-size: 11px;
             margin-top: 10px;
         }
+
         .payment-label {
             font-weight: normal;
             font-size: 11px;
             margin-top: 15px;
             margin-bottom: 5px;
         }
+
         .payment-info-box {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-top: 8px;
         }
+
         .bca-logo-svg {
             width: 70px;
             height: auto;
         }
+
         .payment-details {
             font-size: 11px;
             line-height: 1.3;
         }
+
         .payment-details .rek-num {
             font-size: 13px;
             font-weight: bold;
         }
+
         .payment-details .rek-name {
             font-weight: bold;
         }
@@ -211,16 +239,20 @@
             width: 100%;
             border-collapse: collapse;
         }
+
         .calc-table td {
             padding: 4px 6px;
             font-size: 10px;
         }
+
         .calc-border-top {
             border-top: 1.5px solid #111;
         }
+
         .calc-double-bottom {
             border-bottom: 3px double #111;
         }
+
         .calc-bold {
             font-weight: bold;
         }
@@ -230,10 +262,12 @@
             .no-print-bar {
                 display: none !important;
             }
+
             body {
                 padding: 0;
                 background-color: #fff;
             }
+
             .invoice-container {
                 padding: 0;
                 max-width: 100%;
@@ -241,13 +275,19 @@
         }
     </style>
 </head>
+
 <body>
 
     {{-- Floating Print Control Bar --}}
     <div class="no-print-bar">
         <span style="font-weight: 600; font-size: 12px; color: #374151;">Invoice Document Preview</span>
         <button onclick="window.print()" class="print-btn">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 12px; height: 12px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                style="width: 12px; height: 12px;">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
+                </path>
+            </svg>
             Print Invoice
         </button>
     </div>
@@ -258,7 +298,7 @@
         $remaining = $transaction->grand_total - $totalPaid;
         $csName = auth()->user() ? auth()->user()->name : 'Yana';
         $deadlineDate = \Carbon\Carbon::parse($transaction->created_at)->addDays(7)->format('d-M-y');
-        
+
         $totalQty = $transaction->details->sum('quantity');
         $totalItemsPrice = $transaction->details->sum('subtotal');
     @endphp
@@ -273,9 +313,9 @@
                     {{ $transaction->trx_id }}
                 </div>
             </div>
-            
+
             <div class="logo-container">
-                @if($appearance && $appearance->header_logo)
+                @if ($appearance && $appearance->header_logo)
                     <img src="{{ asset('storage/' . $appearance->header_logo) }}" alt="Logo" class="logo-img">
                 @else
                     <div class="logo-fallback">UCUF KONVEKSI</div>
@@ -287,7 +327,7 @@
         <div class="outstanding-bar">
             <span class="outstanding-label">Sisa yang harus DIBAYAR :</span>
             <span class="outstanding-value">
-                @if($remaining > 0)
+                @if ($remaining > 0)
                     Rp {{ number_format($remaining, 0, ',', '.') }}
                 @else
                     Rp -
@@ -303,7 +343,7 @@
                 <td style="width: 10%;">Costumer</td>
                 <td style="width: 2%;">:</td>
                 <td style="width: 48%;" class="meta-bold">{{ optional($transaction->client)->client_name ?? '-' }}</td>
-                
+
                 <td style="width: 12%;">Tgl Masuk</td>
                 <td style="width: 2%;">:</td>
                 <td style="width: 26%;">{{ $transaction->created_at->format('d-M-y') }}</td>
@@ -312,7 +352,7 @@
                 <td>CS</td>
                 <td>:</td>
                 <td class="meta-red">{{ $csName }}</td>
-                
+
                 <td>Deadline</td>
                 <td>:</td>
                 <td>{{ $deadlineDate }}</td>
@@ -323,39 +363,44 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th style="width: 5%;" class="text-center">No</th>
-                    <th style="width: 15%;">Kode</th>
-                    <th style="width: 40%;">Pesanan</th>
-                    <th style="width: 10%;" class="text-center">Size</th>
-                    <th style="width: 10%;" class="text-center">Jumlah</th>
-                    <th style="width: 10%;" class="text-right">Harga /pcs</th>
-                    <th style="width: 10%;" class="text-right">Total</th>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 10%;">Kode</th>
+                    <th style="width: 35%;">Pesanan</th>
+                    <th style="width: 10%;">Size</th>
+                    <th style="width: 10%;">Jumlah</th>
+                    <th style="width: 10%;">Harga /pcs</th>
+                    <th style="width: 10%;">discount /pcs</th>
+                    <th style="width: 10%;">Total</th>
                 </tr>
             </thead>
             <tbody>
                 @php $rowNo = 1; @endphp
-                @foreach($transaction->details as $item)
+                @foreach ($transaction->details as $item)
                     <tr>
-                        <td class="text-center">{{ $rowNo++ }}</td>
+                        <td>{{ $rowNo++ }}</td>
                         <td>{{ optional($item->product)->code ?? '-' }}</td>
-                        <td>{{ optional($item->product)->product_name ?? 'N/A' }} {{ optional($item->variant)->variant_name ? '(' . optional($item->variant)->variant_name . ')' : '' }}</td>
-                        <td class="text-center">{{ optional($item->sizeOption)->name ?? '-' }}</td>
-                        <td class="text-center">{{ $item->quantity }}</td>
-                        <td class="text-right">{{ number_format($item->price, 0, ',', '.') }}</td>
-                        <td class="text-right">{{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                        <td>{{ optional($item->product)->product_name ?? 'N/A' }}
+                            {{ optional($item->variant)->variant_name ? '(' . optional($item->variant)->variant_name . ')' : '' }}
+                        </td>
+                        <td>{{ optional($item->sizeOption)->name ?? '-' }}</td>
+                        <td>{{ $item->quantity }}</td>
+                        <td>{{ number_format($item->price, 0, ',', '.') }}</td>
+                        <td>{{ $item->discount > 0 ? number_format($item->discount, 0, ',', '.') : '-' }}</td>
+                        <td>{{ number_format($item->subtotal, 0, ',', '.') }}</td>
                     </tr>
                 @endforeach
-                
+
                 {{-- Fill empty rows up to exactly 10 rows for layout stability --}}
-                @for($i = $rowNo; $i <= 10; $i++)
+                @for ($i = $rowNo; $i <= 10; $i++)
                     <tr>
-                        <td class="text-center">{{ $i }}</td>
+                        <td>{{ $i }}</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
-                        <td class="text-center">&nbsp;</td>
-                        <td class="text-center">&nbsp;</td>
-                        <td class="text-right">&nbsp;</td>
-                        <td class="text-right">&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
                     </tr>
                 @endfor
             </tbody>
@@ -369,67 +414,78 @@
                     <div class="note-text">
                         Note: Pesanan diproses setelah melakukan pembayaran
                     </div>
-                    
+
                     <div class="payment-label">
                         Pembayaran :
                     </div>
                     <div class="payment-info-box">
-                        @if($appearance && $appearance->bank_logo)
-                            <img src="{{ asset('storage/' . $appearance->bank_logo) }}" alt="Bank Logo" style="max-height: 35px; width: auto; object-contain: contain;">
+                        @if ($appearance && $appearance->bank_logo)
+                            <img src="{{ asset('storage/' . $appearance->bank_logo) }}" alt="Bank Logo"
+                                style="max-height: 35px; width: auto; object-contain: contain;">
                         @else
                             {{-- Clean SVG representation of BCA logo --}}
-                            <svg class="bca-logo-svg" viewBox="0 0 100 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="100" height="35" rx="4" fill="#00569f"/>
-                                <text x="50" y="24" font-family="'Arial Black', sans-serif" font-size="20" font-weight="900" fill="#fff" text-anchor="middle" italic>BCA</text>
+                            <svg class="bca-logo-svg" viewBox="0 0 100 35" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="100" height="35" rx="4" fill="#00569f" />
+                                <text x="50" y="24" font-family="'Arial Black', sans-serif" font-size="20"
+                                    font-weight="900" fill="#fff" text-anchor="middle" italic>BCA</text>
                             </svg>
                         @endif
                         <div class="payment-details">
-                            rek. <span class="rek-num">{{ ($appearance && $appearance->bank_account_number) ? $appearance->bank_account_number : '0561496870' }}</span><br>
-                            an. <span class="rek-name">{{ ($appearance && $appearance->bank_account_name) ? $appearance->bank_account_name : 'M Dwi Dzulqarnain Hambali' }}</span>
+                            rek. <span
+                                class="rek-num">{{ $appearance && $appearance->bank_account_number ? $appearance->bank_account_number : '0561496870' }}</span><br>
+                            an. <span
+                                class="rek-name">{{ $appearance && $appearance->bank_account_name ? $appearance->bank_account_name : 'M Dwi Dzulqarnain Hambali' }}</span>
                         </div>
                     </div>
                 </td>
-                
+
                 {{-- Right Column: Total Box Calculations --}}
                 <td style="width: 40%;">
                     <table class="calc-table">
                         <tr>
                             <td style="width: 40%;" class="text-right">&nbsp;</td>
-                            <td style="width: 25%;" class="text-center calc-bold">{{ $totalQty }}</td>
-                            <td style="width: 35%;" class="text-right calc-bold">Rp {{ number_format($totalItemsPrice, 0, ',', '.') }}</td>
+                            <td style="width: 25%;" class="text-center calc-bold">Subtotal</td>
+                            <td style="width: 35%;" class="text-right calc-bold">Rp
+                                {{ number_format($totalItemsPrice, 0, ',', '.') }}</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 40%;" class="text-right">&nbsp;</td>
+                            <td style="width: 25%;" class="text-center calc-bold">Discount</td>
+                            <td style="width: 35%;" class="text-right ">
+                                @if ($transaction->total_discount > 0)
+                                    Rp {{ number_format($transaction->total_discount, 0, ',', '.') }}
+                                @else
+                                    Rp -
+                                @endif
+                            </td>
                         </tr>
                         <tr class="calc-border-top">
+                            <td class="calc-bold" style="font-size: 11px;">GRAND TOTAL</td>
+                            <td>&nbsp;</td>
+                            <td class="text-right">
+                                Rp {{ number_format($transaction->grand_total, 0, ',', '.') }}
+
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="calc-bold">DP</td>
                             <td>&nbsp;</td>
                             <td class="text-right">
-                                @if($totalPaid > 0)
+                                @if ($totalPaid > 0)
                                     Rp {{ number_format($totalPaid, 0, ',', '.') }}
                                 @else
                                     Rp -
                                 @endif
                             </td>
                         </tr>
-                        <tr>
-                            <td class="calc-bold">Total</td>
-                            <td>&nbsp;</td>
-                            <td class="text-right">
-                                @if($remaining > 0)
-                                    Rp {{ number_format($remaining, 0, ',', '.') }}
-                                @else
-                                    Rp -
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="calc-bold">PPN 11%</td>
-                            <td>&nbsp;</td>
-                            <td class="text-right">Rp -</td>
-                        </tr>
+
+
                         <tr class="calc-border-top calc-double-bottom">
-                            <td class="calc-bold" style="font-size: 11px;">TOTAL</td>
+                            <td class="calc-bold" style="font-size: 11px;">Sisa yang dibayar</td>
                             <td>&nbsp;</td>
                             <td class="text-right calc-bold" style="font-size: 11px;">
-                                @if($remaining > 0)
+                                @if ($remaining > 0)
                                     Rp {{ number_format($remaining, 0, ',', '.') }}
                                 @else
                                     Rp -
@@ -443,4 +499,5 @@
     </div>
 
 </body>
+
 </html>

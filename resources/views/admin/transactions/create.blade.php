@@ -584,7 +584,11 @@
                 },
 
                 get grandTotal() {
-                    let total = this.subtotal - parseFloat(this.overallDiscount || 0);
+                    let overall = parseFloat(this.overallDiscount);
+                    if (isNaN(overall) || overall < 0) {
+                        overall = 0;
+                    }
+                    let total = this.subtotal - overall;
                     return total > 0 ? total : 0;
                 },
 
@@ -628,7 +632,7 @@
                                 client_phone: this.clientPhone,
                                 client_name: this.clientName,
                                 client_info: this.clientInfo,
-                                overall_discount: parseFloat(this.overallDiscount || 0),
+                                overall_discount: isNaN(parseFloat(this.overallDiscount)) ? 0 : parseFloat(this.overallDiscount),
                                 transaction_type: '{{ request('type', 'direct_order') }}',
                                 items: this.items
                             })

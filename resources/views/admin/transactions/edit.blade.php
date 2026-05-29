@@ -174,7 +174,7 @@
                                         <div x-show="errors['items.'+index+'.qty']" class="text-xs text-rose-500 mt-1 font-medium whitespace-nowrap" x-text="errors['items.'+index+'.qty'][0]"></div>
                                     </td>
                                     <td class="px-4 py-4 text-right text-rose-500 font-medium" x-text="item.discount > 0 ? '-' + formatRupiah(item.discount) : '-'"></td>
-                                    <td class="px-4 py-4 text-right font-bold text-gray-900 dark:text-white" x-text="formatRupiah((item.price * item.qty) - item.discount)"></td>
+                                    <td class="px-4 py-4 text-right font-bold text-gray-900 dark:text-white" x-text="formatRupiah((item.price - item.discount) * item.qty)"></td>
                                     <td class="px-4 py-4 text-center">
                                         @if(!($transaction->status === 'on progress' && $transaction->item_status === 'collected') && $transaction->payment_status !== 'paid')
                                         <div class="flex items-center justify-center gap-2">
@@ -471,13 +471,17 @@
                 errors: {},
                 overallDiscount: {{ $transaction->total_discount - $transaction->details->sum('discount') }},
 
-                // Computed subtotals
+                // Computed subtotals (using the requested formula: subtotal = (price - disc) * QTY)
                 get subtotal() {
-                    return this.items.reduce((sum, item) => sum + ((item.price * item.qty) - item.discount), 0);
+                    return this.items.reduce((sum, item) => sum + ((item.price - item.discount) * item.qty), 0);
                 },
 
                 get grandTotal() {
-                    let total = this.subtotal - parseFloat(this.overallDiscount || 0);
+                    let overall = parseFloat(this.overallDiscount);
+                    if (isNaN(overall) || overall < 0) {
+                        overall = 0;
+                    }
+                    let total = this.subtotal - overall;
                     return total > 0 ? total : 0;
                 },
 
@@ -590,7 +594,7 @@
                                 client_phone: this.clientPhone,
                                 client_name: this.clientName,
                                 client_info: this.clientInfo,
-                                overall_discount: parseFloat(this.overallDiscount || 0),
+                                overall_discount: isNaN(parseFloat(this.overallDiscount)) ? 0 : parseFloat(this.overallDiscount),
                                 transaction_type: this.transactionType,
                                 item_status: this.transactionType === 'pre_order' ? 'in_progress' : this.itemStatus,
                                 items: this.items

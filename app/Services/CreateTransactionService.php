@@ -65,7 +65,7 @@ class CreateTransactionService
                 'trx_id' => 'TRX-' . strtoupper(uniqid()),
                 'client_id' => $client->id,
                 'total_price' => $totalPrice,
-                'total_discount' => $itemsDiscount + $overallDiscount,
+                'total_discount' => $overallDiscount,
                 'grand_total' => $grandTotal > 0 ? $grandTotal : 0,
                 'status' => 'on progress',
                 'transaction_type' => $transactionType,
@@ -83,7 +83,7 @@ class CreateTransactionService
                     'client_id' => $client->id,
                     'transaction_id' => $transaction->id,
                     'total_price' => $totalPrice,
-                    'total_discount' => $itemsDiscount + $overallDiscount,
+                    'total_discount' => $overallDiscount,
                     'grand_total' => $grandTotal > 0 ? $grandTotal : 0,
                     'status' => 'on process',
                 ]);
