@@ -47,8 +47,20 @@ class PublicStockController extends Controller
             });
         }
 
+        $variantsList = \App\Models\Variant::with('product')
+            ->whereHas('product', function($q) {
+                $q->where('is_active', true);
+            })
+            ->get()
+            ->map(fn($v) => [
+                'id' => $v->id,
+                'variant_name' => $v->variant_name,
+                'product_name' => $v->product?->product_name ?? '',
+                'variant_code' => $v->variant_code ?? ''
+            ]);
+
         $variants = $query->paginate(25)->withQueryString();
 
-        return view('public.stock', compact('sizes', 'variants', 'productTypes', 'products', 'search', 'typeId', 'productId'));
+        return view('public.stock', compact('sizes', 'variants', 'productTypes', 'products', 'search', 'typeId', 'productId', 'variantsList'));
     }
 }

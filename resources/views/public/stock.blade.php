@@ -65,9 +65,19 @@
             </div>
 
             <!-- Search & Filter -->
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 mb-12">
-                <form action="{{ route('public.stock') }}" method="GET" class="flex flex-col lg:flex-row gap-4">
-                    <div class="relative flex-1 group">
+            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 mb-12"
+                x-data="{
+                    searchQuery: '{{ $search }}',
+                    productId: '{{ $productId }}',
+                    productName: '{{ $products->firstWhere('id', $productId)?->product_name ?? 'Pilih Produk' }}',
+                    searchDropdownOpen: false,
+                    productDropdownOpen: false,
+                    productSearch: '',
+                    variants: {{ $variantsList->toJson() }},
+                    products: {{ $products->map(fn($p) => ['id' => $p->id, 'name' => $p->product_name])->toJson() }}
+                }">
+                <form action="{{ route('public.stock') }}" method="GET" class="flex flex-col lg:flex-row gap-4" @submit="searchDropdownOpen = false; productDropdownOpen = false">
+                    <div class="relative flex-1 group" @click.away="searchDropdownOpen = false">
                         <div
                             class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,50 +85,80 @@
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                         </div>
-                        <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama produk..."
+                        <input type="text" name="search" x-model="searchQuery" @focus="searchDropdownOpen = true" @input="searchDropdownOpen = true; productId = ''; productName = 'Pilih Produk'" placeholder="Cari nama produk..." autocomplete="off"
                             class="w-full pl-12 pr-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium">
+
+                        <!-- Autocomplete Dropdown -->
+                        <div x-show="searchDropdownOpen && searchQuery.trim().length >= 1" x-cloak
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 translate-y-1"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            class="absolute left-0 right-0 z-50 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
+                            <div class="p-3 bg-slate-50/50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider px-6">
+                                Hasil Pencarian Variant
+                            </div>
+                            <div class="divide-y divide-slate-50">
+                                <template x-for="v in variants.filter(item => 
+                                    item.variant_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    item.product_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    item.variant_code.toLowerCase().includes(searchQuery.toLowerCase())
+                                ).slice(0, 10)" :key="v.id">
+                                    <button type="button" @click="searchQuery = v.product_name; productId = ''; productName = 'Pilih Produk'; searchDropdownOpen = false; $nextTick(() => $el.closest('form').submit())"
+                                        class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition-colors text-sm flex justify-between items-center group">
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-slate-700 group-hover:text-indigo-600 transition-colors" x-text="v.variant_name"></span>
+                                            <span class="text-xs text-slate-400" x-text="v.product_name"></span>
+                                        </div>
+                                        <span class="text-xs text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-lg font-semibold group-hover:bg-indigo-100 transition-colors">Pilih Produk</span>
+                                    </button>
+                                </template>
+                                <template x-if="variants.filter(item => 
+                                    item.variant_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    item.product_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    item.variant_code.toLowerCase().includes(searchQuery.toLowerCase())
+                                ).length === 0">
+                                    <div class="px-6 py-4 text-sm text-slate-400 text-center italic">
+                                        Tidak ada variant yang cocok
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Filter Produk (Searchable Dropdown) -->
-                    <div class="relative min-w-[280px]" x-data="{ 
-                        open: false, 
-                        search: '', 
-                        selectedId: '{{ $productId }}',
-                        selectedName: '{{ $products->firstWhere('id', $productId)?->product_name ?? 'Pilih Produk' }}',
-                        products: {{ $products->map(fn($p) => ['id' => $p->id, 'name' => $p->product_name])->toJson() }}
-                    }" @click.away="open = false">
-                        <button type="button" @click="open = !open" 
+                    <div class="relative min-w-[280px]" @click.away="productDropdownOpen = false">
+                        <button type="button" @click="productDropdownOpen = !productDropdownOpen" 
                             class="w-full px-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-left flex justify-between items-center group">
-                            <span x-text="selectedName" class="truncate text-slate-700"></span>
-                            <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-all" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <span x-text="productName" class="truncate text-slate-700"></span>
+                            <svg class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 transition-all" :class="productDropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         
-                        <input type="hidden" name="product_id" :value="selectedId">
+                        <input type="hidden" name="product_id" :value="productId">
 
-                        <div x-show="open" x-cloak 
+                        <div x-show="productDropdownOpen" x-cloak 
                             x-transition:enter="transition ease-out duration-200"
                             x-transition:enter-start="opacity-0 translate-y-1"
                             x-transition:enter-end="opacity-100 translate-y-0"
                             class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
                             <div class="p-3 border-b border-slate-50 bg-slate-50/50">
-                                <input type="text" x-model="search" placeholder="Cari nama produk..." 
+                                <input type="text" x-model="productSearch" placeholder="Cari nama produk..." 
                                     class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm outline-none transition-all">
                             </div>
                             <div class="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
-                                <button type="button" @click="selectedId = ''; selectedName = 'Semua Produk'; open = false" 
+                                <button type="button" @click="productId = ''; productName = 'Semua Produk'; productDropdownOpen = false; $nextTick(() => $el.closest('form').submit())" 
                                     class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition-colors text-sm flex items-center justify-between"
-                                    :class="selectedId === '' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-600'">
+                                    :class="productId === '' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-600'">
                                     <span>Semua Produk</span>
-                                    <template x-if="selectedId === ''">
+                                    <template x-if="productId === ''">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                     </template>
                                 </button>
-                                <template x-for="product in products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))" :key="product.id">
-                                    <button type="button" @click="selectedId = product.id; selectedName = product.name; open = false" 
+                                <template x-for="product in products.filter(p => p.name.toLowerCase().includes(productSearch.toLowerCase()))" :key="product.id">
+                                    <button type="button" @click="productId = product.id; productName = product.name; searchQuery = ''; productDropdownOpen = false; $nextTick(() => $el.closest('form').submit())" 
                                         class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition-colors text-sm flex items-center justify-between"
-                                        :class="selectedId == product.id ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-600'">
+                                        :class="productId == product.id ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-600'">
                                         <span x-text="product.name"></span>
-                                        <template x-if="selectedId == product.id">
+                                        <template x-if="productId == product.id">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                         </template>
                                     </button>
