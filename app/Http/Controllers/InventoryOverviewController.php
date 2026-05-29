@@ -109,4 +109,21 @@ class InventoryOverviewController extends Controller
             return redirect()->back();
         }
     }
+
+    public function detail($id)
+    {
+        $item = Item::with(['supplier', 'unit', 'productType'])->findOrFail($id);
+
+        $stockIns = \App\Models\StockIn::where('item_id', $item->id)
+            ->with('user')
+            ->orderBy('trx_date', 'desc')
+            ->get();
+
+        $stockOuts = \App\Models\StockOut::where('item_id', $item->id)
+            ->with('user')
+            ->orderBy('trx_date', 'desc')
+            ->get();
+
+        return view('inventory.detail', compact('item', 'stockIns', 'stockOuts'));
+    }
 }

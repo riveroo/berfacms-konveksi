@@ -151,6 +151,9 @@
                                 <th scope="col"
                                     class="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                     Units</th>
+                                <th scope="col"
+                                    class="px-3 py-2 text-center text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                    Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
@@ -178,10 +181,20 @@
                                     <td class="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">
                                         {{ optional($item->unit)->name ?? '-' }}
                                     </td>
+                                    <td class="px-3 py-2 whitespace-nowrap text-center">
+                                         <a href="{{ route('inventory.overview.detail', $item->id) }}" target="_blank"
+                                             class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-indigo-600 dark:border-gray-700 dark:bg-gray-800 dark:text-indigo-400 dark:hover:bg-gray-700 transition-colors shadow-sm">
+                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                             </svg>
+                                             Details
+                                         </a>
+                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7"
+                                    <td colspan="8"
                                         class="px-3 py-12 text-center text-gray-500 dark:text-gray-400 bg-gray-50/50 dark:bg-gray-800/20">
                                         <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24"
                                             stroke="currentColor">
