@@ -32,6 +32,7 @@ class CheckMenuPermission
             'admin/product-pricing',
             'admin/sales-report',
             'admin/transactions/report',
+            'admin/accounts-receivable',
             'admin/transactions',
             'admin/pre-orders',
             'admin/items',

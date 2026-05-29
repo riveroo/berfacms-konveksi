@@ -82,27 +82,34 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('transactions.*') && !request()->routeIs('transactions.report'))
                     ->visible(fn() => canAccessMenu('admin/transactions'))
                     ->sort(1),
-                \Filament\Navigation\NavigationItem::make('Pre Order / Quotation')
+                 \Filament\Navigation\NavigationItem::make('Pre Order / Quotation')
                     ->group('Sales')
                     ->url(fn(): string => route('pre-orders.index'))
                     ->icon('heroicon-o-document-text')
                     ->isActiveWhen(fn() => request()->routeIs('pre-orders.*'))
                     ->visible(fn() => canAccessMenu('admin/pre-orders'))
                     ->sort(2),
+                \Filament\Navigation\NavigationItem::make('Accounts Receivable')
+                    ->group('Sales')
+                    ->url(fn(): string => route('filament.admin.pages.accounts-receivable'))
+                    ->icon('heroicon-o-credit-card')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.accounts-receivable'))
+                    ->visible(fn() => canAccessMenu('admin/accounts-receivable'))
+                    ->sort(3),
                 \Filament\Navigation\NavigationItem::make('Sales Dashboard')
                     ->group('Sales')
                     ->url(fn(): string => route('transactions.report'))
                     ->icon('heroicon-o-chart-pie')
                     ->isActiveWhen(fn() => request()->routeIs('transactions.report'))
                     ->visible(fn() => canAccessMenu('admin/transactions/report'))
-                    ->sort(3),
+                    ->sort(4),
                 \Filament\Navigation\NavigationItem::make('Sales Report')
                     ->group('Sales')
                     ->url(fn(): string => route('sales-report.index'))
                     ->icon('heroicon-o-document-chart-bar')
                     ->isActiveWhen(fn() => request()->routeIs('sales-report.*'))
                     ->visible(fn() => canAccessMenu('admin/sales-report'))
-                    ->sort(4),
+                    ->sort(5),
 
                 // Inventory Links (Coming soon except Overview)
                 \Filament\Navigation\NavigationItem::make('Inventory Overview')
