@@ -99,23 +99,19 @@
                             </div>
                             <div class="divide-y divide-slate-50">
                                 <template x-for="v in variants.filter(item => 
-                                    item.variant_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                    item.product_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                    item.variant_code.toLowerCase().includes(searchQuery.toLowerCase())
+                                    item.variant_name.toLowerCase().includes(searchQuery.toLowerCase())
                                 ).slice(0, 10)" :key="v.id">
-                                    <button type="button" @click="searchQuery = v.product_name; productId = ''; productName = 'Pilih Produk'; searchDropdownOpen = false; $nextTick(() => $el.closest('form').submit())"
+                                    <button type="button" @click="searchQuery = v.variant_name; productId = ''; productName = 'Pilih Produk'; searchDropdownOpen = false; $nextTick(() => $el.closest('form').submit())"
                                         class="w-full px-6 py-3 text-left hover:bg-indigo-50 transition-colors text-sm flex justify-between items-center group">
                                         <div class="flex flex-col">
                                             <span class="font-bold text-slate-700 group-hover:text-indigo-600 transition-colors" x-text="v.variant_name"></span>
                                             <span class="text-xs text-slate-400" x-text="v.product_name"></span>
                                         </div>
-                                        <span class="text-xs text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-lg font-semibold group-hover:bg-indigo-100 transition-colors">Pilih Produk</span>
+                                        <span class="text-xs text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-lg font-semibold group-hover:bg-indigo-100 transition-colors">Pilih Variant</span>
                                     </button>
                                 </template>
                                 <template x-if="variants.filter(item => 
-                                    item.variant_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                    item.product_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                    item.variant_code.toLowerCase().includes(searchQuery.toLowerCase())
+                                    item.variant_name.toLowerCase().includes(searchQuery.toLowerCase())
                                 ).length === 0">
                                     <div class="px-6 py-4 text-sm text-slate-400 text-center italic">
                                         Tidak ada variant yang cocok

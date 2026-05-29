@@ -38,13 +38,7 @@ class PublicStockController extends Controller
         }
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('product', function ($q2) use ($search) {
-                    $q2->where('product_name', 'like', "%{$search}%");
-                })
-                ->orWhere('variant_name', 'like', "%{$search}%")
-                ->orWhere('variant_code', 'like', "%{$search}%");
-            });
+            $query->where('variant_name', 'like', "%{$search}%");
         }
 
         $variantsList = \App\Models\Variant::with('product')

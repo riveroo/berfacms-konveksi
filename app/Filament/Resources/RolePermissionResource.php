@@ -54,6 +54,7 @@ class RolePermissionResource extends Resource
                 ['name' => 'Stock Out', 'route' => 'admin/stock-out'],
                 ['name' => 'Adjustment', 'route' => 'admin/adjustment'],
                 ['name' => 'Production', 'route' => 'admin/production'],
+                ['name' => 'Suppliers', 'route' => 'admin/suppliers'],
             ],
             'Accounting' => [
                 ['name' => 'C.O.A (Chart Of Accounts)', 'route' => 'admin/coa'],

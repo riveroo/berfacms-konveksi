@@ -42,6 +42,7 @@ class CheckMenuPermission
             'admin/stock-out',
             'admin/adjustment',
             'admin/production',
+            'admin/suppliers',
             'admin/product-types',
             'admin/size-options',
             'admin/units',
