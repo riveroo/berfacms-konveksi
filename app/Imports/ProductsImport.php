@@ -44,7 +44,32 @@ class ProductsImport implements ToCollection, WithHeadingRow
                     continue;
                 }
 
-                // 2. Check variant code duplication under the same product
+                // 2. Check if product name, variant name, and variant code already exist in database
+                $existingVariant = null;
+                if (!empty($variantCode)) {
+                    $existingVariant = Variant::where('product_id', $product->id)
+                        ->where('variant_name', $variantName)
+                        ->where('variant_code', $variantCode)
+                        ->first();
+                }
+
+                if ($existingVariant) {
+                    // Resolve Product Type ID
+                    $productTypeId = null;
+                    $productTypeName = isset($row['product_type']) ? trim($row['product_type']) : '';
+                    if (!empty($productTypeName)) {
+                        $pType = ProductType::firstOrCreate(['name' => $productTypeName]);
+                        $productTypeId = $pType->id;
+                    }
+
+                    $existingVariant->update([
+                        'product_type_id' => $productTypeId,
+                        'color' => isset($row['color']) ? trim($row['color']) : '#4F46E5',
+                    ]);
+                    continue;
+                }
+
+                // 3. Check variant code duplication under the same product (for other variants)
                 $hasDuplicateCode = false;
                 if (!empty($variantCode)) {
                     $hasDuplicateCode = Variant::where('product_id', $product->id)
@@ -57,7 +82,7 @@ class ProductsImport implements ToCollection, WithHeadingRow
                     continue;
                 }
 
-                // 3. Resolve Product Type ID
+                // 4. Resolve Product Type ID
                 $productTypeId = null;
                 $productTypeName = isset($row['product_type']) ? trim($row['product_type']) : '';
                 if (!empty($productTypeName)) {
@@ -65,7 +90,7 @@ class ProductsImport implements ToCollection, WithHeadingRow
                     $productTypeId = $pType->id;
                 }
 
-                // 4. Create Variant
+                // 5. Create Variant
                 $variant = Variant::create([
                     'product_id' => $product->id,
                     'product_type_id' => $productTypeId,
@@ -74,7 +99,7 @@ class ProductsImport implements ToCollection, WithHeadingRow
                     'color' => isset($row['color']) ? trim($row['color']) : '#4F46E5',
                 ]);
 
-                // 5. Automatically create stock rows for every active size option
+                // 6. Automatically create stock rows for every active size option
                 foreach ($activeSizes as $size) {
                     Stock::create([
                         'variant_id' => $variant->id,
