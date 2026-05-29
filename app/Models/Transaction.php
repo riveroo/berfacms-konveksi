@@ -56,4 +56,33 @@ class Transaction extends Model
         return $this->hasOne(JournalEntry::class, 'reference_id')
             ->where('reference_type', 'transaction');
     }
+
+    public static function generateTrxId(): string
+    {
+        $prefix = 'INV' . now()->format('my'); // e.g. INV0526 for May 2026
+
+        // Find the last transaction created in the current month with this prefix
+        $lastTrx = self::where('trx_id', 'like', $prefix . '-%')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $nextNumber = 1;
+        if ($lastTrx) {
+            $parts = explode('-', $lastTrx->trx_id);
+            if (isset($parts[1]) && is_numeric($parts[1])) {
+                $nextNumber = intval($parts[1]) + 1;
+            }
+        }
+
+        return $prefix . '-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($transaction) {
+            if (empty($transaction->trx_id) || str_starts_with($transaction->trx_id, 'TRX-')) {
+                $transaction->trx_id = self::generateTrxId();
+            }
+        });
+    }
 }

@@ -110,6 +110,13 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('sales-report.*'))
                     ->visible(fn() => canAccessMenu('admin/sales-report'))
                     ->sort(5),
+                \Filament\Navigation\NavigationItem::make('Customers')
+                    ->group('Sales')
+                    ->url(fn(): string => route('filament.admin.pages.customers'))
+                    ->icon('heroicon-o-users')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.customers'))
+                    ->visible(fn() => canAccessMenu('admin/customers'))
+                    ->sort(6),
 
                 // Inventory Links (Coming soon except Overview)
                 \Filament\Navigation\NavigationItem::make('Inventory Overview')

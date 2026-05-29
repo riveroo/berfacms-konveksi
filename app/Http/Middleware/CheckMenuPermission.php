@@ -35,6 +35,7 @@ class CheckMenuPermission
             'admin/accounts-receivable',
             'admin/transactions',
             'admin/pre-orders',
+            'admin/customers',
             'admin/items',
             'inventory/overview',
             'admin/stock-in',

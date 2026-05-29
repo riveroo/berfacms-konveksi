@@ -45,6 +45,7 @@ class RolePermissionResource extends Resource
                 ['name' => 'Accounts Receivable', 'route' => 'admin/accounts-receivable'],
                 ['name' => 'Sales Dashboard', 'route' => 'admin/transactions/report'],
                 ['name' => 'Sales Report', 'route' => 'admin/sales-report'],
+                ['name' => 'Customers', 'route' => 'admin/customers'],
             ],
             'Inventory' => [
                 ['name' => 'Items', 'route' => 'admin/items'],
