@@ -66,27 +66,21 @@ class SupplierResource extends Resource
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Supplier Name')
+                    ->label('Supplier name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('contact')
                     ->label('Contact')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('address')
+                    ->label('Address')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_items')
-                    ->label('Total Items')
+                    ->label('Total items')
                     ->sortable()
                     ->alignCenter(),
-                Tables\Columns\TextColumn::make('total_transaction_amount')
-                    ->label('Total Transaction Amount')
-                    ->sortable()
-                    ->alignEnd()
-                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
-                Tables\Columns\TextColumn::make('total_outstanding_balance')
-                    ->label('Total Outstanding Balance')
-                    ->sortable()
-                    ->alignEnd()
-                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
             ])
             ->defaultSort('name', 'asc')
             ->filters([

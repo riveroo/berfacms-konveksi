@@ -112,9 +112,8 @@ class SuppliersModuleTest extends TestCase
             ->assertCanSeeTableRecords([$this->supplier])
             ->assertSee('ABC Textile')
             ->assertSee('John Doe')
-            ->assertSee('2') // Total Items
-            ->assertSee('Rp 125.000') // Total Transaction Amount
-            ->assertSee('Rp 0'); // Outstanding Balance
+            ->assertSee('Jakarta')
+            ->assertSee('2'); // Total Items
     }
 
     public function test_can_add_item_to_supplier_via_detail_page(): void
