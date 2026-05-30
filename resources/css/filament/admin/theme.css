@@ -1,3 +1,18 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
+
+@media (min-width: 1024px) {
+    .fi-wi-stats-overview-stats-ctn {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    }
+    .fi-wi-stats-overview-stat-label {
+        font-size: 0.75rem !important; /* text-xs */
+    }
+    .fi-wi-stats-overview-stat-value {
+        font-size: 1.25rem !important; /* text-xl */
+    }
+    .fi-wi-stats-overview-stat-description {
+        font-size: 0.75rem !important; /* text-xs */
+    }
+}

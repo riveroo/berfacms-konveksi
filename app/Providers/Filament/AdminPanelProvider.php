@@ -24,6 +24,23 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $logoUrl = asset('images/logo.png');
+        try {
+            $appearance = \App\Models\AppearanceSetting::first();
+            if ($appearance && $appearance->header_logo) {
+                $logoUrl = asset('storage/' . $appearance->header_logo);
+            }
+        } catch (\Throwable $e) {
+            // DB not migrated yet or table missing (e.g. during testing/migrations)
+        }
+
+        $brandLogoHtml = new \Illuminate\Support\HtmlString('
+            <div class="flex flex-col items-end">
+                <img src="' . e($logoUrl) . '" alt="Berfa CMS" style="height: 3rem;" class="object-contain" />
+                <span style="font-size: 10px; color: #9ca3af; font-weight: 500; letter-spacing: 0.05em; margin-top: -2px; display: block; text-align: right; width: 100%;">by berfacms</span>
+            </div>
+        ');
+
         return $panel
             ->default()
             ->id('admin')
@@ -36,14 +53,14 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('15%')
             ->brandName('Berfa CMS')
-            ->brandLogo(asset('images/logo.png'))
-            ->brandLogoHeight('3rem')
+            ->brandLogo($brandLogoHtml)
+            ->brandLogoHeight('4rem')
             ->favicon(asset('images/favicon.png'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                \App\Filament\Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
