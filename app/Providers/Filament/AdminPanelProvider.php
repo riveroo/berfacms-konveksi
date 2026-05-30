@@ -222,6 +222,12 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(fn() => canAccessMenu('admin/appearance'))
                     ->sort(2),
             ])
+            ->userMenuItems([
+                \Filament\Navigation\UserMenuItem::make()
+                    ->label('Change Password')
+                    ->url(fn (): string => \App\Filament\Pages\ChangePassword::getUrl())
+                    ->icon('heroicon-o-key'),
+            ])
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
                 fn(): string => Blade::render('<div class="flex items-center gap-2 mr-4">
