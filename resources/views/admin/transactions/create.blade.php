@@ -464,7 +464,7 @@
                                     variant_name: v.variant_name,
                                     product_type_name: v.product_type ? v.product_type.name : '-',
                                     size_name: s.size_option ? s.size_option.name : '-',
-                                    stock: s.stock,
+                                    stock: Math.round(parseFloat(s.stock)),
                                     price: parseFloat(s.price),
                                     selected: false
                                 });
