@@ -192,15 +192,7 @@
                         <thead
                             class="bg-slate-50 uppercase text-[10px] text-slate-500 font-bold tracking-wider sticky top-0 z-10 shadow-sm shadow-slate-200/50">
                             <tr>
-                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50">ID</th>
-                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50">Product Name
-                                </th>
-                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50">Variant Name
-                                </th>
-                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50">Color</th>
-                                <th scope="col"
-                                    class="px-6 py-4 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200">
-                                    Type</th>
+                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200">Product Detail</th>
                                 @foreach($sizes as $size)
                                     <th scope="col"
                                         class="px-4 py-4 text-center whitespace-nowrap bg-slate-50 border-l border-slate-100">
@@ -212,30 +204,38 @@
                         <tbody class="divide-y divide-slate-200 bg-white">
                             @forelse($variants as $variant)
                                 <tr class="hover:bg-indigo-50/30 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium text-slate-900">
-                                        {{ $variant->variant_code ?: '-' }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-slate-700">
-                                        <a href="{{ route('products.show', $variant->product_id) }}"
-                                            class="hover:text-indigo-600 transition-colors">
-                                            {{ optional($variant->product)->product_name }}
-                                        </a>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-slate-700 font-medium">
-                                        {{ $variant->variant_name }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-slate-700">
-                                        <div class="flex items-center justify-center">
-                                            @if($variant->color)
-                                                <span class="w-5 h-5 rounded-full border border-slate-300 shadow-sm"
-                                                    style="background-color: {{ $variant->color }}"></span>
-                                            @else
-                                                <span class="text-xs text-slate-400">-</span>
-                                            @endif
+                                    <td class="px-6 py-4 whitespace-nowrap border-r border-slate-200">
+                                        <div class="flex items-center gap-4">
+                                            <!-- Kolom Pertama: Color -->
+                                            <div class="flex-shrink-0">
+                                                @if($variant->color)
+                                                    <span class="w-6 h-6 rounded-full border border-slate-350 shadow-sm block"
+                                                        style="background-color: {{ $variant->color }}"></span>
+                                                @else
+                                                    <span class="text-xs text-slate-400">-</span>
+                                                @endif
+                                            </div>
+                                            <!-- Kolom Kedua: 2 baris -->
+                                            <div class="flex flex-col">
+                                                <!-- Baris 1: Variant Name (font lebih besar) -->
+                                                <div class="text-base font-extrabold text-slate-900 leading-tight mb-1">
+                                                    {{ $variant->variant_name }}
+                                                </div>
+                                                <!-- Baris 2: 2 kolom (Product Name & Type) -->
+                                                <div class="flex items-center gap-3 text-xs text-slate-500">
+                                                    <!-- Kolom 1: Product Name -->
+                                                    <a href="{{ route('products.show', $variant->product_id) }}"
+                                                        class="hover:text-indigo-600 transition-colors font-bold text-slate-700">
+                                                        {{ optional($variant->product)->product_name }}
+                                                    </a>
+                                                    <span class="text-slate-300">|</span>
+                                                    <!-- Kolom 2: Type -->
+                                                    <span class="bg-indigo-50/50 text-indigo-650 px-2 py-0.5 rounded font-bold text-[10px] uppercase tracking-wider">
+                                                        {{ optional($variant->productType)->name ?: '-' }}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-slate-500 border-r border-slate-200">
-                                        {{ optional($variant->productType)->name ?: '-' }}
                                     </td>
                                     @foreach($sizes as $size)
                                         @php
@@ -255,7 +255,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="{{ 5 + count($sizes) }}" class="px-6 py-24 text-center">
+                                    <td colspan="{{ 1 + count($sizes) }}" class="px-6 py-24 text-center">
                                         <div
                                             class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
                                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
