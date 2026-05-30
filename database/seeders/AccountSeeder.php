@@ -44,13 +44,15 @@ class AccountSeeder extends Seeder
                 $parentId = $parent ? $parent->id : null;
             }
 
-            Account::create([
-                'code' => $item['code'],
-                'name' => $item['name'],
-                'type' => $item['type'],
-                'parent_id' => $parentId,
-                'is_active' => true,
-            ]);
+            Account::updateOrCreate(
+                ['code' => $item['code']],
+                [
+                    'name' => $item['name'],
+                    'type' => $item['type'],
+                    'parent_id' => $parentId,
+                    'is_active' => true,
+                ]
+            );
         }
     }
 }

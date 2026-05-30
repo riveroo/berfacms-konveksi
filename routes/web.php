@@ -276,6 +276,17 @@ Route::get('/run-seeder', function () {
     }
 });
 
+Route::get('/run-auth-seeder', function () {
+    try {
+        Artisan::call('db:seed', ['--class' => 'RbacSeeder', '--force' => true]);
+        Artisan::call('db:seed', ['--class' => 'AccountSeeder', '--force' => true]);
+
+        return 'Essential Seeding (Roles, Permissions & Accounts/COA) Berhasil! <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Terjadi Error saat Seeding: ' . $e->getMessage();
+    }
+});
+
 Route::get('/clear-config', function () {
     try {
         Artisan::call('config:clear');
