@@ -14,10 +14,20 @@ class RbacSeeder extends Seeder
     public function run(): void
     {
         // Truncate first to avoid duplicates or old data issues when re-running
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = OFF;');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
+
         DB::table('role_permissions')->truncate();
         DB::table('permissions')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement('PRAGMA foreign_keys = ON;');
+        } else {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
 
         $menus = \App\Filament\Resources\RolePermissionResource::getMenusConfig();
 
