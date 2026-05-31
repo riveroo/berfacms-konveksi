@@ -219,6 +219,30 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.fix-storage');
 });
 
+Route::get('/debug-paths', function () {
+    $searchFile = 'dmXZPyFC2hztghK8UKjXhj2W6KnBbNIZqdHTy3UY.png';
+    $foundPaths = [];
+    
+    try {
+        $dir = new \RecursiveDirectoryIterator('/home/wwwn9843');
+        $iterator = new \RecursiveIteratorIterator($dir);
+        foreach ($iterator as $file) {
+            if ($file->getFilename() === $searchFile) {
+                $foundPaths[] = $file->getPathname();
+            }
+        }
+    } catch (\Exception $e) {
+        $foundPaths[] = 'Error: ' . $e->getMessage();
+    }
+
+    return [
+        'base_path' => base_path(),
+        'public_path' => public_path(),
+        'public_path_resolved' => realpath(public_path()),
+        'found_locations' => $foundPaths,
+    ];
+});
+
 Route::get('/migrate-database', function () {
     try {
         // Menjalankan migrasi dengan flag --force (wajib di production)
