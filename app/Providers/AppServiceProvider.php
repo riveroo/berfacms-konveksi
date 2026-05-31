@@ -11,7 +11,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Custom public path dynamic binding for secure shared hosting structure
+        if (file_exists(base_path('../public_html'))) {
+            $this->app->usePublicPath(base_path('../public_html'));
+        } elseif (file_exists(base_path('public_html'))) {
+            $this->app->usePublicPath(base_path('public_html'));
+        }
     }
 
     /**
