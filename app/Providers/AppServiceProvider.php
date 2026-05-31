@@ -14,10 +14,8 @@ class AppServiceProvider extends ServiceProvider
         // Custom public path dynamic binding for secure shared hosting structure
         if (file_exists(base_path('../public_html'))) {
             $this->app->usePublicPath(base_path('../public_html'));
-            config(['filesystems.disks.public.root' => base_path('../public_html/storage')]);
         } elseif (file_exists(base_path('public_html'))) {
             $this->app->usePublicPath(base_path('public_html'));
-            config(['filesystems.disks.public.root' => base_path('public_html/storage')]);
         }
     }
 

@@ -40,7 +40,9 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => public_path('storage'),
+            'root' => file_exists(base_path('../public_html'))
+                ? base_path('../public_html/storage')
+                : (file_exists(base_path('public_html')) ? base_path('public_html/storage') : public_path('storage')),
             'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
