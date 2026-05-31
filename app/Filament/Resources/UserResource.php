@@ -115,6 +115,12 @@ class UserResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('email', '!=', 'superadmin@berfaerp.com');
+    }
+
     public static function getPages(): array
     {
         return [

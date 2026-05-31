@@ -311,6 +311,15 @@ Route::get('/run-auth-seeder', function () {
     }
 });
 
+Route::get('/run-superadmin-seeder', function () {
+    try {
+        Artisan::call('db:seed', ['--class' => 'SuperAdminSeeder', '--force' => true]);
+        return 'Super Admin Seeder Berhasil Dijalankan! <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Terjadi Error: ' . $e->getMessage();
+    }
+});
+
 Route::get('/clear-config', function () {
     try {
         Artisan::call('config:clear');
