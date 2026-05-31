@@ -219,6 +219,18 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.fix-storage');
 });
 
+Route::get('/debug-paths', function () {
+    return [
+        'base_path' => base_path(),
+        'public_path' => public_path(),
+        'public_path_storage_exists' => file_exists(public_path('storage')),
+        'public_path_is_link' => is_link(public_path('storage')),
+        'public_html_exists' => file_exists(base_path('../public_html')),
+        'public_html_base_exists' => file_exists(base_path('public_html')),
+        'storage_app_public' => file_exists(storage_path('app/public')),
+    ];
+});
+
 Route::get('/migrate-database', function () {
     try {
         // Menjalankan migrasi dengan flag --force (wajib di production)
