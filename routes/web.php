@@ -221,27 +221,25 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/debug-paths', function () {
     $searchFile = 'ZwpMLWLAFGVOlb7w27N2LvrBaYuNFNdVcR1G7A9g.png';
+    $foundPaths = [];
     
-    $publicStorageFiles = [];
-    if (file_exists(public_path('storage/landing-heroes'))) {
-        $publicStorageFiles = scandir(public_path('storage/landing-heroes'));
-    }
-    
-    $appStorageFiles = [];
-    if (file_exists(storage_path('app/public/landing-heroes'))) {
-        $appStorageFiles = scandir(storage_path('app/public/landing-heroes'));
+    try {
+        $dir = new \RecursiveDirectoryIterator('/home/wwwn9843');
+        $iterator = new \RecursiveIteratorIterator($dir);
+        foreach ($iterator as $file) {
+            if ($file->getFilename() === $searchFile) {
+                $foundPaths[] = $file->getPathname();
+            }
+        }
+    } catch (\Exception $e) {
+        $foundPaths[] = 'Error: ' . $e->getMessage();
     }
 
     return [
         'base_path' => base_path(),
         'public_path' => public_path(),
         'public_path_resolved' => realpath(public_path()),
-        'public_path_storage_exists' => file_exists(public_path('storage')),
-        'public_path_is_link' => is_link(public_path('storage')),
-        'public_storage_files' => $publicStorageFiles,
-        'app_storage_files' => $appStorageFiles,
-        'search_file_in_public_storage' => file_exists(public_path('storage/landing-heroes/' . $searchFile)),
-        'search_file_in_app_storage' => file_exists(storage_path('app/public/landing-heroes/' . $searchFile)),
+        'found_locations' => $foundPaths,
     ];
 });
 
