@@ -193,14 +193,17 @@
 
                     <!-- Warna -->
                     <div class="flex flex-wrap gap-2 items-start">
-                        <span
-                            class="text-gray-400 w-24 shrink-0 pt-2 font-bold uppercase tracking-wider text-[10px]">Warna
-                            :</span>
+                        <div class="text-gray-400 w-24 shrink-0 pt-2 font-bold uppercase tracking-wider text-[10px] flex flex-col gap-1">
+                            <span>Warna :</span>
+                            <span class="text-[11px] font-extrabold text-emerald-600 transition-colors duration-200 block normal-case" x-text="hoveredVariantName || getSelectedVariantName()"></span>
+                        </div>
                         <div class="flex flex-wrap gap-3 flex-1">
                             @foreach($product->variants as $variant)
                                 <button type="button"
                                     title="{{ $variant->variant_name }}"
                                     @click="selectedColor = '{{ $variant->color }}'; selectedVariant = {{ $variant->id }}; onVariantChange()"
+                                    @mouseenter="hoveredVariantName = '{{ $variant->variant_name }}'"
+                                    @mouseleave="hoveredVariantName = ''"
                                     :class="selectedVariant == {{ $variant->id }} ? 'ring-2 ring-emerald-500 ring-offset-2 scale-110' : 'hover:scale-110 border-gray-200'"
                                     class="w-8 h-8 rounded-full border transition-all focus:outline-none shrink-0 relative group hover:z-50"
                                     style="background-color: {{ strtolower($variant->color) }}">
@@ -397,6 +400,7 @@
                 selectedColor: '{{ $defaultVariant ? $defaultVariant->color : '' }}',
                 selectedVariant: {{ $defaultVariant ? $defaultVariant->id : 'null' }},
                 selectedSize: null,
+                hoveredVariantName: '',
                 productData: @json($productDataArray),
                 defaultPriceRange: `@if($minPrice == 0 && $maxPrice == 0) Pre Order @elseif($minPrice == $maxPrice) Rp{{ number_format($minPrice, 0, ',', '.') }} @else Rp{{ number_format($minPrice, 0, ',', '.') }} <span class="text-lg text-gray-300 font-light mx-1">-</span> Rp{{ number_format($maxPrice, 0, ',', '.') }} @endif`,
                 isLoading: false,
@@ -404,6 +408,11 @@
                     show: false,
                     message: '',
                     type: 'success'
+                },
+
+                getSelectedVariantName() {
+                    const variant = this.productData.find(v => v.id == this.selectedVariant);
+                    return variant ? variant.variant_name : '';
                 },
 
                 init() {
