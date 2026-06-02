@@ -158,27 +158,29 @@
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
                             @forelse($items as $index => $item)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm">
-                                    <td class="px-3 py-2 whitespace-nowrap text-gray-500 dark:text-gray-400">
+                                @php
+                                    $isLowStock = $item->stock < $item->minimum_stock;
+                                @endphp
+                                <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm {{ $isLowStock ? 'bg-red-50/70 dark:bg-red-950/20' : '' }}">
+                                    <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-500/80 dark:text-red-400/80' : 'text-gray-500 dark:text-gray-400' }}">
                                         {{ $items->firstItem() + $index }}
                                     </td>
-                                    <td class="px-3 py-2 whitespace-nowrap text-gray-500 dark:text-gray-400">
+                                    <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-500/80 dark:text-red-400/80' : 'text-gray-500 dark:text-gray-400' }}">
                                         {{ $item->item_id }}
                                     </td>
-                                    <td class="px-3 py-2 whitespace-nowrap font-bold text-gray-900 dark:text-gray-100">
+                                    <td class="px-3 py-2 whitespace-nowrap font-bold {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-900 dark:text-gray-100' }}">
                                         {{ $item->item_code }}
                                     </td>
-                                    <td class="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
+                                    <td class="px-3 py-2 whitespace-nowrap font-medium {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-700 dark:text-gray-300' }}">
                                         {{ $item->item_name }}
                                     </td>
-                                    <td class="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">
+                                    <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-700 dark:text-gray-300' }}">
                                         {{ optional($item->productType)->name ?? '-' }}
                                     </td>
-                                    <td
-                                        class="px-3 py-2 whitespace-nowrap text-right font-bold text-gray-900 dark:text-gray-100">
+                                    <td class="px-3 py-2 whitespace-nowrap text-right font-bold {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-900 dark:text-gray-100' }}">
                                         {{ $item->stock }}
                                     </td>
-                                    <td class="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">
+                                    <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-700 dark:text-gray-300' }}">
                                         {{ optional($item->unit)->name ?? '-' }}
                                     </td>
                                     <td class="px-3 py-2 whitespace-nowrap text-center">

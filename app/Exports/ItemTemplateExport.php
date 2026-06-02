@@ -16,7 +16,8 @@ class ItemTemplateExport implements FromArray, WithHeadings
                 '30s', 
                 'Kg', 
                 'Denesik, Kessler and Hermann', 
-                125000
+                125000,
+                10
             ],
         ];
     }
@@ -30,6 +31,7 @@ class ItemTemplateExport implements FromArray, WithHeadings
             'unit',
             'supplier',
             'price',
+            'minimum_stock',
         ];
     }
 }

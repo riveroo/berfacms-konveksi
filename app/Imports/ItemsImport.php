@@ -30,16 +30,6 @@ class ItemsImport implements ToCollection, WithHeadingRow
                     $itemCode = 'CODE-' . strtoupper(Str::random(8));
                 }
 
-                // Check duplicate by item_code or item_name
-                $exists = Item::where('item_code', $itemCode)
-                    ->orWhere('item_name', $itemName)
-                    ->exists();
-
-                if ($exists) {
-                    // Skip duplicate items
-                    continue;
-                }
-
                 // Resolve Unit (required)
                 $unitName = isset($row['unit']) ? trim($row['unit']) : '';
                 if (empty($unitName)) {
@@ -66,6 +56,25 @@ class ItemsImport implements ToCollection, WithHeadingRow
                 // Resolve Price
                 $price = isset($row['price']) ? (float)$row['price'] : 0.0;
 
+                // Resolve Minimum Stock
+                $minimumStock = isset($row['minimum_stock']) ? (int)$row['minimum_stock'] : 0;
+
+                // Check duplicate by item_code or item_name
+                $existingItem = Item::where('item_code', $itemCode)
+                    ->orWhere('item_name', $itemName)
+                    ->first();
+
+                if ($existingItem) {
+                    $existingItem->update([
+                        'product_type_id' => $productTypeId,
+                        'unit_id' => $unit->id,
+                        'supplier_id' => $supplierId,
+                        'price' => $price,
+                        'minimum_stock' => $minimumStock,
+                    ]);
+                    continue;
+                }
+
                 // Generate incremental item_id
                 $lastItem = Item::where('item_id', 'like', 'ITM-%')
                     ->latest('id')
@@ -89,7 +98,7 @@ class ItemsImport implements ToCollection, WithHeadingRow
                     'unit_id' => $unit->id,
                     'supplier_id' => $supplierId,
                     'price' => $price,
-                    'minimum_stock' => 0,
+                    'minimum_stock' => $minimumStock,
                     'stock' => 0,
                 ]);
             }

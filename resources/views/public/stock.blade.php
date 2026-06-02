@@ -192,10 +192,10 @@
                         <thead
                             class="bg-slate-50 uppercase text-[10px] text-slate-500 font-bold tracking-wider sticky top-0 z-10 shadow-sm shadow-slate-200/50">
                             <tr>
-                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200 text-sm md:text-base font-black text-slate-700">Product Detail</th>
+                                <th scope="col" class="px-4 py-2.5 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200 text-sm md:text-base font-black text-slate-700">Product Detail</th>
                                 @foreach($sizes as $size)
                                     <th scope="col"
-                                        class="px-8 py-4 text-center whitespace-nowrap bg-slate-50 border-l border-slate-100 min-w-[120px] text-sm md:text-base font-black text-slate-700 tracking-wider">
+                                        class="px-4 py-2.5 text-center whitespace-nowrap bg-slate-50 border-l border-slate-100 min-w-[80px] text-sm md:text-base font-black text-slate-700 tracking-wider">
                                         {{ $size->name }}
                                     </th>
                                 @endforeach
@@ -204,12 +204,12 @@
                         <tbody class="divide-y divide-slate-200 bg-white">
                             @forelse($variants as $variant)
                                 <tr class="hover:bg-indigo-50/30 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap border-r border-slate-200">
+                                    <td class="px-4 py-2 whitespace-nowrap border-r border-slate-200">
                                         <div class="flex items-center gap-3">
                                             <!-- Kolom Pertama: Color -->
                                             <div class="flex-shrink-0">
                                                 @if($variant->color)
-                                                    <span class="w-6 h-6 rounded-full border border-slate-300 shadow-sm block"
+                                                    <span class="w-4 h-4 rounded-full border border-slate-300 shadow-sm block"
                                                         style="background-color: {{ $variant->color }}"></span>
                                                 @else
                                                     <span class="text-xs text-slate-400">-</span>
@@ -229,7 +229,7 @@
                                             $stockItem = $variant->stocks->firstWhere('size_option_id', $size->id);
                                             $qty = $stockItem ? (int)$stockItem->stock : 0;
                                         @endphp
-                                        <td class="px-8 py-4 whitespace-nowrap text-center border-l border-slate-50 text-sm md:text-base">
+                                        <td class="px-4 py-2 whitespace-nowrap text-center border-l border-slate-50 text-sm md:text-base">
                                             @if($qty == 0)
                                                 <span class="text-slate-300 font-medium">0</span>
                                             @elseif($qty <= 5)

@@ -18,7 +18,9 @@ class InventoryOverviewController extends Controller
         $suppliers = Supplier::orderBy('name')->get();
         $productTypes = ProductType::orderBy('name')->get();
 
-        $query = Item::with(['supplier', 'unit', 'productType'])->orderBy('item_name');
+        $query = Item::with(['supplier', 'unit', 'productType'])
+            ->orderByRaw('(stock - minimum_stock) ASC')
+            ->orderBy('item_name');
 
         if ($supplierId) {
             $query->where('supplier_id', $supplierId);
