@@ -201,7 +201,7 @@
                                 <button type="button"
                                     @click="selectedColor = '{{ $variant->color }}'; selectedVariant = {{ $variant->id }}; onVariantChange()"
                                     :class="selectedVariant == {{ $variant->id }} ? 'ring-2 ring-emerald-500 ring-offset-2 scale-110' : 'hover:scale-110 border-gray-200'"
-                                    class="w-8 h-8 rounded-full border transition-all focus:outline-none shrink-0 relative group"
+                                    class="w-8 h-8 rounded-full border transition-all focus:outline-none shrink-0 relative group hover:z-50"
                                     style="background-color: {{ strtolower($variant->color) }}">
                                     <!-- Tooltip showing variant name on hover -->
                                     <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg whitespace-nowrap z-50">
