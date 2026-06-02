@@ -18,7 +18,10 @@ Route::get('/stock', [PublicStockController::class, 'index'])->name('public.stoc
 
 Route::get('/products', function (Illuminate\Http\Request $request) {
     $sort = $request->query('sort', 'latest');
-    $productsQuery = Product::with('variants.stocks.sizeOption')->where('is_active', true)->latest();
+    $productsQuery = Product::with('variants.stocks.sizeOption')
+        ->where('is_active', true)
+        ->orderBy('sort_order', 'asc')
+        ->orderBy('created_at', 'desc');
 
     $products = $productsQuery->get();
 
@@ -169,7 +172,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('journal.export');
 
     // Profit & Loss Report Module
-    Route::get('/admin/reports/profit-loss', [\App\Http\Controllers\ProfitLossController::class, 'index'])
+    Route::get('/admin/reports/profit-loss', \App\Filament\Pages\ProfitLoss::class)
         ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
         ->name('reports.profit-loss');
     Route::get('/admin/reports/profit-loss/drilldown', [\App\Http\Controllers\ProfitLossController::class, 'drilldown'])

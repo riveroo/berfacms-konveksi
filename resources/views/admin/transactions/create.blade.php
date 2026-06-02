@@ -84,12 +84,12 @@
                     </div>
                     <div>
                         <x-text variant="label" class="mb-1.5">Transaction Date</x-text>
-                        <input type="text" value="{{ now()->format('Y-m-d H:i') }}" readonly
+                        <input type="text" value="-" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
                     </div>
                     <div>
                         <x-text variant="label" class="mb-1.5">Last Update</x-text>
-                        <input type="text" value="{{ now()->format('Y-m-d H:i') }}" readonly
+                        <input type="text" value="-" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
                     </div>
                     <div>

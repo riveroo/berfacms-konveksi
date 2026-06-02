@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['product_name', 'description', 'thumbnail', 'is_active'];
+    protected $fillable = ['product_name', 'description', 'thumbnail', 'is_active', 'sort_order'];
 
     protected static function booted()
     {

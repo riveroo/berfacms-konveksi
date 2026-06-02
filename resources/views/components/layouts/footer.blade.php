@@ -1,9 +1,11 @@
 @php
     $footer = \App\Models\LandingFooter::first();
+    $appearance = \App\Models\AppearanceSetting::first();
     $companyName = $footer->company_name ?? 'Konveksi hub';
     $address = $footer->address ?? 'Jakarta';
     $phone = $footer->phone ?? '+62 819-0766-6620';
     $email = $footer->email ?? 'hello@konveksihub.com';
+    $description = $footer->description ?? 'Mewujudkan desain Anda dengan presisi industri dan estetika modern. Partner resmi brand apparel dunia.';
 @endphp
 
 <footer id="kontak" {{ $attributes->merge(['class' => 'bg-slate-950 pt-32 pb-12 text-slate-400']) }}>
@@ -11,12 +13,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 mb-32">
             <div class="lg:col-span-1">
                 <a href="{{ url('/') }}" class="flex items-center gap-2 mb-10 group">
-                    <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl transition-transform group-hover:scale-110 shadow-lg shadow-indigo-600/20">
-                        {{ substr($companyName, 0, 1) }}
-                    </div>
-                    <span class="font-outfit text-2xl font-black tracking-tight text-white italic">{{ $companyName }}</span>
+                    @if($appearance && $appearance->header_logo)
+                        <img src="{{ asset('storage/' . $appearance->header_logo) }}" alt="{{ $companyName }}" class="h-12 w-auto object-contain">
+                    @else
+                        <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl transition-transform group-hover:scale-110 shadow-lg shadow-indigo-600/20">
+                            {{ substr($companyName, 0, 1) }}
+                        </div>
+                        <span class="font-outfit text-2xl font-black tracking-tight text-white italic">{{ $companyName }}</span>
+                    @endif
                 </a>
-                <p class="text-lg leading-relaxed mb-10">Mewujudkan desain Anda dengan presisi industri dan estetika modern. Partner resmi brand apparel dunia.</p>
+                <p class="text-lg leading-relaxed mb-10">{{ $description }}</p>
                 <div class="flex flex-wrap gap-4">
                     @if($footer)
                         @if($footer->instagram_url)
@@ -56,6 +62,9 @@
             <div class="lg:col-span-1">
                 <h4 class="font-outfit text-white text-xl font-black mb-10">CONTACT US</h4>
                 <ul class="space-y-6">
+                    <li class="text-white font-bold text-lg font-outfit tracking-wide mb-2 uppercase">
+                        {{ $companyName }}
+                    </li>
                     @if($phone)
                     <li class="flex items-center gap-4 text-white">
                         <span class="p-3 bg-indigo-600 rounded-xl shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg></span>

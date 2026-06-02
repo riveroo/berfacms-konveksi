@@ -47,14 +47,22 @@ class ProductResource extends Resource
                                     Forms\Components\TextInput::make('product_name')
                                         ->label(fn () => __('product.product_name'))
                                         ->required()
-                                        ->maxLength(255),
+                                        ->maxLength(255)
+                                        ->live(onBlur: true),
                                     Forms\Components\Textarea::make('description')
                                         ->label(fn () => __('product.description'))
                                         ->maxLength(65535)
-                                        ->columnSpanFull(),
+                                        ->columnSpanFull()
+                                        ->live(onBlur: true),
                                     Forms\Components\Toggle::make('is_active')
                                         ->label('Active')
-                                        ->default(true),
+                                        ->default(true)
+                                        ->live(),
+                                    Forms\Components\TextInput::make('sort_order')
+                                        ->label('Urutan')
+                                        ->numeric()
+                                        ->default(0)
+                                        ->live(onBlur: true),
                                 ])
                         ])->columnSpan(['default' => 3, 'md' => 2]),
 
@@ -70,7 +78,8 @@ class ProductResource extends Resource
                                         ->disk('public')
                                         ->directory('product-thumbnails')
                                         ->visibility('public')
-                                        ->columnSpanFull(),
+                                        ->columnSpanFull()
+                                        ->live(),
                                 ])
                         ])->columnSpan(['default' => 3, 'md' => 1]),
                     ]),
@@ -78,7 +87,8 @@ class ProductResource extends Resource
                 Forms\Components\Section::make('Variants')
                     ->schema([
                         \Filament\Forms\Components\Livewire::make(\App\Livewire\ProductVariantsManager::class)
-                            ->key('product-variants-manager'),
+                            ->key('product-variants-manager')
+                            ->dehydrated(false),
                     ])
                     ->hidden(fn (string $operation) => $operation === 'create')
                     ->columnSpanFull(),
@@ -97,6 +107,10 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('product_name')
                     ->label(fn() => __('product.product_name'))
                     ->searchable(),
+                Tables\Columns\TextInputColumn::make('sort_order')
+                    ->label('Urutan')
+                    ->sortable()
+                    ->rules(['nullable', 'integer', 'min:0']),
                 Tables\Columns\TextColumn::make('variants_count')
                     ->label('Variants')
                     ->counts('variants'),
@@ -148,7 +162,8 @@ class ProductResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('sort_order', 'asc');
     }
 
     public static function getRelations(): array

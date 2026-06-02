@@ -1,9 +1,9 @@
-<x-filament-panels::layout>
+<x-filament-panels::page>
     <style>
         [x-cloak] { display: none !important; }
     </style>
     
-    <div class="px-8 py-8 mx-auto w-full max-w-full min-w-0" x-data="{
+    <div x-data="{
         isOpen: false,
         loading: false,
         accountName: '',
@@ -425,4 +425,4 @@
             });
         });
     </script>
-</x-filament-panels::layout>
+</x-filament-panels::page>

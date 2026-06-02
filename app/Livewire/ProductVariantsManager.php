@@ -20,6 +20,7 @@ class ProductVariantsManager extends Component
 
     // Table state
     public $variants = [];
+    public $search = '';
 
     // Modal state
     public ?int $editingVariantId = null;
@@ -66,9 +67,14 @@ class ProductVariantsManager extends Component
     public function loadVariants()
     {
         if ($this->product) {
-            $this->variants = Variant::with(['productType', 'stocks.sizeOption'])
-                ->where('product_id', $this->product->id)
-                ->get();
+            $query = Variant::with(['productType', 'stocks.sizeOption'])
+                ->where('product_id', $this->product->id);
+
+            if (filled($this->search)) {
+                $query->where('variant_name', 'like', '%' . $this->search . '%');
+            }
+
+            $this->variants = $query->get();
         } else {
             $this->variants = [];
         }
@@ -252,6 +258,7 @@ class ProductVariantsManager extends Component
 
     public function render()
     {
+        $this->loadVariants();
         return view('livewire.product-variants-manager');
     }
 }

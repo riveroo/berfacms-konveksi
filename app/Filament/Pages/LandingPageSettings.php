@@ -80,6 +80,7 @@ class LandingPageSettings extends Page
     // Form fields for Footer
     public $footerCompanyName;
     public $footerAddress;
+    public $footerDescription;
     public $footerPhone;
     public $footerEmail;
     public $footerYoutubeUrl;
@@ -100,6 +101,7 @@ class LandingPageSettings extends Page
         if ($this->footer) {
             $this->footerCompanyName = $this->footer['company_name'];
             $this->footerAddress = $this->footer['address'];
+            $this->footerDescription = $this->footer['description'] ?? null;
             $this->footerPhone = $this->footer['phone'];
             $this->footerEmail = $this->footer['email'];
             $this->footerYoutubeUrl = $this->footer['youtube_url'];
@@ -672,6 +674,7 @@ class LandingPageSettings extends Page
         $this->validate([
             'footerCompanyName' => 'required|string|max:255',
             'footerAddress' => 'nullable|string',
+            'footerDescription' => 'nullable|string',
             'footerPhone' => 'nullable|string|max:50',
             'footerEmail' => 'nullable|email|max:255',
             'footerYoutubeUrl' => 'nullable|url',
@@ -685,6 +688,7 @@ class LandingPageSettings extends Page
         $data = [
             'company_name' => $this->footerCompanyName,
             'address' => $this->footerAddress,
+            'description' => $this->footerDescription,
             'phone' => $this->footerPhone,
             'email' => $this->footerEmail,
             'youtube_url' => $this->footerYoutubeUrl,

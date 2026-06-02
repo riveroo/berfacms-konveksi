@@ -75,7 +75,6 @@ class ProfitLossModuleTest extends TestCase
 
         $response = $this->actingAs($this->user)->get('/admin/reports/profit-loss');
         $response->assertStatus(200);
-        $response->assertViewIs('admin.reports.profit-loss');
         $response->assertSee('Profit & Loss Statement', false);
     }
 

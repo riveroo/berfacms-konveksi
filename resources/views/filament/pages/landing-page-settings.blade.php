@@ -660,6 +660,12 @@
                         @error('footerAddress') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Footer Description</label>
+                        <textarea wire:model="footerDescription" rows="2" class="w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"></textarea>
+                        @error('footerDescription') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
                     <h3 class="font-semibold text-gray-700 mb-4 pt-4 border-t border-gray-200">Social Media Links (Optional)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>

@@ -197,37 +197,18 @@
                             class="text-gray-400 w-24 shrink-0 pt-2 font-bold uppercase tracking-wider text-[10px]">Warna
                             :</span>
                         <div class="flex flex-wrap gap-3 flex-1">
-                            @foreach($product->variants->pluck('color')->filter()->unique() as $color)
+                            @foreach($product->variants as $variant)
                                 <button type="button"
-                                    @click="selectedColor = '{{ $color }}'; selectedVariant = null; updateUI()"
-                                    title="{{ $color }}"
-                                    :class="selectedColor === '{{ $color }}' ? 'ring-2 ring-emerald-500 ring-offset-2 scale-110' : 'hover:scale-110 border-gray-200'"
-                                    class="w-8 h-8 rounded-full border transition-all focus:outline-none shrink-0"
-                                    style="background-color: {{ strtolower($color) }}">
+                                    @click="selectedColor = '{{ $variant->color }}'; selectedVariant = {{ $variant->id }}; onVariantChange()"
+                                    :class="selectedVariant == {{ $variant->id }} ? 'ring-2 ring-emerald-500 ring-offset-2 scale-110' : 'hover:scale-110 border-gray-200'"
+                                    class="w-8 h-8 rounded-full border transition-all focus:outline-none shrink-0 relative group"
+                                    style="background-color: {{ strtolower($variant->color) }}">
+                                    <!-- Tooltip showing variant name on hover -->
+                                    <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-900 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg whitespace-nowrap z-50">
+                                        {{ $variant->variant_name }}
+                                    </span>
                                 </button>
                             @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Varian -->
-                    <div class="flex flex-wrap gap-2 items-center" x-show="selectedColor" x-cloak>
-                        <span class="text-gray-400 w-24 shrink-0 font-bold uppercase tracking-wider text-[10px]">Varian
-                            :</span>
-                        <div class="flex-1 max-w-xs relative">
-                            <select x-model="selectedVariant" @change="onVariantChange()"
-                                class="w-full h-10 pl-4 pr-10 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-gray-50/50 appearance-none outline-none">
-                                <option value="null" disabled>Pilih Varian</option>
-                                <template x-for="v in availableVariants" :key="v.id">
-                                    <option :value="v.id" x-text="v.variant_name"></option>
-                                </template>
-                            </select>
-                            <div
-                                class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </div>
                         </div>
                     </div>
 
@@ -458,6 +439,12 @@
                         setMainImage(null, variant.image_url);
                     }
                     this.selectedSize = null;
+                    if (variant && variant.stocks.length > 0) {
+                        const availableStock = variant.stocks.find(s => s.stock > 0);
+                        if (availableStock) {
+                            this.selectedSize = availableStock.size_option_id;
+                        }
+                    }
                     this.updateUI();
                 },
 

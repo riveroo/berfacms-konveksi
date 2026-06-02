@@ -17,6 +17,7 @@ class LandingFooter extends Model
         'tokopedia_url',
         'shopee_url',
         'facebook_url',
+        'description',
     ];
 
     public function getFormattedWaNumberAttribute()

@@ -10,6 +10,35 @@ class EditProduct extends EditRecord
 {
     protected static string $resource = ProductResource::class;
 
+    public static bool $formActionsAreSticky = true;
+
+    public function isFormDirty(): bool
+    {
+        $original = $this->getRecord()->attributesToArray();
+        foreach ($this->data as $key => $value) {
+            $originalVal = $original[$key] ?? null;
+            // Handle null and empty string comparison safely
+            if (($value === '' || $value === null) && ($originalVal === '' || $originalVal === null)) {
+                continue;
+            }
+            if ($value != $originalVal) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected function getSaveFormAction(): \Filament\Actions\Action
+    {
+        return parent::getSaveFormAction()
+            ->disabled(fn () => !$this->isFormDirty());
+    }
+
+    public function getFooter(): ?\Illuminate\Contracts\View\View
+    {
+        return view('filament.resources.products.pages.edit-product-footer');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
