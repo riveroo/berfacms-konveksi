@@ -13,8 +13,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 mb-32">
             <div class="lg:col-span-1">
                 <a href="{{ url('/') }}" class="flex items-center gap-2 mb-10 group">
-                    @if($appearance && $appearance->header_logo)
-                        <img src="{{ asset('storage/' . $appearance->header_logo) }}" alt="{{ $companyName }}" class="h-12 w-auto object-contain">
+                    @if($footer && $footer->logo)
+                        <img src="{{ asset('storage/' . $footer->logo) }}" alt="{{ $companyName }}" class="h-12 w-auto object-contain">
                     @else
                         <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl transition-transform group-hover:scale-110 shadow-lg shadow-indigo-600/20">
                             {{ substr($companyName, 0, 1) }}

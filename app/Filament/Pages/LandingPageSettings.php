@@ -81,6 +81,8 @@ class LandingPageSettings extends Page
     public $footerCompanyName;
     public $footerAddress;
     public $footerDescription;
+    public $footerLogo;
+    public $footerLogoPath;
     public $footerPhone;
     public $footerEmail;
     public $footerYoutubeUrl;
@@ -102,6 +104,7 @@ class LandingPageSettings extends Page
             $this->footerCompanyName = $this->footer['company_name'];
             $this->footerAddress = $this->footer['address'];
             $this->footerDescription = $this->footer['description'] ?? null;
+            $this->footerLogoPath = $this->footer['logo'] ?? null;
             $this->footerPhone = $this->footer['phone'];
             $this->footerEmail = $this->footer['email'];
             $this->footerYoutubeUrl = $this->footer['youtube_url'];
@@ -675,6 +678,7 @@ class LandingPageSettings extends Page
             'footerCompanyName' => 'required|string|max:255',
             'footerAddress' => 'nullable|string',
             'footerDescription' => 'nullable|string',
+            'footerLogo' => 'nullable|image|max:2048',
             'footerPhone' => 'nullable|string|max:50',
             'footerEmail' => 'nullable|email|max:255',
             'footerYoutubeUrl' => 'nullable|url',
@@ -699,14 +703,20 @@ class LandingPageSettings extends Page
             'facebook_url' => $this->footerFacebookUrl,
         ];
 
+        if ($this->footerLogo) {
+            $data['logo'] = $this->footerLogo->store('landing-footer', 'public');
+        }
+
         if ($this->footer) {
             LandingFooter::where('id', $this->footer['id'])->update($data);
         } else {
             LandingFooter::create($data);
         }
 
+        $this->reset(['footerLogo']);
         $this->loadData();
         $this->footer = LandingFooter::first()->toArray();
+        $this->footerLogoPath = $this->footer['logo'] ?? null;
 
         \Filament\Notifications\Notification::make()
             ->title('Footer settings saved successfully')

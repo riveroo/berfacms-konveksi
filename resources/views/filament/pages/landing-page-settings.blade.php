@@ -637,6 +637,23 @@
             <div x-show="open === 'footer'" x-collapse class="px-6 pb-6 border-t border-gray-100 pt-4">
                 <form wire:submit.prevent="saveFooter" class="bg-gray-50 rounded-lg p-5 border border-gray-200">
                     <h3 class="font-semibold text-gray-700 mb-4">General Information</h3>
+                    
+                    @if($footerLogoPath)
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Current Footer Logo</label>
+                            <div class="p-4 bg-white rounded-lg inline-block border border-gray-200">
+                                <img src="{{ asset('storage/' . $footerLogoPath) }}" alt="Footer Logo" class="h-10 w-auto object-contain">
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Upload Footer Logo</label>
+                        <input type="file" wire:model="footerLogo" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-gray-300 rounded-md p-1 bg-white">
+                        @error('footerLogo') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        <div wire:loading wire:target="footerLogo" class="text-xs text-primary-600 mt-1">Uploading logo...</div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-500">*</span></label>

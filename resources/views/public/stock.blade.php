@@ -192,10 +192,10 @@
                         <thead
                             class="bg-slate-50 uppercase text-[10px] text-slate-500 font-bold tracking-wider sticky top-0 z-10 shadow-sm shadow-slate-200/50">
                             <tr>
-                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200">Product Detail</th>
+                                <th scope="col" class="px-6 py-4 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200 text-sm md:text-base font-black text-slate-700">Product Detail</th>
                                 @foreach($sizes as $size)
                                     <th scope="col"
-                                        class="px-4 py-4 text-center whitespace-nowrap bg-slate-50 border-l border-slate-100">
+                                        class="px-8 py-4 text-center whitespace-nowrap bg-slate-50 border-l border-slate-100 min-w-[120px] text-sm md:text-base font-black text-slate-700 tracking-wider">
                                         {{ $size->name }}
                                     </th>
                                 @endforeach
@@ -205,35 +205,22 @@
                             @forelse($variants as $variant)
                                 <tr class="hover:bg-indigo-50/30 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap border-r border-slate-200">
-                                        <div class="flex items-center gap-4">
+                                        <div class="flex items-center gap-3">
                                             <!-- Kolom Pertama: Color -->
                                             <div class="flex-shrink-0">
                                                 @if($variant->color)
-                                                    <span class="w-6 h-6 rounded-full border border-slate-350 shadow-sm block"
+                                                    <span class="w-6 h-6 rounded-full border border-slate-300 shadow-sm block"
                                                         style="background-color: {{ $variant->color }}"></span>
                                                 @else
                                                     <span class="text-xs text-slate-400">-</span>
                                                 @endif
                                             </div>
-                                            <!-- Kolom Kedua: 2 baris -->
-                                            <div class="flex flex-col">
-                                                <!-- Baris 1: Variant Name (font lebih besar) -->
-                                                <div class="text-base font-extrabold text-slate-900 leading-tight mb-1">
-                                                    {{ $variant->variant_name }}
-                                                </div>
-                                                <!-- Baris 2: 2 kolom (Product Name & Type) -->
-                                                <div class="flex items-center gap-3 text-xs text-slate-500">
-                                                    <!-- Kolom 1: Product Name -->
-                                                    <a href="{{ route('products.show', $variant->product_id) }}"
-                                                        class="hover:text-indigo-600 transition-colors font-bold text-slate-700">
-                                                        {{ optional($variant->product)->product_name }}
-                                                    </a>
-                                                    <span class="text-slate-300">|</span>
-                                                    <!-- Kolom 2: Type -->
-                                                    <span class="bg-indigo-50/50 text-indigo-650 px-2 py-0.5 rounded font-bold text-[10px] uppercase tracking-wider">
-                                                        {{ optional($variant->productType)->name ?: '-' }}
-                                                    </span>
-                                                </div>
+                                            <!-- Kolom Kedua: 1 Baris (Nama Produk & Nama Varian Digabung & Bisa Diklik) -->
+                                            <div class="text-sm md:text-base font-extrabold whitespace-nowrap flex items-center gap-2">
+                                                <a href="{{ route('products.show', $variant->product_id) }}"
+                                                    class="text-slate-800 hover:text-indigo-600 transition-colors hover:underline">
+                                                    {{ optional($variant->product)->product_name }} {{ $variant->variant_name }}
+                                                </a>
                                             </div>
                                         </div>
                                     </td>
@@ -242,13 +229,13 @@
                                             $stockItem = $variant->stocks->firstWhere('size_option_id', $size->id);
                                             $qty = $stockItem ? (int)$stockItem->stock : 0;
                                         @endphp
-                                        <td class="px-4 py-4 whitespace-nowrap text-center border-l border-slate-50">
+                                        <td class="px-8 py-4 whitespace-nowrap text-center border-l border-slate-50 text-sm md:text-base">
                                             @if($qty == 0)
                                                 <span class="text-slate-300 font-medium">0</span>
                                             @elseif($qty <= 5)
                                                 <span class="text-rose-600 font-black animate-pulse">{{ $qty }}</span>
                                             @else
-                                                <span class="font-bold text-slate-900">{{ $qty }}</span>
+                                                <span class="font-extrabold text-slate-900">{{ $qty }}</span>
                                             @endif
                                         </td>
                                     @endforeach

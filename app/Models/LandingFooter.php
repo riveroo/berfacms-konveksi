@@ -18,6 +18,7 @@ class LandingFooter extends Model
         'shopee_url',
         'facebook_url',
         'description',
+        'logo',
     ];
 
     public function getFormattedWaNumberAttribute()
