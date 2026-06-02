@@ -199,6 +199,7 @@
                         <div class="flex flex-wrap gap-3 flex-1">
                             @foreach($product->variants as $variant)
                                 <button type="button"
+                                    title="{{ $variant->variant_name }}"
                                     @click="selectedColor = '{{ $variant->color }}'; selectedVariant = {{ $variant->id }}; onVariantChange()"
                                     :class="selectedVariant == {{ $variant->id }} ? 'ring-2 ring-emerald-500 ring-offset-2 scale-110' : 'hover:scale-110 border-gray-200'"
                                     class="w-8 h-8 rounded-full border transition-all focus:outline-none shrink-0 relative group hover:z-50"
