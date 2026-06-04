@@ -22,6 +22,8 @@ class AccountResource extends Resource
     
     protected static ?string $navigationLabel = 'C.O.A (Chart Of Accounts)';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $modelLabel = 'Account';
     
     protected static ?string $pluralModelLabel = 'C.O.A (Chart Of Accounts)';

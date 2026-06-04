@@ -21,10 +21,18 @@ class LandingPageSettings extends Page
     use WithFileUploads;
 
     protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
-    protected static ?string $navigationGroup = 'Page Editor';
-    protected static ?string $navigationLabel = 'Landing Page';
     protected static ?string $slug = 'landing-page';
     protected static string $view = 'filament.pages.landing-page-settings';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Landing Page');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Page Editor');
+    }
 
     public static function canAccess(): bool
     {
@@ -159,7 +167,7 @@ class LandingPageSettings extends Page
     public function saveHero()
     {
         if (count($this->heroes) >= 5) {
-            $this->addError('newHero', 'Maximum 5 hero images allowed.');
+            $this->addError('newHero', __('landing.err_hero_limit'));
             return;
         }
 
@@ -181,7 +189,7 @@ class LandingPageSettings extends Page
         $this->loadData();
         
         \Filament\Notifications\Notification::make()
-            ->title('Hero image uploaded successfully')
+            ->title(__('landing.msg_hero_uploaded'))
             ->success()
             ->send();
     }
@@ -192,7 +200,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Hero image deleted')
+            ->title(__('landing.msg_hero_deleted'))
             ->success()
             ->send();
     }
@@ -206,7 +214,7 @@ class LandingPageSettings extends Page
             $this->loadData();
 
             \Filament\Notifications\Notification::make()
-                ->title('Hero status updated')
+                ->title(__('landing.msg_hero_status'))
                 ->success()
                 ->send();
         }
@@ -254,7 +262,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Hero updated successfully')
+            ->title(__('landing.msg_hero_updated'))
             ->success()
             ->send();
     }
@@ -271,7 +279,7 @@ class LandingPageSettings extends Page
     public function saveValue()
     {
         if (count($this->values) >= 5) {
-            $this->addError('newValue', 'Maximum 5 value cards allowed.');
+            $this->addError('newValue', __('landing.err_value_limit'));
             return;
         }
 
@@ -294,7 +302,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Value card added successfully')
+            ->title(__('landing.msg_value_added'))
             ->success()
             ->send();
     }
@@ -305,7 +313,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Value card deleted')
+            ->title(__('landing.msg_value_deleted'))
             ->success()
             ->send();
     }
@@ -357,7 +365,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Value card updated successfully')
+            ->title(__('landing.msg_value_updated'))
             ->success()
             ->send();
     }
@@ -374,7 +382,7 @@ class LandingPageSettings extends Page
     public function saveLogo()
     {
         if (count($this->logos) >= 6) {
-            $this->addError('newLogo', 'Maximum 6 logos allowed.');
+            $this->addError('newLogo', __('landing.err_logo_limit'));
             return;
         }
 
@@ -394,7 +402,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Logo uploaded successfully')
+            ->title(__('landing.msg_logo_uploaded'))
             ->success()
             ->send();
     }
@@ -405,7 +413,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Logo deleted')
+            ->title(__('landing.msg_logo_deleted'))
             ->success()
             ->send();
     }
@@ -419,7 +427,7 @@ class LandingPageSettings extends Page
             $this->loadData();
 
             \Filament\Notifications\Notification::make()
-                ->title('Logo status updated')
+                ->title(__('landing.msg_logo_status'))
                 ->success()
                 ->send();
         }
@@ -429,7 +437,7 @@ class LandingPageSettings extends Page
     public function saveCategory()
     {
         if (count($this->categories) >= 6) {
-            $this->addError('newCategory', 'Maximum 6 categories allowed.');
+            $this->addError('newCategory', __('landing.err_category_limit'));
             return;
         }
 
@@ -452,7 +460,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Category added successfully')
+            ->title(__('landing.msg_category_added'))
             ->success()
             ->send();
     }
@@ -463,7 +471,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Category deleted')
+            ->title(__('landing.msg_category_deleted'))
             ->success()
             ->send();
     }
@@ -472,7 +480,7 @@ class LandingPageSettings extends Page
     public function savePopularProduct()
     {
         if (count($this->popularProducts) >= 4) {
-            $this->addError('newPopularProduct', 'Maximum 4 products allowed.');
+            $this->addError('newPopularProduct', __('landing.err_popular_limit'));
             return;
         }
 
@@ -489,7 +497,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Product added to popular section')
+            ->title(__('landing.msg_popular_added'))
             ->success()
             ->send();
     }
@@ -500,7 +508,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Product removed from popular section')
+            ->title(__('landing.msg_popular_deleted'))
             ->success()
             ->send();
     }
@@ -521,7 +529,7 @@ class LandingPageSettings extends Page
             LandingBannerCta::where('id', $this->bannerCta['id'])->update(['is_active' => $this->bannerActive]);
             
             \Filament\Notifications\Notification::make()
-                ->title('Banner status updated')
+                ->title(__('landing.msg_banner_status'))
                 ->success()
                 ->send();
         }
@@ -567,7 +575,7 @@ class LandingPageSettings extends Page
         $this->bannerCta = LandingBannerCta::first()->toArray();
 
         \Filament\Notifications\Notification::make()
-            ->title('Banner settings saved successfully')
+            ->title(__('landing.msg_banner_saved'))
             ->success()
             ->send();
     }
@@ -576,7 +584,7 @@ class LandingPageSettings extends Page
     public function saveReview()
     {
         if (count($this->reviews) >= 8) {
-            $this->addError('newReview', 'Maximum 8 reviews allowed.');
+            $this->addError('newReview', __('landing.err_review_limit'));
             return;
         }
 
@@ -597,7 +605,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Review added successfully')
+            ->title(__('landing.msg_review_added'))
             ->success()
             ->send();
     }
@@ -608,7 +616,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Review deleted')
+            ->title(__('landing.msg_review_deleted'))
             ->success()
             ->send();
     }
@@ -658,7 +666,7 @@ class LandingPageSettings extends Page
         $this->loadData();
 
         \Filament\Notifications\Notification::make()
-            ->title('Review updated successfully')
+            ->title(__('landing.msg_review_updated'))
             ->success()
             ->send();
     }
@@ -719,7 +727,7 @@ class LandingPageSettings extends Page
         $this->footerLogoPath = $this->footer['logo'] ?? null;
 
         \Filament\Notifications\Notification::make()
-            ->title('Footer settings saved successfully')
+            ->title(__('landing.msg_footer_saved'))
             ->success()
             ->send();
     }

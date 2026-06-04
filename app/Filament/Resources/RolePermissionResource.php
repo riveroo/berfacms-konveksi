@@ -17,7 +17,15 @@ class RolePermissionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
-    protected static ?string $navigationGroup = 'User Management';
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Roles & Permission');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.User Management');
+    }
 
     protected static ?string $modelLabel = 'Role & Permission';
     protected static ?string $pluralModelLabel = 'Roles & Permissions';

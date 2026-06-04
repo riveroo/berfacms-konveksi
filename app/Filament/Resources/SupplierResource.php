@@ -16,8 +16,17 @@ class SupplierResource extends Resource
     protected static ?string $model = Supplier::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-truck';
-    protected static ?string $navigationGroup = 'Inventory';
     protected static ?int $navigationSort = 7;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Suppliers');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Inventory');
+    }
 
     public static function canViewAny(): bool
     {

@@ -19,9 +19,17 @@ class StockAdjustmentResource extends Resource
     protected static ?string $slug = 'adjustment';
 
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
-    protected static ?string $navigationGroup = 'Inventory';
-    protected static ?string $navigationLabel = 'Adjustment';
     protected static ?int $navigationSort = 5;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Adjustment');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Inventory');
+    }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {

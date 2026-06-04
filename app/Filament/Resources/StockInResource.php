@@ -18,10 +18,18 @@ class StockInResource extends Resource
     protected static ?string $model = StockIn::class;
     protected static ?string $slug = 'stock-in';
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-down-tray';
-    protected static ?string $navigationGroup = 'Inventory';
-    protected static ?string $navigationLabel = 'Stock In';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-left-on-rectangle';
     protected static ?int $navigationSort = 3;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Stock In');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Inventory');
+    }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {

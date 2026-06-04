@@ -6,6 +6,11 @@ use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
 {
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Dashboard');
+    }
+
     public function getColumns(): int | string | array
     {
         return 4;

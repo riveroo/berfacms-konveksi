@@ -18,7 +18,16 @@ class UnitResource extends Resource
     protected static ?string $model = Unit::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';
-    protected static ?string $navigationGroup = 'Master Data';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Units');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Master Data');
+    }
 
     public static function canViewAny(): bool
     {

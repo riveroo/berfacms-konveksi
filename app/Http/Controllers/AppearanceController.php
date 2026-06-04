@@ -58,6 +58,6 @@ class AppearanceController extends Controller
 
         $appearance->save();
 
-        return redirect()->route('admin.appearance.index')->with('success', 'Appearance settings updated successfully.');
+        return redirect()->route('admin.appearance.index')->with('success', __('appearance.success_message'));
     }
 }

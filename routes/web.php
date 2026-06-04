@@ -87,32 +87,43 @@ Route::get('/invoice/{trx_id}', [CheckoutController::class, 'invoice'])->name('i
 Route::get('/lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'id'])) {
         session()->put('locale', $locale);
+        session()->save();
     }
     return redirect()->back();
 })->name('switch.locale');
 
 use App\Http\Controllers\CekStokController;
-Route::middleware(['auth'])->group(function () {
+use App\Http\Controllers\ProductPricingController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\PreOrderController;
+
+Route::middleware([
+    \Filament\Http\Middleware\SetUpPanel::class . ':admin',
+    \Illuminate\Cookie\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Filament\Http\Middleware\AuthenticateSession::class,
+    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+    \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+    \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    \Filament\Http\Middleware\DisableBladeIconComponents::class,
+    \App\Http\Middleware\SetLanguage::class,
+    \Filament\Http\Middleware\DispatchServingFilamentEvent::class,
+    \App\Http\Middleware\CheckMenuPermission::class,
+    'auth',
+])->group(function () {
     Route::get('/cek-stok/product', [CekStokController::class, 'product'])->name('cek-stok.product');
     Route::get('/cek-stok/export', [CekStokController::class, 'downloadTemplate'])->name('cek-stok.export');
     Route::post('/cek-stok/import', [CekStokController::class, 'importStock'])->name('cek-stok.import');
     Route::get('/cek-stok/barang', [CekStokController::class, 'barang'])->name('cek-stok.barang');
-});
 
-use App\Http\Controllers\ProductPricingController;
-Route::middleware(['auth'])->group(function () {
     Route::get('/admin/product-pricing', [ProductPricingController::class, 'index'])->name('admin.product-pricing');
     Route::post('/admin/product-pricing/update/{id}', [ProductPricingController::class, 'update'])->name('admin.product-pricing.update');
     Route::get('/admin/product-pricing/export', [ProductPricingController::class, 'downloadTemplate'])->name('admin.product-pricing.export');
     Route::post('/admin/product-pricing/import', [ProductPricingController::class, 'importPricing'])->name('admin.product-pricing.import');
-});
 
-use App\Http\Controllers\TransactionController;
-Route::middleware(['auth'])->group(function () {
     Route::get('/admin/transactions', [TransactionController::class, 'index'])->name('transactions.index');
-    Route::get('/admin/transactions/report', [TransactionController::class, 'report'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('transactions.report');
+    Route::get('/admin/transactions/report', [TransactionController::class, 'report'])->name('transactions.report');
     Route::get('/admin/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
     Route::post('/admin/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('/admin/transactions/{id}', [TransactionController::class, 'detail'])->name('transactions.detail');
@@ -124,10 +135,7 @@ Route::middleware(['auth'])->group(function () {
     
     Route::get('/admin/sales-report', [\App\Http\Controllers\SalesReportController::class, 'index'])->name('sales-report.index');
     Route::get('/admin/sales-report/export', [\App\Http\Controllers\SalesReportController::class, 'export'])->name('sales-report.export');
-});
 
-use App\Http\Controllers\PreOrderController;
-Route::middleware(['auth'])->group(function () {
     Route::get('/admin/pre-orders', [PreOrderController::class, 'index'])->name('pre-orders.index');
     Route::get('/admin/pre-orders/create', [PreOrderController::class, 'create'])->name('pre-orders.create');
     Route::post('/admin/pre-orders/store', [PreOrderController::class, 'store'])->name('pre-orders.store');
@@ -164,42 +172,22 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/admin/cash-book/{cashBook}', [\App\Http\Controllers\CashBookController::class, 'destroy'])->name('cash-book.destroy');
 
     // Journal Module
-    Route::get('/admin/journal', [\App\Http\Controllers\JournalController::class, 'index'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('journal.index');
-    Route::get('/admin/journal/export', [\App\Http\Controllers\JournalController::class, 'exportPdf'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('journal.export');
+    Route::get('/admin/journal', [\App\Http\Controllers\JournalController::class, 'index'])->name('journal.index');
+    Route::get('/admin/journal/export', [\App\Http\Controllers\JournalController::class, 'exportPdf'])->name('journal.export');
 
     // Profit & Loss Report Module
-    Route::get('/admin/reports/profit-loss', \App\Filament\Pages\ProfitLoss::class)
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('reports.profit-loss');
-    Route::get('/admin/reports/profit-loss/drilldown', [\App\Http\Controllers\ProfitLossController::class, 'drilldown'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('reports.profit-loss.drilldown');
-    Route::get('/admin/reports/profit-loss/export-pdf', [\App\Http\Controllers\ProfitLossController::class, 'exportPdf'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('reports.profit-loss.export-pdf');
-    Route::get('/admin/reports/profit-loss/export-excel', [\App\Http\Controllers\ProfitLossController::class, 'exportExcel'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('reports.profit-loss.export-excel');
+    Route::get('/admin/reports/profit-loss', \App\Filament\Pages\ProfitLoss::class)->name('reports.profit-loss');
+    Route::get('/admin/reports/profit-loss/drilldown', [\App\Http\Controllers\ProfitLossController::class, 'drilldown'])->name('reports.profit-loss.drilldown');
+    Route::get('/admin/reports/profit-loss/export-pdf', [\App\Http\Controllers\ProfitLossController::class, 'exportPdf'])->name('reports.profit-loss.export-pdf');
+    Route::get('/admin/reports/profit-loss/export-excel', [\App\Http\Controllers\ProfitLossController::class, 'exportExcel'])->name('reports.profit-loss.export-excel');
 
     // General Ledger Module Exports
-    Route::get('/admin/general-ledger/export-excel', [\App\Http\Controllers\GeneralLedgerController::class, 'exportExcel'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('admin.general-ledger.export-excel');
-    Route::get('/admin/general-ledger/export-pdf', [\App\Http\Controllers\GeneralLedgerController::class, 'exportPdf'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('admin.general-ledger.export-pdf');
+    Route::get('/admin/general-ledger/export-excel', [\App\Http\Controllers\GeneralLedgerController::class, 'exportExcel'])->name('admin.general-ledger.export-excel');
+    Route::get('/admin/general-ledger/export-pdf', [\App\Http\Controllers\GeneralLedgerController::class, 'exportPdf'])->name('admin.general-ledger.export-pdf');
 
     // Balance Sheet Module Exports
-    Route::get('/admin/balance-sheet/export-excel', [\App\Http\Controllers\BalanceSheetController::class, 'exportExcel'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('admin.balance-sheet.export-excel');
-    Route::get('/admin/balance-sheet/export-pdf', [\App\Http\Controllers\BalanceSheetController::class, 'exportPdf'])
-        ->middleware(\App\Http\Middleware\CheckMenuPermission::class)
-        ->name('admin.balance-sheet.export-pdf');
+    Route::get('/admin/balance-sheet/export-excel', [\App\Http\Controllers\BalanceSheetController::class, 'exportExcel'])->name('admin.balance-sheet.export-excel');
+    Route::get('/admin/balance-sheet/export-pdf', [\App\Http\Controllers\BalanceSheetController::class, 'exportPdf'])->name('admin.balance-sheet.export-pdf');
 });
 
 

@@ -19,9 +19,17 @@ class StockOutResource extends Resource
     protected static ?string $slug = 'stock-out';
 
     protected static ?string $navigationIcon = 'heroicon-o-arrow-up-tray';
-    protected static ?string $navigationGroup = 'Inventory';
-    protected static ?string $navigationLabel = 'Stock Out';
     protected static ?int $navigationSort = 4;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Stock Out');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Inventory');
+    }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {

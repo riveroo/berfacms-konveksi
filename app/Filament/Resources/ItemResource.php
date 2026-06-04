@@ -18,8 +18,17 @@ class ItemResource extends Resource
     protected static ?string $model = Item::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
-    protected static ?string $navigationGroup = 'Inventory';
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Items');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Inventory');
+    }
 
     public static function canViewAny(): bool
     {

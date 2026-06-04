@@ -19,7 +19,15 @@ class SizeOptionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
-    protected static ?string $navigationGroup = 'Master Data';
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Size Option');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('sidebar.Master Data');
+    }
 
     public static function canViewAny(): bool
     {
