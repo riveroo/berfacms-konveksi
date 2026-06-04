@@ -113,26 +113,23 @@
         <div
             class="bg-white dark:bg-gray-900 shadow-sm rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800 text-sm">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800 text-xs">
                     <thead
                         class="bg-gray-50 dark:bg-gray-800/50 uppercase text-[10px] text-gray-500 font-bold tracking-wider sticky top-0 z-10 shadow-sm shadow-gray-200/50 dark:shadow-gray-900/50">
                         <tr>
                             <th scope="col"
-                                class="px-6 py-4 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">ID</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">ID</th>
                             <th scope="col"
-                                class="px-6 py-4 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Product
-                                Name</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Product Name</th>
                             <th scope="col"
-                                class="px-6 py-4 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Variant
-                                Name</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Variant Name</th>
                             <th scope="col"
-                                class="px-6 py-4 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Color</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Color</th>
                             <th scope="col"
-                                class="px-6 py-4 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700">
-                                Type</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700">Type</th>
                             @foreach($sizes as $size)
                                 <th scope="col"
-                                    class="px-4 py-4 text-center whitespace-nowrap bg-gray-50 dark:bg-gray-800/50 border-l border-gray-100 dark:border-gray-800">
+                                    class="px-3 py-2 text-center whitespace-nowrap bg-gray-50 dark:bg-gray-800/50 border-l border-gray-100 dark:border-gray-800">
                                     {{ $size->name }}
                                 </th>
                             @endforeach
@@ -141,24 +138,24 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
                         @foreach($variants as $variant)
                             <tr class="hover:bg-indigo-50/50 dark:hover:bg-white/5 transition-colors">
-                                <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-gray-100">
+                                <td class="px-3 py-1.5 whitespace-nowrap font-medium text-gray-900 dark:text-gray-100">
                                     {{ $variant->variant_code ?: '-' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
+                                <td class="px-3 py-1.5 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
                                     <a href="{{ url('/admin/products/' . $variant->product_id) }}" 
                                        class="text-indigo-600 dark:text-indigo-400 hover:underline"
                                        title="{{ optional($variant->product)->product_name }}">
                                         {{ \Illuminate\Support\Str::limit(optional($variant->product)->product_name, 20, '...') }}
                                     </a>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
+                                <td class="px-3 py-1.5 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
                                     {{ $variant->variant_name }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300">
+                                <td class="px-3 py-1.5 whitespace-nowrap text-gray-700 dark:text-gray-300">
                                     <div class="flex items-center justify-center">
                                         @if($variant->color)
                                             <span
-                                                class="w-5 h-5 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm"
+                                                class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm block"
                                                 style="background-color: {{ $variant->color }}"
                                                 title="{{ $variant->color }}"></span>
                                         @else
@@ -167,7 +164,7 @@
                                     </div>
                                 </td>
                                 <td
-                                    class="px-6 py-4 whitespace-nowrap text-gray-500 dark:text-gray-400 border-r border-gray-200 dark:border-gray-800">
+                                    class="px-3 py-1.5 whitespace-nowrap text-gray-500 dark:text-gray-400 border-r border-gray-200 dark:border-gray-800">
                                     {{ optional($variant->productType)->name ?: '-' }}
                                 </td>
                                 @foreach($sizes as $size)
@@ -175,7 +172,7 @@
                                         $stockItem = $variant->stocks->firstWhere('size_option_id', $size->id);
                                     @endphp
                                     <td
-                                        class="px-4 py-4 whitespace-nowrap text-center text-gray-700 dark:text-gray-300 border-l border-gray-50 dark:border-gray-800/50 {{ $stockItem && $stockItem->stock > 0 ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-600' }}">
+                                        class="px-3 py-1.5 whitespace-nowrap text-center text-gray-700 dark:text-gray-300 border-l border-gray-50 dark:border-gray-800/50 {{ $stockItem && $stockItem->stock > 0 ? 'font-bold text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-600' }}">
                                         {{ $stockItem ? (int)$stockItem->stock : '-' }}
                                     </td>
                                 @endforeach
