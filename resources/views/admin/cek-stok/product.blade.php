@@ -145,8 +145,10 @@
                                     {{ $variant->variant_code ?: '-' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
-                                    <a href="{{ url('/admin/products/' . $variant->product_id) }}" class="text-indigo-600 dark:text-indigo-400 hover:underline">
-                                        {{ optional($variant->product)->product_name }}
+                                    <a href="{{ url('/admin/products/' . $variant->product_id) }}" 
+                                       class="text-indigo-600 dark:text-indigo-400 hover:underline"
+                                       title="{{ optional($variant->product)->product_name }}">
+                                        {{ \Illuminate\Support\Str::limit(optional($variant->product)->product_name, 20, '...') }}
                                     </a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300 font-medium">
