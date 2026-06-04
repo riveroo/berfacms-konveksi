@@ -143,7 +143,14 @@
                                         <div class="text-gray-600 dark:text-gray-400 font-medium" x-text="item.variant_name"></div>
                                         <div class="text-xs text-indigo-500 font-bold mt-0.5" x-text="'Size ' + item.size_name"></div>
                                     </td>
-                                    <td class="px-4 py-4 text-right text-gray-600 dark:text-gray-450 font-mono font-bold" x-text="formatRupiah(item.price)"></td>
+                                    <!-- Price Input -->
+                                    <td class="px-4 py-4 text-right min-w-[130px]">
+                                        <div class="relative inline-block">
+                                            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">Rp</span>
+                                            <input type="number" x-model.number="item.price" @input="validatePrice(index)" min="0"
+                                                class="w-28 h-9 pl-7 pr-1.5 text-right text-sm font-bold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/30 outline-none transition">
+                                        </div>
+                                    </td>
                                     
                                     <!-- QTY Input -->
                                     <td class="px-4 py-4 text-center min-w-[100px]">
@@ -570,6 +577,19 @@
                     }
                     if (item.discount > item.price) {
                         alert('Discount cannot exceed the selling price.');
+                        item.discount = item.price;
+                    }
+                },
+
+                validatePrice(index) {
+                    let item = this.items[index];
+                    if (item.price === '' || item.price === null || isNaN(item.price)) {
+                        return;
+                    }
+                    if (item.price < 0) {
+                        item.price = 0;
+                    }
+                    if (item.discount > item.price) {
                         item.discount = item.price;
                     }
                 },
