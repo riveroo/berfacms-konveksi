@@ -322,6 +322,14 @@ Route::get('/run-superadmin-seeder', function () {
         return 'Terjadi Error: ' . $e->getMessage();
     }
 });
+Route::get('/clear-view', function () {
+    try {
+        Artisan::call('view:clear');
+        return 'Blade view cache cleared successfully! <br><pre>' . Artisan::output() . '</pre>';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
 
 Route::get('/clear-config', function () {
     try {

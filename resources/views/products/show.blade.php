@@ -224,7 +224,7 @@
                             <span>Warna :</span>
                             <span class="text-[11px] font-extrabold text-emerald-600 transition-colors duration-200 block normal-case" x-text="hoveredVariantName || getSelectedVariantName()"></span>
                         </div>
-                        <div class="flex flex-wrap gap-3 flex-1 max-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
+                        <div class="flex flex-wrap gap-3 flex-1 max-h-[120px] overflow-y-auto p-1.5 pr-2 scrollbar-thin scrollbar-thumb-gray-200">
                             @foreach($product->variants as $variant)
                                 <button type="button"
                                     title="{{ $variant->variant_name }}"

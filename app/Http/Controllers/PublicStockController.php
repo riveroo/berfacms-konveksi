@@ -24,10 +24,18 @@ class PublicStockController extends Controller
                 $q->where('is_active', true);
             })
             ->orderBy(
-                \App\Models\Product::select('product_name')
+                \App\Models\Product::select('sort_order')
                     ->whereColumn('products.id', 'variants.product_id')
-                    ->limit(1)
-            );
+                    ->limit(1),
+                'asc'
+            )
+            ->orderBy(
+                \App\Models\Product::select('created_at')
+                    ->whereColumn('products.id', 'variants.product_id')
+                    ->limit(1),
+                'desc'
+            )
+            ->orderBy('variant_name', 'asc');
 
         if ($typeId) {
             $query->where('product_type_id', $typeId);

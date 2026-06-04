@@ -79,4 +79,5 @@ These special diagnostic and maintenance routes are available for managing the p
 * **`/run-auth-seeder`**: Executes essential auth seeders only (`RbacSeeder` and `AccountSeeder`) to setup/restore default Roles, Permissions, Super Admin user, and standard Chart of Accounts (COA) without touching existing business data.
 * **`/run-migration`** or **`/migrate-database`**: Runs `php artisan migrate --force` to update database schemas instantly.
 * **`/clear-config`**: Clears system configuration, routes, views, and application caches safely.
+* **`/clear-view`**: Clears Blade view compiler cache specifically (`php artisan view:clear`) to compile fresh templates.
 * **`/admin/fix-storage`**: Creates a physical public storage link directory if `symlink` or terminal functions are restricted by the hosting provider.
