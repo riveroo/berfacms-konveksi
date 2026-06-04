@@ -57,7 +57,34 @@
     </div>
 
     @php
-        $defaultVariant = $product->variants->count() > 0 ? $product->variants->random() : null;
+        $requestedVariantId = request()->query('variant_id');
+        $defaultVariant = null;
+        $defaultSizeId = null;
+
+        if ($requestedVariantId) {
+            $defaultVariant = $product->variants->firstWhere('id', $requestedVariantId);
+            if ($defaultVariant) {
+                // Select a random size from those with stock > 0
+                $availableStocks = $defaultVariant->stocks->where('stock', '>', 0);
+                if ($availableStocks->isNotEmpty()) {
+                    $defaultSizeId = $availableStocks->random()->size_option_id;
+                } else {
+                    $anyStock = $defaultVariant->stocks;
+                    if ($anyStock->isNotEmpty()) {
+                        $defaultSizeId = $anyStock->random()->size_option_id;
+                    }
+                }
+            }
+        }
+
+        if (!$defaultVariant) {
+            $defaultVariant = $product->variants->count() > 0 ? $product->variants->random() : null;
+            if ($defaultVariant && $defaultVariant->stocks->isNotEmpty()) {
+                $availableStocks = $defaultVariant->stocks->where('stock', '>', 0);
+                $defaultSizeId = $availableStocks->isNotEmpty() ? $availableStocks->first()->size_option_id : $defaultVariant->stocks->first()->size_option_id;
+            }
+        }
+
         $images = [];
         if ($product->thumbnail) {
             $images[] = Storage::url($product->thumbnail);
@@ -197,7 +224,7 @@
                             <span>Warna :</span>
                             <span class="text-[11px] font-extrabold text-emerald-600 transition-colors duration-200 block normal-case" x-text="hoveredVariantName || getSelectedVariantName()"></span>
                         </div>
-                        <div class="flex flex-wrap gap-3 flex-1">
+                        <div class="flex flex-wrap gap-3 flex-1 max-h-[120px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-200">
                             @foreach($product->variants as $variant)
                                 <button type="button"
                                     title="{{ $variant->variant_name }}"
@@ -421,10 +448,16 @@
                         if (variant && variant.image_url) {
                             setMainImage(null, variant.image_url);
                         }
-                        if (variant && variant.stocks.length > 0) {
-                            const availableStock = variant.stocks.find(s => s.stock > 0);
-                            if (availableStock) this.selectedSize = availableStock.size_option_id;
-                        }
+                        
+                        // Use default size from backend if set
+                        @if(isset($defaultSizeId) && $defaultSizeId)
+                            this.selectedSize = {{ $defaultSizeId }};
+                        @else
+                            if (variant && variant.stocks.length > 0) {
+                                const availableStock = variant.stocks.find(s => s.stock > 0);
+                                if (availableStock) this.selectedSize = availableStock.size_option_id;
+                            }
+                        @endif
                     }
                     this.updateUI();
                 },

@@ -218,7 +218,7 @@
                                             <!-- Kolom 2 -->
                                             <div class="flex flex-col">
                                                 <!-- Kolom 2 Baris 1: Variant Name (Ukuran lebih besar, dapat diklik, warna hitam) -->
-                                                <a href="{{ route('products.show', $variant->product_id) }}"
+                                                <a href="{{ route('products.show', $variant->product_id) }}?variant_id={{ $variant->id }}"
                                                     class="text-xs md:text-sm font-extrabold text-slate-900 hover:text-indigo-600 transition-colors hover:underline">
                                                     {{ $variant->variant_name }}
                                                 </a>
