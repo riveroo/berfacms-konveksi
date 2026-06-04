@@ -188,14 +188,14 @@
             <!-- Stock List -->
             <div class="bg-white shadow-sm rounded-2xl border border-slate-200 overflow-hidden mb-12">
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200 text-sm">
+                    <table class="min-w-full divide-y divide-slate-200 text-xs">
                         <thead
                             class="bg-slate-50 uppercase text-[10px] text-slate-500 font-bold tracking-wider sticky top-0 z-10 shadow-sm shadow-slate-200/50">
                             <tr>
-                                <th scope="col" class="px-4 py-2.5 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200 text-sm md:text-base font-black text-slate-700">Product Detail</th>
+                                <th scope="col" class="px-3 py-1.5 text-left whitespace-nowrap bg-slate-50 border-r border-slate-200 text-xs md:text-sm font-black text-slate-700">Product Detail</th>
                                 @foreach($sizes as $size)
                                     <th scope="col"
-                                        class="px-4 py-2.5 text-center whitespace-nowrap bg-slate-50 border-l border-slate-100 min-w-[80px] text-sm md:text-base font-black text-slate-700 tracking-wider">
+                                        class="px-3 py-1.5 text-center whitespace-nowrap bg-slate-50 border-l border-slate-100 min-w-[80px] text-xs md:text-sm font-black text-slate-700 tracking-wider">
                                         {{ $size->name }}
                                     </th>
                                 @endforeach
@@ -204,23 +204,29 @@
                         <tbody class="divide-y divide-slate-200 bg-white">
                             @forelse($variants as $variant)
                                 <tr class="hover:bg-indigo-50/30 transition-colors">
-                                    <td class="px-4 py-2 whitespace-nowrap border-r border-slate-200">
+                                    <td class="px-3 py-1.5 whitespace-nowrap border-r border-slate-200">
                                         <div class="flex items-center gap-3">
-                                            <!-- Kolom Pertama: Color -->
+                                            <!-- Kolom 1: Color -->
                                             <div class="flex-shrink-0">
                                                 @if($variant->color)
-                                                    <span class="w-4 h-4 rounded-full border border-slate-300 shadow-sm block"
+                                                    <span class="w-3 h-3 rounded-full border border-slate-300 shadow-sm block"
                                                         style="background-color: {{ $variant->color }}"></span>
                                                 @else
-                                                    <span class="text-xs text-slate-400">-</span>
+                                                    <span class="text-[10px] text-slate-400">-</span>
                                                 @endif
                                             </div>
-                                            <!-- Kolom Kedua: 1 Baris (Nama Produk & Nama Varian Digabung & Bisa Diklik) -->
-                                            <div class="text-sm md:text-base font-extrabold whitespace-nowrap flex items-center gap-2">
+                                            <!-- Kolom 2 -->
+                                            <div class="flex flex-col">
+                                                <!-- Kolom 2 Baris 1: Variant Name (Ukuran lebih besar, dapat diklik, warna hitam) -->
                                                 <a href="{{ route('products.show', $variant->product_id) }}"
-                                                    class="text-slate-800 hover:text-indigo-600 transition-colors hover:underline">
-                                                    {{ optional($variant->product)->product_name }} {{ $variant->variant_name }}
+                                                    class="text-xs md:text-sm font-extrabold text-slate-900 hover:text-indigo-600 transition-colors hover:underline">
+                                                    {{ $variant->variant_name }}
                                                 </a>
+                                                <!-- Kolom 2 Baris 2: Product Name & Type -->
+                                                <div class="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium">
+                                                    <span>{{ optional($variant->product)->product_name }}</span>
+                                                    <span>- {{ optional($variant->productType)->name ?? '-' }}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -229,7 +235,7 @@
                                             $stockItem = $variant->stocks->firstWhere('size_option_id', $size->id);
                                             $qty = $stockItem ? (int)$stockItem->stock : 0;
                                         @endphp
-                                        <td class="px-4 py-2 whitespace-nowrap text-center border-l border-slate-50 text-sm md:text-base">
+                                        <td class="px-3 py-1.5 whitespace-nowrap text-center border-l border-slate-50 text-xs md:text-sm">
                                             @if($qty == 0)
                                                 <span class="text-slate-300 font-medium">0</span>
                                             @elseif($qty <= 5)
