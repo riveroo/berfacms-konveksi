@@ -142,7 +142,9 @@ class TransactionController extends Controller
     public function detail($id)
     {
         $transaction = Transaction::with(['client', 'details.product', 'details.variant', 'details.sizeOption'])->findOrFail($id);
-        return view('admin.transactions.detail', compact('transaction'));
+        $transferToAccounts = \App\Models\Account::where('type', 'asset')->where('is_active', true)->get();
+        $categories = \App\Models\Account::where('is_active', true)->get();
+        return view('admin.transactions.detail', compact('transaction', 'transferToAccounts', 'categories'));
     }
 
     public function cancel(Request $request, $id, \App\Services\UpdateTransactionService $updateTransactionService)
@@ -160,6 +162,8 @@ class TransactionController extends Controller
             'bank_name' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
             'payment_date' => 'nullable|date',
+            'transfer_to_id' => 'required|exists:accounts,id',
+            'category_id' => 'required|exists:accounts,id',
         ]);
 
         $transaction = Transaction::findOrFail($id);

@@ -339,6 +339,26 @@
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
                         </div>
                         <div>
+                            <x-text variant="label" class="mb-1.5">Transfer To</x-text>
+                            <select name="transfer_to_id" required
+                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
+                                <option value="">Select Account</option>
+                                @foreach($transferToAccounts as $account)
+                                    <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->code }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <x-text variant="label" class="mb-1.5">Category</x-text>
+                            <select name="category_id" required
+                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
+                                <option value="">Select Category</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }} ({{ $category->code }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
                             <x-text variant="label" class="mb-1.5">{{ __('transaction.amount') }}</x-text>
                             <input type="number" name="amount" value="{{ (int) max(0, $transaction->grand_total - $transaction->payments()->sum('amount')) }}"
                                 required min="1" max="{{ max(0, $transaction->grand_total - $transaction->payments()->sum('amount')) }}"

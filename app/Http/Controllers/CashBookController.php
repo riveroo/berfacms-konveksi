@@ -165,66 +165,6 @@ class CashBookController extends Controller
 
     private function generateJournal(CashTransaction $tx)
     {
-        $journal = JournalEntry::create([
-            'date' => $tx->date,
-            'description' => $tx->description,
-            'reference_type' => 'cashbook',
-            'reference_id' => $tx->id,
-        ]);
-
-        if ($tx->type === 'money_in' || $tx->type === 'in') {
-            JournalDetail::create([
-                'journal_entry_id' => $journal->id,
-                'account_id' => $tx->account_id,
-                'debit' => $tx->amount,
-                'credit' => 0,
-                'created_at' => $tx->date,
-                'updated_at' => $tx->date,
-            ]);
-            JournalDetail::create([
-                'journal_entry_id' => $journal->id,
-                'account_id' => $tx->counter_account_id,
-                'debit' => 0,
-                'credit' => $tx->amount,
-                'created_at' => $tx->date,
-                'updated_at' => $tx->date,
-            ]);
-        } elseif ($tx->type === 'transfer') {
-            JournalDetail::create([
-                'journal_entry_id' => $journal->id,
-                'account_id' => $tx->account_id, // destination account
-                'debit' => $tx->amount,
-                'credit' => 0,
-                'created_at' => $tx->date,
-                'updated_at' => $tx->date,
-            ]);
-            JournalDetail::create([
-                'journal_entry_id' => $journal->id,
-                'account_id' => $tx->counter_account_id, // source account
-                'debit' => 0,
-                'credit' => $tx->amount,
-                'created_at' => $tx->date,
-                'updated_at' => $tx->date,
-            ]);
-        } elseif ($tx->type === 'money_out' || $tx->type === 'out') {
-            // CREDIT (cash/bank)
-            JournalDetail::create([
-                'journal_entry_id' => $journal->id,
-                'account_id' => $tx->account_id,
-                'debit' => 0,
-                'credit' => $tx->amount,
-                'created_at' => $tx->date,
-                'updated_at' => $tx->date,
-            ]);
-            // DEBIT (expense/account)
-            JournalDetail::create([
-                'journal_entry_id' => $journal->id,
-                'account_id' => $tx->counter_account_id,
-                'debit' => $tx->amount,
-                'credit' => 0,
-                'created_at' => $tx->date,
-                'updated_at' => $tx->date,
-            ]);
-        }
+        $tx->generateJournal();
     }
 }

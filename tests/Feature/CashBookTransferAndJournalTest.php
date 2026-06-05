@@ -19,12 +19,28 @@ class CashBookTransferAndJournalTest extends TestCase
     protected Account $bankAccount;
     protected Account $expenseAccount;
     protected Account $revenueAccount;
+    protected \App\Models\Role $role;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->user = User::factory()->create();
+        $this->role = \App\Models\Role::create([
+            'name' => 'Finance Staff',
+            'is_active' => true,
+        ]);
+
+        $this->user = User::factory()->create([
+            'role_id' => $this->role->id,
+            'is_active' => true,
+        ]);
+
+        $permission = \App\Models\Permission::create([
+            'menu_name' => 'Cash Book',
+            'route' => 'admin/cash-book',
+            'can_access' => true,
+        ]);
+        $this->role->permissions()->attach($permission->id);
 
         // Create accounts
         $this->cashAccount = Account::create([

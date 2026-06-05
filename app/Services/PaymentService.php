@@ -30,6 +30,20 @@ class PaymentService
                 'created_by' => $userId ?? auth()->id(),
             ]);
 
+            $cashTx = \App\Models\CashTransaction::create([
+                'date' => $payment->payment_date,
+                'description' => 'Pembayaran transaksi - ' . $transaction->trx_id,
+                'type' => 'money_in',
+                'amount' => $payment->amount,
+                'client_id' => $transaction->client_id,
+                'account_id' => $data['transfer_to_id'],
+                'counter_account_id' => $data['category_id'],
+                'reference_type' => 'transaction',
+                'reference_id' => $transaction->trx_id,
+            ]);
+
+            $cashTx->generateJournal();
+
             $newTotalPaid = $totalPaid + $data['amount'];
             
             if ($newTotalPaid == 0) {
