@@ -79,6 +79,13 @@
                     </x-button>
                 </form>
 
+                <!-- Input Deadline Button -->
+                @if($transaction->payment_status !== 'paid')
+                <x-button type="button" @click="deadlineModalOpen = true" variant="outline">
+                    Input Deadline
+                </x-button>
+                @endif
+
                 <!-- Input Payment Button -->
                 @if($transaction->payment_status !== 'paid')
                 <x-button type="button" @click="paymentModalOpen = true" variant="primary">
@@ -303,12 +310,12 @@
                         </div>
                         <div>
                             <x-text variant="label" class="mb-1.5">Bank Name</x-text>
-                            <input type="text" name="bank_name" required placeholder="e.g BCA"
+                            <input type="text" name="bank_name" placeholder="e.g BCA"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
                         </div>
                         <div>
                             <x-text variant="label" class="mb-1.5">Account Number</x-text>
-                            <input type="text" name="account_number" required
+                            <input type="text" name="account_number"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
                         </div>
                         <div>
@@ -332,12 +339,42 @@
             </div>
         </div>
 
+        <!-- Deadline Modal -->
+        <div x-cloak x-show="deadlineModalOpen"
+            class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+            <div @click.away="deadlineModalOpen = false"
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-sm p-6 overflow-hidden">
+                <x-text variant="heading" class="mb-4">Input / Update Deadline</x-text>
+
+                <form action="{{ route('transactions.deadline', $transaction->id) }}" method="POST">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <x-text variant="label" class="mb-1.5">Deadline Date</x-text>
+                            <input type="date" name="deadline" value="{{ $transaction->deadline ? \Carbon\Carbon::parse($transaction->deadline)->format('Y-m-d') : '' }}" required
+                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none">
+                        </div>
+
+                        <div class="flex justify-end gap-2 pt-4">
+                            <x-button type="button" @click="deadlineModalOpen = false" variant="outline" size="sm">
+                                Cancel
+                            </x-button>
+                            <x-button type="submit" variant="primary" size="sm">
+                                Save Deadline
+                            </x-button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('transactionDetail', () => ({
                 paymentModalOpen: false,
+                deadlineModalOpen: false,
             }));
         });
     </script>

@@ -156,8 +156,8 @@ class TransactionController extends Controller
     public function inputPayment(Request $request, $id, \App\Services\PaymentService $paymentService)
     {
         $request->validate([
-            'account_number' => 'required|string',
-            'bank_name' => 'required|string',
+            'account_number' => 'nullable|string',
+            'bank_name' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
             'payment_date' => 'nullable|date',
         ]);
@@ -192,6 +192,31 @@ class TransactionController extends Controller
         return back()->with('success', 'Status updated successfully.');
     }
 
+    public function updateDeadline(Request $request, $id)
+    {
+        $request->validate([
+            'deadline' => 'required|date',
+        ]);
+
+        $transaction = Transaction::findOrFail($id);
+        
+        if ($transaction->payment_status === 'paid') {
+            return back()->withErrors(['deadline' => 'Cannot update deadline for fully paid transactions.']);
+        }
+
+        $transaction->update([
+            'deadline' => $request->deadline,
+        ]);
+
+        \App\Models\TransactionLog::create([
+            'transaction_id' => $transaction->id,
+            'user_id' => auth()->id(),
+            'action' => 'Updated deadline to ' . $request->deadline,
+        ]);
+
+        return back()->with('success', 'Deadline updated successfully.');
+    }
+
     public function create()
     {
         $clients = \App\Models\Client::all();
@@ -205,6 +230,7 @@ class TransactionController extends Controller
             'client_phone' => 'required|string',
             'client_name' => 'required|string',
             'transaction_type' => 'required|in:pre_order,direct_order',
+            'overall_discount' => 'nullable|numeric|min:0',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.variant_id' => 'required|exists:variants,id',
@@ -262,6 +288,7 @@ class TransactionController extends Controller
             'client_name' => 'required|string',
             'transaction_type' => 'required|in:pre_order,direct_order',
             'item_status' => 'required|string',
+            'overall_discount' => 'nullable|numeric|min:0',
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.variant_id' => 'required|exists:variants,id',

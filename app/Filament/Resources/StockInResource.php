@@ -31,6 +31,11 @@ class StockInResource extends Resource
         return __('sidebar.Inventory');
     }
 
+    public static function canViewAny(): bool
+    {
+        return canAccessMenu('admin/stock-ins');
+    }
+
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
         return false;

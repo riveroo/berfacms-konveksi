@@ -132,6 +132,7 @@ Route::middleware([
     Route::put('/admin/transactions/{id}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::post('/admin/transactions/{id}/payment', [TransactionController::class, 'inputPayment'])->name('transactions.payment');
     Route::post('/admin/transactions/{id}/status', [TransactionController::class, 'updateStatus'])->name('transactions.status');
+    Route::post('/admin/transactions/{id}/deadline', [TransactionController::class, 'updateDeadline'])->name('transactions.deadline');
     
     Route::get('/admin/sales-report', [\App\Http\Controllers\SalesReportController::class, 'index'])->name('sales-report.index');
     Route::get('/admin/sales-report/export', [\App\Http\Controllers\SalesReportController::class, 'export'])->name('sales-report.export');

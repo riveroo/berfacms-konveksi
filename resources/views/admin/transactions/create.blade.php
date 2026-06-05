@@ -216,7 +216,7 @@
 
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-gray-500 dark:text-gray-400 pt-1">Overall Discount</span>
-                            <input type="number" x-model="overallDiscount"
+                            <input type="number" x-model.number="overallDiscount" @input="if(overallDiscount < 0) overallDiscount = 0"
                                 class="w-32 h-9 px-3 text-right text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500/50 outline-none transition"
                                 min="0" placeholder="0">
                         </div>

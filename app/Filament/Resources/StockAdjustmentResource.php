@@ -31,6 +31,11 @@ class StockAdjustmentResource extends Resource
         return __('sidebar.Inventory');
     }
 
+    public static function canViewAny(): bool
+    {
+        return canAccessMenu('admin/adjustments');
+    }
+
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
         return false;

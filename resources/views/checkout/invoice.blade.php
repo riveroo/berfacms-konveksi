@@ -297,7 +297,7 @@
         $totalPaid = $transaction->payments->sum('amount');
         $remaining = $transaction->grand_total - $totalPaid;
         $csName = auth()->user() ? auth()->user()->name : 'Yana';
-        $deadlineDate = \Carbon\Carbon::parse($transaction->created_at)->addDays(7)->format('d-M-y');
+        $deadlineDate = $transaction->deadline ? \Carbon\Carbon::parse($transaction->deadline)->format('d-M-y') : '-';
 
         $totalQty = $transaction->details->sum('quantity');
         $totalItemsPrice = $transaction->details->sum('subtotal');
