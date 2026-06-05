@@ -112,10 +112,10 @@
 
         <div
             class="bg-white dark:bg-gray-900 shadow-sm rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
-            <div class="overflow-x-auto">
+            <div class="overflow-auto max-h-[70vh]">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800 text-xs">
                     <thead
-                        class="bg-gray-50 dark:bg-gray-800/50 uppercase text-[10px] text-gray-500 font-bold tracking-wider sticky top-0 z-10 shadow-sm shadow-gray-200/50 dark:shadow-gray-900/50">
+                        class="bg-gray-50 dark:bg-gray-800/50 uppercase text-[10px] text-gray-500 font-bold tracking-wider sticky top-0 z-20">
                         <tr>
                             <th scope="col"
                                 class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">{{ __('product.id_code') }}</th>
