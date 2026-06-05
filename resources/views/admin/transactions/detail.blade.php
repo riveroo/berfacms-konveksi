@@ -19,9 +19,41 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <x-button variant="primary" href="{{ route('invoice.show', $transaction->trx_id) }}" target="_blank">
-                    Invoice
-                </x-button>
+                <div x-data="{ open: false }" class="relative inline-block text-left" @click.away="open = false">
+                    <button type="button" @click="open = !open" 
+                        class="inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition shadow-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900 px-4 py-2 text-sm bg-gray-900 hover:bg-gray-800 text-white dark:bg-white dark:hover:bg-gray-100 dark:text-gray-900 focus:ring-gray-900 dark:focus:ring-white">
+                        <span>Invoice</span>
+                        <svg class="w-4 h-4 ml-1 transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    
+                    <div x-cloak x-show="open" 
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="transform opacity-0 scale-95"
+                         x-transition:enter-end="transform opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="transform opacity-100 scale-100"
+                         x-transition:leave-end="transform opacity-0 scale-95"
+                         class="absolute right-0 mt-2 w-48 rounded-xl shadow-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 focus:outline-none z-50">
+                        <div class="py-1">
+                            <a href="{{ route('invoice.show', $transaction->trx_id) }}" target="_blank" @click="open = false"
+                               class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                                </svg>
+                                <span>Horizontal</span>
+                            </a>
+                            <a href="{{ route('invoice.show', $transaction->trx_id) }}?format=vertical" target="_blank" @click="open = false"
+                               class="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium border-t border-gray-100 dark:border-gray-700/50">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                <span>Vertical</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 <x-button variant="outline" href="{{ route('transactions.index') }}">
                     Back to List
                 </x-button>

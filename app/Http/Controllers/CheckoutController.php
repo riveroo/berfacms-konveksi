@@ -107,11 +107,15 @@ class CheckoutController extends Controller
         return view('checkout.success');
     }
 
-    public function invoice($trx_id)
+    public function invoice(Request $request, $trx_id)
     {
         $transaction = Transaction::where('trx_id', $trx_id)
             ->with(['client', 'details.product', 'details.variant', 'details.sizeOption'])
             ->firstOrFail();
+
+        if ($request->query('format') === 'vertical') {
+            return view('checkout.invoice_vertical', compact('transaction'));
+        }
 
         return view('checkout.invoice', compact('transaction'));
     }
