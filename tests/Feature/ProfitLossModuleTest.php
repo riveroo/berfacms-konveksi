@@ -75,7 +75,7 @@ class ProfitLossModuleTest extends TestCase
 
         $response = $this->actingAs($this->user)->get('/admin/reports/profit-loss');
         $response->assertStatus(200);
-        $response->assertSee('Profit & Loss Statement', false);
+        $response->assertSee(__('finance.profit_loss_statement'));
     }
 
     public function test_profit_loss_calculates_balances_using_debit_credit_rules(): void

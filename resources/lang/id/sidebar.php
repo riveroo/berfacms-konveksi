@@ -32,6 +32,7 @@ return [
     'Journal' => 'Jurnal Umum',
     'Balance Sheet' => 'Neraca',
     'General Ledger' => 'Buku Besar',
+    'Trial Balance' => 'Neraca Saldo',
     'Profit & Loss' => 'Laba Rugi',
     'Master Data' => 'Data Master',
     'Product Type' => 'Kategori Produk',
@@ -40,4 +41,7 @@ return [
     'User Management' => 'Manajemen Pengguna',
     'Account' => 'Akun Pengguna',
     'Roles & Permission' => 'Peran & Hak Akses',
+    'Product Inventory' => 'Persediaan Produk',
+    'Import / Export' => 'Impor / Ekspor',
+    'Pre Order' => 'Pre Order',
 ];

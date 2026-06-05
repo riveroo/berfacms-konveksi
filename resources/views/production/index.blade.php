@@ -4,8 +4,8 @@
             {{-- Header Section --}}
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Production <span class="text-xs font-normal text-gray-400">(v2)</span></h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage and monitor production batches</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ __('production.production') }} <span class="text-xs font-normal text-gray-400">(v2)</span></h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('production.subtitle') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <x-button href="{{ route('production.create') }}" variant="primary" class="w-full sm:w-auto">
@@ -13,7 +13,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
                             </path>
                         </svg>
-                        Add Production
+                        {{ __('production.add_production') }}
                     </x-button>
                 </div>
             </div>
@@ -38,10 +38,10 @@
                     class="flex flex-row items-end gap-6 w-full">
                     {{-- User Filter --}}
                     <div class="flex-1 min-w-0">
-                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 ml-1">User</label>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 ml-1">{{ __('production.user') }}</label>
                         <select name="user_id"
                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none cursor-pointer">
-                            <option value="">All Users</option>
+                            <option value="">{{ __('production.all_users') }}</option>
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}" {{ request('user_id') == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }}
@@ -52,8 +52,7 @@
 
                     {{-- Date Filter --}}
                     <div class="flex-1 min-w-0">
-                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 ml-1">Production
-                            Date</label>
+                        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 ml-1">{{ __('production.production_date') }}</label>
                         <div class="flex items-center gap-1">
                             <input type="date" name="from_date" value="{{ request('from_date') }}"
                                 class="w-full h-10 px-1.5 rounded-lg border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white text-[10px] sm:text-xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none">
@@ -66,9 +65,9 @@
                     {{-- Search Input --}}
                     <div class="flex-1 min-w-0">
                         <label
-                            class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 ml-1">Search</label>
+                            class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1 ml-1">{{ __('production.search') }}</label>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Name or Batch..."
+                            placeholder="{{ __('production.search_placeholder') }}"
                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none">
                     </div>
 
@@ -76,11 +75,11 @@
                     <div class="flex gap-2 w-48 shrink-0">
                         <button type="submit"
                             class="flex-1 h-10 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            Search
+                            {{ __('production.search') }}
                         </button>
                         <a href="{{ route('production.index') }}"
                             class="flex-1 h-10 px-4 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                            Reset
+                            {{ __('production.reset') }}
                         </a>
                     </div>
                 </form>
@@ -95,28 +94,28 @@
                             <tr>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    No</th>
+                                    {{ __('production.no') }}</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    Prod Date</th>
+                                    {{ __('production.prod_date') }}</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    Batch Code</th>
+                                    {{ __('production.batch_code') }}</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    Production Name</th>
+                                    {{ __('production.production_name') }}</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    Materials</th>
+                                    {{ __('production.materials') }}</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    Products</th>
+                                    {{ __('production.products') }}</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    User</th>
+                                    {{ __('production.user') }}</th>
                                 <th scope="col"
                                     class="px-6 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                    Action</th>
+                                    {{ __('production.action') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
@@ -137,10 +136,10 @@
                                         {{ $prod->production_name }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
-                                        {{ $prod->materials->count() }} items
+                                        {{ __('production.items_count', ['count' => $prod->materials->count()]) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400">
-                                        {{ $prod->products->count() }} items
+                                        {{ __('production.items_count', ['count' => $prod->products->count()]) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                                         {{ $prod->user->name }}
@@ -148,14 +147,14 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <a href="{{ route('production.show', $prod->id) }}"
                                             class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
-                                            Detail
+                                            {{ __('production.detail') }}
                                         </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
                                     <td colspan="8" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400">
-                                        No production records found.
+                                        {{ __('production.no_records') }}
                                     </td>
                                 </tr>
                             @endforelse
@@ -167,7 +166,7 @@
                 <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Show</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('production.show') }}</span>
                             <form method="GET" action="{{ route('production.index') }}" id="perPageForm">
                                 @foreach(request()->except('perPage') as $key => $value)
                                     <input type="hidden" name="{{ $key }}" value="{{ $value }}">
@@ -179,7 +178,7 @@
                                     <option value="50" {{ request('perPage') == '50' ? 'selected' : '' }}>50</option>
                                 </select>
                             </form>
-                            <span class="text-sm text-gray-600 dark:text-gray-400">results</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('production.results') }}</span>
                         </div>
 
                         <div class="production-pagination">

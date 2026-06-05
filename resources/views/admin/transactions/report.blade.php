@@ -4,8 +4,8 @@
             {{-- Header Section --}}
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Transactions Dashboard</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Analyze revenue metrics, sales trends, top-selling products, and top spenders.</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ __('transaction.trx_dashboard') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('transaction.trx_dashboard_help') }}</p>
                 </div>
             </div>
 
@@ -13,7 +13,7 @@
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm p-4">
                 <form method="GET" action="{{ route('transactions.report') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('transaction.start_date') }}</label>
                         <input 
                             type="date" 
                             name="start_date" 
@@ -22,7 +22,7 @@
                         >
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('transaction.end_date') }}</label>
                         <input 
                             type="date" 
                             name="end_date" 
@@ -35,13 +35,13 @@
                             type="submit" 
                             class="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white font-medium rounded-lg text-sm transition"
                         >
-                            Filter
+                            {{ __('transaction.filter') }}
                         </button>
                         <a 
                             href="{{ route('transactions.report') }}" 
                             class="flex-1 text-center px-4 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-medium rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                         >
-                            Reset
+                            {{ __('transaction.reset') }}
                         </a>
                     </div>
                 </form>
@@ -56,7 +56,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Revenue</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('transaction.total_revenue') }}</p>
                         <p class="text-xl font-black text-gray-900 dark:text-white whitespace-nowrap mt-0.5">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Products Sold</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('transaction.total_products_sold') }}</p>
                         <p class="text-xl font-black text-gray-900 dark:text-white whitespace-nowrap mt-0.5">{{ number_format($totalProductsSold) }} units</p>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Average Order Value</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('transaction.avg_order_value') }}</p>
                         <p class="text-xl font-black text-gray-900 dark:text-white whitespace-nowrap mt-0.5">Rp {{ number_format($avgOrderValue, 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -88,7 +88,7 @@
 
             {{-- Daily Trend Chart Card --}}
             <div class="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
-                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Daily Sales Trend</h3>
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">{{ __('transaction.daily_sales_trend') }}</h3>
                 <div class="h-80 w-full">
                     <canvas id="salesTrendsChart"></canvas>
                 </div>
@@ -99,15 +99,15 @@
                 {{-- Top-Selling Products Table --}}
                 <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col">
                     <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
-                        <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">Top-Selling Products (Top 5)</h3>
+                        <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">{{ __('transaction.top_selling_products') }}</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 uppercase text-[10px] font-bold">
                                 <tr>
-                                    <th class="px-6 py-3 text-left">Product</th>
-                                    <th class="px-6 py-3 text-center w-24">Qty Sold</th>
-                                    <th class="px-6 py-3 text-right w-40">Total Revenue</th>
+                                    <th class="px-6 py-3 text-left">{{ __('transaction.product') }}</th>
+                                    <th class="px-6 py-3 text-center w-24">{{ __('transaction.qty_sold') }}</th>
+                                    <th class="px-6 py-3 text-right w-40">{{ __('transaction.total_revenue') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -132,7 +132,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-8 text-center text-gray-400 italic">No sales recorded for this period</td>
+                                        <td colspan="3" class="px-6 py-8 text-center text-gray-400 italic">{{ __('transaction.no_sales_recorded') }}</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -143,15 +143,15 @@
                 {{-- Top Customer Spenders Table --}}
                 <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col">
                     <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
-                        <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">Top Spenders (Top 5 Customers)</h3>
+                        <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">{{ __('transaction.top_spenders') }}</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 uppercase text-[10px] font-bold">
                                 <tr>
-                                    <th class="px-6 py-3 text-left">Customer</th>
-                                    <th class="px-6 py-3 text-center w-24">Orders Count</th>
-                                    <th class="px-6 py-3 text-right w-40">Total Spending</th>
+                                    <th class="px-6 py-3 text-left">{{ __('transaction.client') }}</th>
+                                    <th class="px-6 py-3 text-center w-24">{{ __('transaction.orders_count') }}</th>
+                                    <th class="px-6 py-3 text-right w-40">{{ __('transaction.total_spending') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -170,7 +170,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-8 text-center text-gray-400 italic">No customer orders recorded for this period</td>
+                                        <td colspan="3" class="px-6 py-8 text-center text-gray-400 italic">{{ __('transaction.no_cust_orders_recorded') }}</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -192,7 +192,7 @@
                     labels: @json($trendLabels),
                     datasets: [
                         {
-                            label: 'Sales Revenue',
+                            label: '{{ __('transaction.sales_revenue') }}',
                             data: @json($trendData),
                             borderColor: '#6366f1',
                             backgroundColor: 'rgba(99, 102, 241, 0.05)',

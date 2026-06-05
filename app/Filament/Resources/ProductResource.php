@@ -51,7 +51,7 @@ class ProductResource extends Resource
                 Forms\Components\Grid::make(3)
                     ->schema([
                         Forms\Components\Group::make([
-                            Forms\Components\Section::make('Product Details')
+                            Forms\Components\Section::make(fn () => __('product.product_details'))
                                 ->schema([
                                     Forms\Components\TextInput::make('product_name')
                                         ->label(fn () => __('product.product_name'))
@@ -64,11 +64,11 @@ class ProductResource extends Resource
                                         ->columnSpanFull()
                                         ->live(onBlur: true),
                                     Forms\Components\Toggle::make('is_active')
-                                        ->label('Active')
+                                        ->label(fn () => __('product.active'))
                                         ->default(true)
                                         ->live(),
                                     Forms\Components\TextInput::make('sort_order')
-                                        ->label('Urutan')
+                                        ->label(fn () => __('product.urutan'))
                                         ->numeric()
                                         ->default(0)
                                         ->live(onBlur: true),
@@ -76,7 +76,7 @@ class ProductResource extends Resource
                         ])->columnSpan(['default' => 3, 'md' => 2]),
 
                         Forms\Components\Group::make([
-                            Forms\Components\Section::make('Thumbnail')
+                            Forms\Components\Section::make(fn () => __('product.thumbnail'))
                                 ->schema([
                                     Forms\Components\FileUpload::make('thumbnail')
                                         ->hiddenLabel()
@@ -93,7 +93,7 @@ class ProductResource extends Resource
                         ])->columnSpan(['default' => 3, 'md' => 1]),
                     ]),
 
-                Forms\Components\Section::make('Variants')
+                Forms\Components\Section::make(fn () => __('product.variants'))
                     ->schema([
                         \Filament\Forms\Components\Livewire::make(\App\Livewire\ProductVariantsManager::class)
                             ->key('product-variants-manager')
@@ -117,14 +117,14 @@ class ProductResource extends Resource
                     ->label(fn() => __('product.product_name'))
                     ->searchable(),
                 Tables\Columns\TextInputColumn::make('sort_order')
-                    ->label('Urutan')
+                    ->label(fn() => __('product.urutan'))
                     ->sortable()
                     ->rules(['nullable', 'integer', 'min:0']),
                 Tables\Columns\TextColumn::make('variants_count')
-                    ->label('Variants')
+                    ->label(fn() => __('product.variants'))
                     ->counts('variants'),
                 Tables\Columns\TextColumn::make('price_range')
-                    ->label('Price Range')
+                    ->label(fn() => __('product.price_range'))
                     ->getStateUsing(function (Product $record) {
                         $prices = $record->variants->flatMap->stocks->pluck('price')->filter();
                         if ($prices->isEmpty()) {
@@ -140,7 +140,7 @@ class ProductResource extends Resource
                     ->fontFamily('outfit')
                     ->color('rose'),
                 Tables\Columns\TextColumn::make('total_stock')
-                    ->label('Total Stock')
+                    ->label(fn() => __('product.total_stock'))
                     ->getStateUsing(function (Product $record) {
                         return $record->variants->flatMap->stocks->sum('stock');
                     })
@@ -151,7 +151,7 @@ class ProductResource extends Resource
                         default => 'success',
                     }),
                 Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
+                    ->label(fn() => __('product.active'))
                     ->boolean()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
@@ -164,7 +164,7 @@ class ProductResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->label('Details'),
+                    ->label(fn() => __('product.product_details')),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

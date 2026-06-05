@@ -4,15 +4,15 @@
             {{-- Header --}}
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Production Details</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Reviewing production batch: {{ $production->batch_code }}</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ __('production.production_details') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('production.details_subtitle', ['batch' => $production->batch_code]) }}</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <x-button href="{{ route('production.index') }}" variant="outline">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        Back to List
+                        {{ __('production.back_to_list') }}
                     </x-button>
                 </div>
             </div>
@@ -21,26 +21,26 @@
             <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold">1</span>
-                    General Information
+                    {{ __('production.general_info') }}
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Production Date</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.production_date') }}</label>
                         <input type="text" value="{{ $production->production_date->format('Y-m-d H:i') }}" readonly
                             class="w-full h-10 px-3 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 outline-none cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Batch Code</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.batch_code') }}</label>
                         <input type="text" value="{{ $production->batch_code }}" readonly
                             class="w-full h-10 px-3 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-indigo-400 font-bold outline-none cursor-not-allowed">
                     </div>
                     <div class="md:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Production Label / Name</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.production_label') }}</label>
                         <input type="text" value="{{ $production->production_name }}" readonly
                             class="w-full h-10 px-3 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 outline-none cursor-not-allowed">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">User</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.user') }}</label>
                         <input type="text" value="{{ $production->user->name }}" readonly
                             class="w-full h-10 px-3 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 outline-none cursor-not-allowed">
                     </div>
@@ -51,15 +51,15 @@
             <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-bold">2</span>
-                    Material Consumption (Stock Out)
+                    {{ __('production.material_consumption') }}
                 </h3>
                 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                         <thead>
                             <tr class="text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                <th class="px-4 py-2">Material</th>
-                                <th class="px-4 py-2 w-32">Qty</th>
+                                <th class="px-4 py-2">{{ __('production.materials') }}</th>
+                                <th class="px-4 py-2 w-32">{{ __('production.qty') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -84,17 +84,17 @@
             <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-bold">3</span>
-                    Product Output (Stock In)
+                    {{ __('production.product_output') }}
                 </h3>
                 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                         <thead>
                             <tr class="text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                <th class="px-4 py-2">Product</th>
-                                <th class="px-4 py-2">Variant</th>
-                                <th class="px-4 py-2">Size</th>
-                                <th class="px-4 py-2 w-32">Qty</th>
+                                <th class="px-4 py-2">{{ __('production.products') }}</th>
+                                <th class="px-4 py-2">{{ __('production.variant') }}</th>
+                                <th class="px-4 py-2">{{ __('production.size') }}</th>
+                                <th class="px-4 py-2 w-32">{{ __('production.qty') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800">

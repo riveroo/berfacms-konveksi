@@ -194,20 +194,27 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.general-ledger'))
                     ->visible(fn() => canAccessMenu('admin/general-ledger'))
                     ->sort(7),
+                \Filament\Navigation\NavigationItem::make(fn() => __('sidebar.Trial Balance'))
+                    ->group(fn() => __('sidebar.Accounting'))
+                    ->url(fn(): string => route('filament.admin.pages.trial-balance'))
+                    ->icon('heroicon-o-scale')
+                    ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.trial-balance'))
+                    ->visible(fn() => canAccessMenu('admin/trial-balance'))
+                    ->sort(8),
                 \Filament\Navigation\NavigationItem::make(fn() => __('sidebar.Profit & Loss'))
                     ->group(fn() => __('sidebar.Accounting'))
                     ->url(fn(): string => route('reports.profit-loss'))
                     ->icon('heroicon-o-document-chart-bar')
                     ->isActiveWhen(fn() => request()->routeIs('reports.profit-loss'))
                     ->visible(fn() => canAccessMenu('admin/reports/profit-loss'))
-                    ->sort(8),
+                    ->sort(9),
                 \Filament\Navigation\NavigationItem::make(fn() => __('sidebar.Balance Sheet'))
                     ->group(fn() => __('sidebar.Accounting'))
                     ->url(fn(): string => route('filament.admin.pages.balance-sheet'))
                     ->icon('heroicon-o-book-open')
                     ->isActiveWhen(fn() => request()->routeIs('filament.admin.pages.balance-sheet'))
                     ->visible(fn() => canAccessMenu('admin/balance-sheet'))
-                    ->sort(9),
+                    ->sort(10),
 
                 // Page Editor links
                 \Filament\Navigation\NavigationItem::make(fn() => __('sidebar.Appearance'))

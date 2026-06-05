@@ -27,28 +27,33 @@ class Customers extends Page implements HasTable
         return canAccessMenu('admin/customers');
     }
 
+    public function getTitle(): string
+    {
+        return __('transaction.customer_list');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
             \Filament\Actions\Action::make('downloadTemplate')
-                ->label('Download Template')
+                ->label(fn () => __('transaction.download_template'))
                 ->icon('heroicon-o-arrow-down-tray')
                 ->color('gray')
                 ->visible(fn () => canAccessMenu('admin/import-export'))
                 ->action(function () {
                     return \Maatwebsite\Excel\Facades\Excel::download(
-                        new \App\Exports\CustomerTemplateExport(),
+                         new \App\Exports\CustomerTemplateExport(),
                         'customer_import_template.xlsx'
                     );
                 }),
             \Filament\Actions\Action::make('importCustomer')
-                ->label('Import Customer')
+                ->label(fn () => __('transaction.import_customer'))
                 ->icon('heroicon-o-arrow-up-tray')
                 ->color('primary')
                 ->visible(fn () => canAccessMenu('admin/import-export'))
                 ->form([
                     \Filament\Forms\Components\FileUpload::make('file')
-                        ->label('Choose CSV/Excel File')
+                        ->label(fn () => __('transaction.choose_csv_excel'))
                         ->required()
                         ->disk('local')
                         ->directory('temp-imports')
@@ -68,17 +73,20 @@ class Customers extends Page implements HasTable
                         
                         \Illuminate\Support\Facades\Storage::disk('local')->delete($data['file']);
                         
-                        $message = "{$import->getImportedCount()} customers imported, {$import->getSkippedCount()} customers skipped.";
+                        $message = __('transaction.import_success_msg', [
+                            'imported' => $import->getImportedCount(),
+                            'skipped' => $import->getSkippedCount(),
+                        ]);
                         
                         \Filament\Notifications\Notification::make()
-                            ->title('Import Successful')
+                            ->title(fn () => __('transaction.import_successful'))
                             ->body($message)
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
                         \Filament\Notifications\Notification::make()
-                            ->title('Import Failed')
-                            ->body('Error processing file: ' . $e->getMessage())
+                            ->title(fn () => __('transaction.import_failed'))
+                            ->body(fn () => __('transaction.error_processing_file') . ': ' . $e->getMessage())
                             ->danger()
                             ->send();
                     }
@@ -90,7 +98,8 @@ class Customers extends Page implements HasTable
     {
         return $table
             ->query(
-                Client::select('clients.*')
+                Client::query()
+                    ->select('clients.*')
                     ->selectSub(
                         Transaction::selectRaw('COALESCE(COUNT(id), 0)')
                             ->whereColumn('client_id', 'clients.id')
@@ -110,19 +119,19 @@ class Customers extends Page implements HasTable
             )
             ->columns([
                 \Filament\Tables\Columns\TextColumn::make('client_name')
-                    ->label('Customer Name')
+                    ->label(fn () => __('transaction.customer_name'))
                     ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('total_transactions')
-                    ->label('Total Transactions')
+                    ->label(fn () => __('transaction.total_transactions'))
                     ->sortable()
                     ->alignCenter(),
                 \Filament\Tables\Columns\TextColumn::make('total_transaction_amount')
-                    ->label('Total Transaction Amount')
+                    ->label(fn () => __('transaction.total_transaction_amount'))
                     ->sortable()
                     ->alignEnd()
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
                 \Filament\Tables\Columns\TextColumn::make('total_outstanding_balance')
-                    ->label('Total Outstanding Balance')
+                    ->label(fn () => __('transaction.total_outstanding_balance'))
                     ->sortable()
                     ->alignEnd()
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
@@ -132,8 +141,8 @@ class Customers extends Page implements HasTable
                 \Filament\Tables\Filters\Filter::make('client_name_search')
                     ->form([
                         \Filament\Forms\Components\TextInput::make('client_name')
-                            ->label('Customer Name')
-                            ->placeholder('Search by customer name...'),
+                            ->label(fn () => __('transaction.customer_name'))
+                            ->placeholder(fn () => __('transaction.search_by_customer_name')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when(
@@ -144,13 +153,13 @@ class Customers extends Page implements HasTable
             ])
             ->actions([
                 \Filament\Tables\Actions\Action::make('detail')
-                    ->label('Detail')
+                    ->label(fn () => __('transaction.detail'))
                     ->icon('heroicon-o-eye')
                     ->color('primary')
-                    ->modalHeading('Customer Detail')
+                    ->modalHeading(fn () => __('transaction.customer_detail'))
                     ->modalWidth('5xl')
                     ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Close')
+                    ->modalCancelActionLabel(fn () => __('transaction.close'))
                     ->modalContent(fn (Client $record) => view('filament.pages.accounts-receivable-detail-modal', [
                         'client' => $record,
                     ])),

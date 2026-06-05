@@ -9,14 +9,14 @@
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                             </svg>
-                            Back to Overview
+                            {{ __('inventory.back_to_overview') }}
                         </a>
                     </div>
                     <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white flex items-center gap-2">
-                        <span>Item Details:</span>
+                        <span>{{ __('inventory.item_details') }}:</span>
                         <span class="text-indigo-600 dark:text-indigo-400 font-extrabold">{{ $item->item_name }}</span>
                     </h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Detailed information and transaction logs for this item</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('inventory.detail_subtitle') }}</p>
                 </div>
             </div>
 
@@ -27,56 +27,56 @@
                         <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        Item Information
+                        {{ __('inventory.item_info') }}
                     </h3>
                 </div>
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- Item ID -->
                         <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-800/60">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Item ID</span>
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">{{ __('inventory.item_id') }}</span>
                             <span class="text-sm font-mono font-bold text-gray-900 dark:text-gray-100">{{ $item->item_id }}</span>
                         </div>
 
                         <!-- Item Code -->
                         <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-800/60">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Item Code</span>
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">{{ __('inventory.item_code') }}</span>
                             <span class="text-sm font-mono font-bold text-gray-900 dark:text-gray-100">{{ $item->item_code }}</span>
                         </div>
 
                         <!-- Item Type -->
                         <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-800/60">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Item Type</span>
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">{{ __('inventory.item_type') }}</span>
                             <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ optional($item->productType)->name ?? '-' }}</span>
                         </div>
 
                         <!-- Unit -->
                         <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-800/60">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Unit</span>
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">{{ __('inventory.units') }}</span>
                             <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ optional($item->unit)->name ?? '-' }}</span>
                         </div>
 
                         <!-- Supplier -->
                         <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-800/60">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Supplier</span>
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">{{ __('inventory.supplier') }}</span>
                             <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ optional($item->supplier)->name ?? '-' }}</span>
                         </div>
 
                         <!-- Minimum Stock -->
                         <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-800/60">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Minimum Stock</span>
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">{{ __('inventory.minimum_stock') }}</span>
                             <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $item->minimum_stock }}</span>
                         </div>
 
                         <!-- Price -->
                         <div class="bg-gray-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-100 dark:border-gray-800/60">
-                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">Price</span>
+                            <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider block mb-1">{{ __('inventory.price') }}</span>
                             <span class="text-sm font-bold text-gray-900 dark:text-gray-100">Rp {{ number_format($item->price, 0, ',', '.') }}</span>
                         </div>
 
                         <!-- Current Stock -->
                         <div class="bg-indigo-50/50 dark:bg-indigo-950/20 p-4 rounded-xl border border-indigo-100/50 dark:border-indigo-900/30">
-                            <span class="text-xs font-semibold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider block mb-1">Current Stock</span>
+                            <span class="text-xs font-semibold text-indigo-500 dark:text-indigo-400 uppercase tracking-wider block mb-1">{{ __('inventory.current_stock') }}</span>
                             <span class="text-lg font-black text-indigo-700 dark:text-indigo-300">{{ $item->stock }}</span>
                         </div>
                     </div>
@@ -92,19 +92,19 @@
                             <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            Stock In History
+                            {{ __('inventory.stock_in_history') }}
                         </h3>
                         <span class="text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-2.5 py-0.5 rounded-full">
-                            {{ $stockIns->count() }} records
+                            {{ $stockIns->count() }} {{ __('inventory.records') }}
                         </span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                             <thead class="bg-gray-50 dark:bg-gray-800/50">
                                 <tr>
-                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Trx Date</th>
-                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">User</th>
-                                    <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Update Stock</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('inventory.trx_date') }}</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('inventory.user') }}</th>
+                                    <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('inventory.update_stock') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
@@ -123,7 +123,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="3" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                            No stock in records found.
+                                            {{ __('inventory.no_stock_in') }}
                                         </td>
                                     </tr>
                                 @endforelse
@@ -139,19 +139,19 @@
                             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                             </svg>
-                            Stock Out History
+                            {{ __('inventory.stock_out_history') }}
                         </h3>
                         <span class="text-xs font-medium bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 px-2.5 py-0.5 rounded-full">
-                            {{ $stockOuts->count() }} records
+                            {{ $stockOuts->count() }} {{ __('inventory.records') }}
                         </span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                             <thead class="bg-gray-50 dark:bg-gray-800/50">
                                 <tr>
-                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Trx Date</th>
-                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">User</th>
-                                    <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Update Stock</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('inventory.trx_date') }}</th>
+                                    <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('inventory.user') }}</th>
+                                    <th scope="col" class="px-4 py-3 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">{{ __('inventory.update_stock') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-800 bg-white dark:bg-gray-900">
@@ -170,7 +170,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="3" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                            No stock out records found.
+                                            {{ __('inventory.no_stock_out') }}
                                         </td>
                                     </tr>
                                 @endforelse

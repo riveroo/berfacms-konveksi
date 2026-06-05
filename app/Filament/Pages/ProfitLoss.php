@@ -12,12 +12,21 @@ use Illuminate\Http\Request;
 class ProfitLoss extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
-    protected static ?string $navigationLabel = 'Profit & Loss';
     protected static ?string $slug = 'reports/profit-loss';
     protected static string $view = 'admin.reports.profit-loss';
 
     // Navigation registration is manually handled in AdminPanelProvider for exact sorting order
     protected static bool $shouldRegisterNavigation = false;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Profit & Loss');
+    }
+
+    public function getTitle(): string | \Illuminate\Contracts\Support\Htmlable
+    {
+        return __('sidebar.Profit & Loss');
+    }
 
     public string $filter_type = 'monthly';
     public ?string $filter_month = null;
@@ -197,6 +206,8 @@ class ProfitLoss extends Page
         $filterData = $this->getFilteredDatesAndLabels();
         $startDate = $filterData['start_date'];
         $endDate = $filterData['end_date'];
+
+        app(\App\Services\Accounting\MonthlyBalanceService::class)->ensureSnapshotsUpTo($endDate->year, $endDate->month);
 
         $financials = $this->calculateProfitAndLoss($startDate, $endDate);
         $trends = $this->compileTrends($startDate, $endDate, $filterData['filter_type']);

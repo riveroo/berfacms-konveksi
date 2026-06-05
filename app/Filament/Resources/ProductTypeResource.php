@@ -39,7 +39,7 @@ class ProductTypeResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Product Type Name')
+                    ->label(__('master.product_type_name'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -50,9 +50,11 @@ class ProductTypeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('master.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('master.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

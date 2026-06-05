@@ -21,7 +21,7 @@ class ListItems extends ListRecords
     {
         return [
             Actions\Action::make('download_template')
-                ->label('Download Template')
+                ->label(fn () => __('item.download_template'))
                 ->icon('heroicon-o-document-arrow-down')
                 ->visible(fn () => canAccessMenu('admin/import-export'))
                 ->action(function () {
@@ -29,12 +29,12 @@ class ListItems extends ListRecords
                 }),
                 
             Actions\Action::make('import_excel')
-                ->label('Import Excel')
+                ->label(fn () => __('item.import_excel'))
                 ->icon('heroicon-o-document-arrow-up')
                 ->visible(fn () => canAccessMenu('admin/import-export'))
                 ->form([
                     FileUpload::make('file')
-                        ->label('Excel File')
+                        ->label(fn () => __('item.excel_file'))
                         ->disk('local')
                         ->directory('imports')
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'text/csv'])
@@ -45,12 +45,12 @@ class ListItems extends ListRecords
                         $filePath = Storage::disk('local')->path($data['file']);
                         Excel::import(new ItemsImport, $filePath);
                         Notification::make()
-                            ->title('Import Successful')
+                            ->title(__('item.import_successful'))
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
                         Notification::make()
-                            ->title('Import Failed')
+                            ->title(__('item.import_failed'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();

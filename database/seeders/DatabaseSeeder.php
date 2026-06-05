@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             ProductionSeeder::class,
             CashTransactionSeeder::class,
             LandingReviewSeeder::class,
+            JournalEntrySeeder::class,
         ]);
     }
 }

@@ -38,18 +38,18 @@ class SupplierResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label('Supplier Name')
+                    ->label(fn () => __('supplier.supplier_name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('contact')
-                    ->label('Contact')
+                    ->label(fn () => __('supplier.contact'))
                     ->maxLength(255),
                 Forms\Components\Textarea::make('information')
-                    ->label('Information')
+                    ->label(fn () => __('supplier.information'))
                     ->maxLength(65535)
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('address')
-                    ->label('Address')
+                    ->label(fn () => __('supplier.address'))
                     ->maxLength(65535)
                     ->columnSpanFull(),
             ]);
@@ -75,19 +75,19 @@ class SupplierResource extends Resource
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Supplier name')
+                    ->label(fn () => __('supplier.supplier_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('contact')
-                    ->label('Contact')
+                    ->label(fn () => __('supplier.contact'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('address')
-                    ->label('Address')
+                    ->label(fn () => __('supplier.address'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total_items')
-                    ->label('Total items')
+                    ->label(fn () => __('supplier.total_items'))
                     ->sortable()
                     ->alignCenter(),
             ])
@@ -96,8 +96,8 @@ class SupplierResource extends Resource
                 Tables\Filters\Filter::make('name_search')
                     ->form([
                         Forms\Components\TextInput::make('name')
-                            ->label('Supplier Name')
-                            ->placeholder('Search by supplier name...'),
+                            ->label(fn () => __('supplier.supplier_name'))
+                            ->placeholder(fn () => __('supplier.search_placeholder')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when(
@@ -108,7 +108,7 @@ class SupplierResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->label('Detail'),
+                    ->label(fn () => __('supplier.detail')),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])

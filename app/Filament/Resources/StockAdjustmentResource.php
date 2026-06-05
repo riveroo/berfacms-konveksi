@@ -53,10 +53,10 @@ class StockAdjustmentResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Select::make('item_type')
-                            ->label('Item Type')
-                            ->options([
-                                'product' => 'Product',
-                                'material' => 'Material',
+                            ->label(fn () => __('stock.item_type'))
+                            ->options(fn () => [
+                                'product' => __('stock.product'),
+                                'material' => __('stock.material'),
                             ])
                             ->required()
                             ->live()
@@ -70,7 +70,7 @@ class StockAdjustmentResource extends Resource
 
                         // Product Selection Flow
                         Forms\Components\Select::make('product_id')
-                            ->label('Product')
+                            ->label(fn () => __('stock.product'))
                             ->relationship('product', 'product_name')
                             ->searchable()
                             ->preload()
@@ -84,7 +84,7 @@ class StockAdjustmentResource extends Resource
                             }),
 
                         Forms\Components\Select::make('variant_id')
-                            ->label('Variant')
+                            ->label(fn () => __('stock.variant'))
                             ->options(fn (Forms\Get $get) => 
                                 \App\Models\Variant::where('product_id', $get('product_id'))
                                     ->pluck('variant_name', 'id')
@@ -101,7 +101,7 @@ class StockAdjustmentResource extends Resource
                             }),
 
                         Forms\Components\Select::make('size_option_id')
-                            ->label('Size Option')
+                            ->label(fn () => __('stock.size_option'))
                             ->options(fn (Forms\Get $get) => 
                                 \App\Models\Stock::where('variant_id', $get('variant_id'))
                                     ->whereNotNull('size_option_id')
@@ -126,7 +126,7 @@ class StockAdjustmentResource extends Resource
 
                         // Material Selection
                         Forms\Components\Select::make('item_id')
-                            ->label('Material Name')
+                            ->label(fn () => __('stock.material_name'))
                             ->relationship('item', 'item_name')
                             ->searchable()
                             ->preload()
@@ -141,13 +141,13 @@ class StockAdjustmentResource extends Resource
                         Forms\Components\Grid::make(2)
                             ->schema([
                                 Forms\Components\TextInput::make('current_stock')
-                                    ->label('Current Stock')
+                                    ->label(fn () => __('stock.current_stock'))
                                     ->numeric()
                                     ->readonly()
                                     ->dehydrated(false)
                                     ->placeholder('0'),
                                 Forms\Components\TextInput::make('new_stock')
-                                    ->label('New Stock')
+                                    ->label(fn () => __('stock.new_stock'))
                                     ->numeric()
                                     ->required()
                                     ->minValue(0)
@@ -155,14 +155,14 @@ class StockAdjustmentResource extends Resource
                             ]),
 
                         Forms\Components\Textarea::make('reason')
-                            ->label('Adjustment Reason')
+                            ->label(fn () => __('stock.reason'))
                             ->required()
                             ->rows(3)
-                            ->placeholder('e.g., Stock opname finding, Damaged goods, etc.')
+                            ->placeholder(fn () => __('stock.reason_placeholder'))
                             ->disabled(fn (Forms\Get $get) => ! $get('item_type')),
 
                         Forms\Components\DateTimePicker::make('trx_date')
-                            ->label('TRX Date')
+                            ->label(fn () => __('stock.trx_date'))
                             ->default(now())
                             ->required()
                             ->disabled(fn (Forms\Get $get) => ! $get('item_type')),
@@ -179,53 +179,54 @@ class StockAdjustmentResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('index')
-                    ->label('No')
+                    ->label(fn () => __('stock.no'))
                     ->rowIndex(),
                 Tables\Columns\TextColumn::make('trx_date')
-                    ->label('TRX Date')
+                    ->label(fn () => __('stock.trx_date'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('item_type')
-                    ->label('Item Type')
+                    ->label(fn () => __('stock.item_type'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => __('stock.' . $state))
                     ->color(fn (string $state): string => match ($state) {
                         'product' => 'success',
                         'material' => 'info',
                     }),
                 Tables\Columns\TextColumn::make('item_name')
-                    ->label('Item Name')
+                    ->label(fn () => __('stock.item_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('old_stock')
-                    ->label('Old Stock')
+                    ->label(fn () => __('stock.old_stock'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('new_stock')
-                    ->label('New Stock')
+                    ->label(fn () => __('stock.new_stock'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('difference')
-                    ->label('Difference')
+                    ->label(fn () => __('stock.difference'))
                     ->numeric()
                     ->sortable()
                     ->color(fn ($state) => $state >= 0 ? 'success' : 'danger')
                     ->formatStateUsing(fn ($state) => ($state > 0 ? '+' : '') . $state),
                 Tables\Columns\TextColumn::make('reason')
-                    ->label('Reason')
+                    ->label(fn () => __('stock.reason'))
                     ->wrap()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(fn () => __('stock.user'))
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('trx_date')
                     ->form([
                         Forms\Components\DatePicker::make('from_date')
-                            ->label('From Date')
+                            ->label(fn () => __('stock.from_date'))
                             ->live(),
                         Forms\Components\DatePicker::make('to_date')
-                            ->label('To Date')
+                            ->label(fn () => __('stock.to_date'))
                             ->disabled(fn (Forms\Get $get) => ! $get('from_date')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -238,15 +239,25 @@ class StockAdjustmentResource extends Resource
                                 $data['to_date'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('trx_date', '<=', $date),
                             );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['from_date'] ?? null) {
+                            $indicators[] = __('stock.from_date') . ': ' . $data['from_date'];
+                        }
+                        if ($data['to_date'] ?? null) {
+                            $indicators[] = __('stock.to_date') . ': ' . $data['to_date'];
+                        }
+                        return $indicators;
                     }),
                 Tables\Filters\SelectFilter::make('item_type')
-                    ->label('Item Type')
-                    ->options([
-                        'product' => 'Product',
-                        'material' => 'Material',
+                    ->label(fn () => __('stock.item_type'))
+                    ->options(fn () => [
+                        'product' => __('stock.product'),
+                        'material' => __('stock.material'),
                     ]),
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->label('User')
+                    ->label(fn () => __('stock.user'))
                     ->relationship('user', 'name'),
             ])
             ->actions([

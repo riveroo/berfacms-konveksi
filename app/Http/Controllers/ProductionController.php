@@ -174,7 +174,7 @@ class ProductionController extends Controller
             DB::commit();
 
             return redirect()->route('production.index')
-                ->with('success', 'Production recorded successfully and stock updated.');
+                ->with('success', __('production.store_success'));
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -182,7 +182,7 @@ class ProductionController extends Controller
                 'exception' => $e,
                 'request' => $request->all()
             ]);
-            return back()->withInput()->with('error', 'Failed to save production: ' . $e->getMessage());
+            return back()->withInput()->with('error', __('production.store_failed', ['message' => $e->getMessage()]));
         }
     }
 }

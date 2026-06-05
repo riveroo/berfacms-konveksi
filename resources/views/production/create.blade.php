@@ -6,15 +6,15 @@
             {{-- Header --}}
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Record Production</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Create a new production batch and update stock</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ __('production.record_production') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('production.create_subtitle') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <x-button href="{{ route('production.index') }}" variant="outline">
-                        Cancel
+                        {{ __('production.cancel') }}
                     </x-button>
                     <x-button type="submit" variant="primary">
-                        Save Production
+                        {{ __('production.save_production') }}
                     </x-button>
                 </div>
             </div>
@@ -45,27 +45,27 @@
             <div class="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <span class="flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold">1</span>
-                    General Information
+                    {{ __('production.general_info') }}
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Production Date</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.production_date') }}</label>
                         <input type="date" name="production_date" value="{{ now()->format('Y-m-d') }}" required
                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Batch Code</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.batch_code') }}</label>
                         <input type="text" name="batch_code" value="{{ $batchCode }}" readonly
                             class="w-full h-10 px-3 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 font-bold outline-none cursor-not-allowed">
-                        <p class="text-[10px] text-gray-500 mt-1 italic">Auto-generated format: DDMMYY-NNNN</p>
+                        <p class="text-[10px] text-gray-500 mt-1 italic">{{ __('production.auto_generated_format') }}</p>
                     </div>
                     <div class="md:col-span-1">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Production Label / Name</label>
-                        <input type="text" name="production_name" placeholder="e.g. Kaos Polos Batch A" required
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.production_label') }}</label>
+                        <input type="text" name="production_name" placeholder="{{ __('production.production_label_placeholder') }}" required
                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">User</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('production.user') }}</label>
                         <input type="text" value="{{ auth()->user()->name }}" readonly
                             class="w-full h-10 px-3 rounded-lg border border-gray-200 bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400 outline-none cursor-not-allowed">
                     </div>
@@ -77,10 +77,10 @@
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <span class="flex items-center justify-center w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-bold">2</span>
-                        Material Consumption (Stock Out)
+                        {{ __('production.material_consumption') }}
                     </h3>
                     <button type="button" @click="addMaterial()" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Add Material
+                        {{ __('production.add_material') }}
                     </button>
                 </div>
                 
@@ -88,8 +88,8 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                         <thead>
                             <tr class="text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                <th class="px-4 py-2">Material</th>
-                                <th class="px-4 py-2 w-32">Qty</th>
+                                <th class="px-4 py-2">{{ __('production.materials') }}</th>
+                                <th class="px-4 py-2 w-32">{{ __('production.qty') }}</th>
                                 <th class="px-4 py-2 w-16"></th>
                             </tr>
                         </thead>
@@ -99,7 +99,7 @@
                                     <td class="px-2 py-3">
                                         <select :name="'materials['+matIndex+'][item_id]'" x-model="mat.item_id" required
                                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none cursor-pointer">
-                                            <option value="">Select Material</option>
+                                            <option value="">{{ __('production.select_material') }}</option>
                                             @foreach($materials as $m)
                                                 <option value="{{ $m->id }}">{{ $m->item_name }} (Stock: {{ number_format($m->stock, 2) }})</option>
                                             @endforeach
@@ -119,7 +119,7 @@
                         </tbody>
                     </table>
                     <div x-show="selectedMaterials.length === 0" class="py-10 text-center text-sm text-gray-500 italic">
-                        No materials added yet. Click "Add Material" to start.
+                        {{ __('production.no_materials') }}
                     </div>
                 </div>
             </div>
@@ -129,10 +129,10 @@
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <span class="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-bold">3</span>
-                        Product Output (Stock In)
+                        {{ __('production.product_output') }}
                     </h3>
                     <button type="button" @click="addProduct()" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Add Product
+                        {{ __('production.add_product') }}
                     </button>
                 </div>
                 
@@ -140,10 +140,10 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                         <thead>
                             <tr class="text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
-                                <th class="px-4 py-2">Product</th>
-                                <th class="px-4 py-2">Variant</th>
-                                <th class="px-4 py-2">Size</th>
-                                <th class="px-4 py-2 w-32">Qty</th>
+                                <th class="px-4 py-2">{{ __('production.products') }}</th>
+                                <th class="px-4 py-2">{{ __('production.variant') }}</th>
+                                <th class="px-4 py-2">{{ __('production.size') }}</th>
+                                <th class="px-4 py-2 w-32">{{ __('production.qty') }}</th>
                                 <th class="px-4 py-2 w-16"></th>
                             </tr>
                         </thead>
@@ -153,7 +153,7 @@
                                     <td class="px-2 py-3">
                                         <select :name="'products['+prodIndex+'][product_id]'" x-model="prod.product_id" @change="onProductChange(prod)" required
                                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none cursor-pointer">
-                                            <option value="">Select Product</option>
+                                            <option value="">{{ __('production.select_product') }}</option>
                                             <template x-for="p in allProducts" :key="p.id">
                                                 <option :value="p.id" x-text="p.product_name"></option>
                                             </template>
@@ -162,7 +162,7 @@
                                     <td class="px-2 py-3">
                                         <select :name="'products['+prodIndex+'][variant_id]'" x-model="prod.variant_id" @change="onVariantChange(prod)" required :disabled="!prod.product_id"
                                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed">
-                                            <option value="">Select Variant</option>
+                                            <option value="">{{ __('production.select_variant') }}</option>
                                             <template x-for="v in getVariants(prod.product_id)" :key="v.id">
                                                 <option :value="v.id" x-text="v.variant_name"></option>
                                             </template>
@@ -171,7 +171,7 @@
                                     <td class="px-2 py-3">
                                         <select :name="'products['+prodIndex+'][size_option_id]'" x-model="prod.size_option_id" :disabled="!prod.variant_id"
                                             class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm focus:ring-2 focus:ring-indigo-500/20 outline-none cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed">
-                                            <option value="">Select Size</option>
+                                            <option value="">{{ __('production.select_size') }}</option>
                                             <template x-for="s in getSizes(prod.variant_id)" :key="s.id">
                                                 <option :value="s.id" x-text="s.name"></option>
                                             </template>
@@ -192,7 +192,7 @@
                         </tbody>
                     </table>
                     <div x-show="selectedProducts.length === 0" class="py-10 text-center text-sm text-gray-500 italic">
-                        No products added yet. Click "Add Product" to start.
+                        {{ __('production.no_products') }}
                     </div>
                 </div>
             </div>

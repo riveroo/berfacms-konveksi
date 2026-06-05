@@ -53,10 +53,10 @@ class StockInResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Select::make('item_type')
-                            ->label('Item Type')
-                            ->options([
-                                'product' => 'Product',
-                                'material' => 'Material',
+                            ->label(fn () => __('stock.item_type'))
+                            ->options(fn () => [
+                                'product' => __('stock.product'),
+                                'material' => __('stock.material'),
                             ])
                             ->required()
                             ->live()
@@ -69,7 +69,7 @@ class StockInResource extends Resource
 
                         // Product Selection Flow
                         Forms\Components\Select::make('product_id')
-                            ->label('Product')
+                            ->label(fn () => __('stock.product'))
                             ->relationship('product', 'product_name')
                             ->searchable()
                             ->preload()
@@ -82,7 +82,7 @@ class StockInResource extends Resource
                             }),
 
                         Forms\Components\Select::make('variant_id')
-                            ->label('Variant')
+                            ->label(fn () => __('stock.variant'))
                             ->options(fn (Forms\Get $get) => 
                                 \App\Models\Variant::where('product_id', $get('product_id'))
                                     ->pluck('variant_name', 'id')
@@ -95,7 +95,7 @@ class StockInResource extends Resource
                             ->afterStateUpdated(fn (Forms\Set $set) => $set('size_option_id', null)),
 
                         Forms\Components\Select::make('size_option_id')
-                            ->label('Size Option')
+                            ->label(fn () => __('stock.size_option'))
                             ->options(fn (Forms\Get $get) => 
                                 \App\Models\Stock::where('variant_id', $get('variant_id'))
                                     ->whereNotNull('size_option_id')
@@ -115,7 +115,7 @@ class StockInResource extends Resource
 
                         // Material Selection
                         Forms\Components\Select::make('item_id')
-                            ->label('Material Name')
+                            ->label(fn () => __('stock.material_name'))
                             ->relationship('item', 'item_name')
                             ->searchable()
                             ->preload()
@@ -123,13 +123,13 @@ class StockInResource extends Resource
                             ->visible(fn (Forms\Get $get) => $get('item_type') === 'material'),
 
                         Forms\Components\TextInput::make('quantity')
-                            ->label('Update Stock (Quantity)')
+                            ->label(fn () => __('stock.update_stock_qty'))
                             ->numeric()
                             ->required()
                             ->disabled(fn (Forms\Get $get) => ! $get('item_type')),
 
                         Forms\Components\DateTimePicker::make('trx_date')
-                            ->label('TRX Date')
+                            ->label(fn () => __('stock.trx_date'))
                             ->default(now())
                             ->required()
                             ->disabled(fn (Forms\Get $get) => ! $get('item_type')),
@@ -146,39 +146,40 @@ class StockInResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('index')
-                    ->label('No')
+                    ->label(fn () => __('stock.no'))
                     ->rowIndex(),
                 Tables\Columns\TextColumn::make('trx_date')
-                    ->label('TRX Date')
+                    ->label(fn () => __('stock.trx_date'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('item_type')
-                    ->label('Item Type')
+                    ->label(fn () => __('stock.item_type'))
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => __('stock.' . $state))
                     ->color(fn (string $state): string => match ($state) {
                         'product' => 'success',
                         'material' => 'info',
                     }),
                 Tables\Columns\TextColumn::make('item_name')
-                    ->label('Item Name')
+                    ->label(fn () => __('stock.item_name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')
-                    ->label('Update Stock')
+                    ->label(fn () => __('stock.update_stock'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(fn () => __('stock.user'))
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('trx_date')
                     ->form([
                         Forms\Components\DatePicker::make('from_date')
-                            ->label('From Date')
+                            ->label(fn () => __('stock.from_date'))
                             ->live(),
                         Forms\Components\DatePicker::make('to_date')
-                            ->label('To Date')
+                            ->label(fn () => __('stock.to_date'))
                             ->disabled(fn (Forms\Get $get) => ! $get('from_date')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -195,21 +196,21 @@ class StockInResource extends Resource
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['from_date'] ?? null) {
-                            $indicators[] = 'From ' . $data['from_date'];
+                            $indicators[] = __('stock.from_date') . ': ' . $data['from_date'];
                         }
                         if ($data['to_date'] ?? null) {
-                            $indicators[] = 'To ' . $data['to_date'];
+                            $indicators[] = __('stock.to_date') . ': ' . $data['to_date'];
                         }
                         return $indicators;
                     }),
                 Tables\Filters\SelectFilter::make('item_type')
-                    ->label('Item Type')
-                    ->options([
-                        'product' => 'Product',
-                        'material' => 'Material',
+                    ->label(fn () => __('stock.item_type'))
+                    ->options(fn () => [
+                        'product' => __('stock.product'),
+                        'material' => __('stock.material'),
                     ]),
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->label('User')
+                    ->label(fn () => __('stock.user'))
                     ->relationship('user', 'name'),
             ])
             ->actions([
@@ -217,7 +218,7 @@ class StockInResource extends Resource
             ])
             ->headerActions([
                 Tables\Actions\Action::make('export')
-                    ->label('Export Excel')
+                    ->label(fn () => __('stock.export_excel'))
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('success')
                     ->action(fn (Tables\Table $table) => \Maatwebsite\Excel\Facades\Excel::download(
@@ -228,7 +229,7 @@ class StockInResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(fn () => __('stock.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('success')
                         ->action(fn (\Illuminate\Database\Eloquent\Collection $records) => \Maatwebsite\Excel\Facades\Excel::download(

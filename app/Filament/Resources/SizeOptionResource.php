@@ -39,10 +39,12 @@ class SizeOptionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('master.name'))
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\TextInput::make('order')
+                    ->label(__('master.order'))
                     ->numeric()
                     ->required()
                     ->default(0),
@@ -54,16 +56,20 @@ class SizeOptionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('master.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('order')
+                    ->label(__('master.order'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('master.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('master.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

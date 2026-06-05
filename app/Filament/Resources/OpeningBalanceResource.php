@@ -31,27 +31,27 @@ class OpeningBalanceResource extends Resource
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('date')
-                    ->label('Trx Date')
+                    ->label(fn () => __('finance.trx_date'))
                     ->required()
                     ->default(now()->format('Y-m-d')),
                 Forms\Components\Select::make('account_id')
-                    ->label('Choose Account')
+                    ->label(fn () => __('finance.choose_account'))
                     ->options(Account::where('type', 'asset')->where('is_active', true)->pluck('name', 'id'))
                     ->searchable()
                     ->required()
                     ->unique(ignoreRecord: true),
                 Forms\Components\Select::make('counter_account_id')
-                    ->label('Counter Account')
+                    ->label(fn () => __('finance.counter_account_label'))
                     ->options(Account::where('is_active', true)->pluck('name', 'id'))
                     ->searchable()
                     ->required()
                     ->different('account_id'),
                 Forms\Components\TextInput::make('amount')
-                    ->label('Amount')
+                    ->label(fn () => __('finance.amount'))
                     ->numeric()
                     ->minValue(0.01)
                     ->required()
-                    ->placeholder('e.g. 50000000'),
+                    ->placeholder(__('finance.amount_placeholder')),
             ])->columns(1);
     }
 
@@ -60,28 +60,28 @@ class OpeningBalanceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('date')
-                    ->label('Trx Date')
+                    ->label(fn () => __('finance.trx_date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('account.name')
-                    ->label('COA')
+                    ->label(fn () => __('finance.coa'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount')
-                    ->label('Amount')
+                    ->label(fn () => __('finance.amount'))
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(fn () => __('finance.user'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('counterAccount.name')
-                    ->label('Category (counter account)')
+                    ->label(fn () => __('finance.counter_account'))
                     ->searchable()
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('account_id')
-                    ->label('COA')
+                    ->label(fn () => __('finance.coa'))
                     ->options(Account::where('type', 'asset')->pluck('name', 'id'))
                     ->query(function (Builder $query, array $data) {
                         if ($data['value']) {
@@ -89,7 +89,7 @@ class OpeningBalanceResource extends Resource
                         }
                     }),
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->label('User')
+                    ->label(fn () => __('finance.user'))
                     ->options(User::pluck('name', 'id'))
                     ->query(function (Builder $query, array $data) {
                         if ($data['value']) {

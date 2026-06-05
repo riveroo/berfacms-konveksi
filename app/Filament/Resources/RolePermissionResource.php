@@ -27,8 +27,15 @@ class RolePermissionResource extends Resource
         return __('sidebar.User Management');
     }
 
-    protected static ?string $modelLabel = 'Role & Permission';
-    protected static ?string $pluralModelLabel = 'Roles & Permissions';
+    public static function getModelLabel(): string
+    {
+        return __('master.role_permission');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('master.roles_permissions');
+    }
 
     public static function canViewAny(): bool
     {
@@ -72,6 +79,7 @@ class RolePermissionResource extends Resource
                 ['name' => 'Journal', 'route' => 'admin/journal'],
                 ['name' => 'Balance Sheet', 'route' => 'admin/balance-sheet'],
                 ['name' => 'General Ledger', 'route' => 'admin/general-ledger'],
+                ['name' => 'Trial Balance', 'route' => 'admin/trial-balance'],
                 ['name' => 'Profit & Loss', 'route' => 'admin/reports/profit-loss'],
             ],
             'Master Data' => [
@@ -92,14 +100,16 @@ class RolePermissionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('master.role_name'))
                     ->required()
                     ->maxLength(255)
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('is_active')
+                    ->label(__('master.active_status'))
                     ->default(true)
                     ->columnSpanFull(),
                 Forms\Components\ViewField::make('permissions_matrix')
-                    ->label('Permissions')
+                    ->label(__('master.permissions'))
                     ->view('filament.forms.components.permission-matrix')
                     ->columnSpanFull()
                     ->default(function () {
@@ -127,20 +137,20 @@ class RolePermissionResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->label('Role Name'),
+                    ->label(__('master.role_name')),
                 Tables\Columns\TextColumn::make('permissions_count')
                     ->counts('permissions')
-                    ->label('Assigned Permissions'),
+                    ->label(__('master.assigned_permissions')),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean()
-                    ->label('Is Active'),
+                    ->label(__('master.active')),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active Status')
+                    ->label(__('master.active_status'))
                     ->boolean()
-                    ->trueLabel('Active')
-                    ->falseLabel('Inactive'),
+                    ->trueLabel(__('master.active'))
+                    ->falseLabel(__('master.inactive')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

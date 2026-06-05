@@ -33,26 +33,26 @@ class BankTransferResource extends Resource
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('date')
-                    ->label('Trx Date')
+                    ->label(fn () => __('finance.trx_date'))
                     ->required()
                     ->default(now()->format('Y-m-d')),
                 Forms\Components\Select::make('from_account_id')
-                    ->label('Choose Account From')
+                    ->label(fn () => __('finance.choose_account_from'))
                     ->options(Account::where('type', 'asset')->where('is_active', true)->pluck('name', 'id'))
                     ->searchable()
                     ->required(),
                 Forms\Components\Select::make('to_account_id')
-                    ->label('Account To')
+                    ->label(fn () => __('finance.account_to'))
                     ->options(Account::where('type', 'asset')->where('is_active', true)->pluck('name', 'id'))
                     ->searchable()
                     ->required()
                     ->different('from_account_id'),
                 Forms\Components\TextInput::make('amount')
-                    ->label('Amount')
+                    ->label(fn () => __('finance.amount'))
                     ->numeric()
                     ->minValue(0.01)
                     ->required()
-                    ->placeholder('e.g. 10000000'),
+                    ->placeholder(__('finance.amount_placeholder')),
             ])->columns(1);
     }
 
@@ -61,28 +61,28 @@ class BankTransferResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('date')
-                    ->label('Trx Date')
+                    ->label(fn () => __('finance.trx_date'))
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('fromAccount.name')
-                    ->label('COA From')
+                    ->label(fn () => __('finance.coa_from'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('toAccount.name')
-                    ->label('COA To')
+                    ->label(fn () => __('finance.coa_to'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount')
-                    ->label('Amount')
+                    ->label(fn () => __('finance.amount'))
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(fn () => __('finance.user'))
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('from_account_id')
-                    ->label('From Account')
+                    ->label(fn () => __('finance.from_account'))
                     ->options(Account::where('type', 'asset')->pluck('name', 'id'))
                     ->query(function (Builder $query, array $data) {
                         if ($data['value']) {
@@ -90,7 +90,7 @@ class BankTransferResource extends Resource
                         }
                     }),
                 Tables\Filters\SelectFilter::make('to_account_id')
-                    ->label('To Account')
+                    ->label(fn () => __('finance.to_account'))
                     ->options(Account::where('type', 'asset')->pluck('name', 'id'))
                     ->query(function (Builder $query, array $data) {
                         if ($data['value']) {
@@ -98,7 +98,7 @@ class BankTransferResource extends Resource
                         }
                     }),
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->label('User')
+                    ->label(fn () => __('finance.user'))
                     ->options(User::pluck('name', 'id'))
                     ->query(function (Builder $query, array $data) {
                         if ($data['value']) {

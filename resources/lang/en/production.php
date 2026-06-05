@@ -1,0 +1,57 @@
+<?php
+
+return [
+    'production' => 'Production',
+    'subtitle' => 'Manage and monitor production batches',
+    'add_production' => 'Add Production',
+    'user' => 'User',
+    'all_users' => 'All Users',
+    'production_date' => 'Production Date',
+    'search' => 'Search',
+    'search_placeholder' => 'Name or Batch...',
+    'reset' => 'Reset',
+    'no' => 'No',
+    'prod_date' => 'Prod Date',
+    'batch_code' => 'Batch Code',
+    'production_name' => 'Production Name',
+    'materials' => 'Materials',
+    'products' => 'Products',
+    'action' => 'Action',
+    'detail' => 'Detail',
+    'items_count' => ':count items',
+    'no_records' => 'No production records found.',
+    'show' => 'Show',
+    'results' => 'results',
+
+    // Create page
+    'record_production' => 'Record Production',
+    'create_subtitle' => 'Create a new production batch and update stock',
+    'cancel' => 'Cancel',
+    'save_production' => 'Save Production',
+    'general_info' => 'General Information',
+    'production_label' => 'Production Label / Name',
+    'production_label_placeholder' => 'e.g. Kaos Polos Batch A',
+    'auto_generated_format' => 'Auto-generated format: DDMMYY-NNNN',
+    'material_consumption' => 'Material Consumption (Stock Out)',
+    'add_material' => 'Add Material',
+    'select_material' => 'Select Material',
+    'qty' => 'Qty',
+    'no_materials' => 'No materials added yet. Click "Add Material" to start.',
+    'product_output' => 'Product Output (Stock In)',
+    'add_product' => 'Add Product',
+    'select_product' => 'Select Product',
+    'select_variant' => 'Select Variant',
+    'select_size' => 'Select Size',
+    'variant' => 'Variant',
+    'size' => 'Size',
+    'no_products' => 'No products added yet. Click "Add Product" to start.',
+
+    // Show page
+    'production_details' => 'Production Details',
+    'details_subtitle' => 'Reviewing production batch: :batch',
+    'back_to_list' => 'Back to List',
+
+    // Controller responses
+    'store_success' => 'Production recorded successfully and stock updated.',
+    'store_failed' => 'Failed to save production: :message',
+];

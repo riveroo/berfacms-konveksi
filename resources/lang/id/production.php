@@ -1,0 +1,57 @@
+<?php
+
+return [
+    'production' => 'Produksi',
+    'subtitle' => 'Kelola dan pantau batch produksi',
+    'add_production' => 'Tambah Produksi',
+    'user' => 'Pengguna',
+    'all_users' => 'Semua Pengguna',
+    'production_date' => 'Tanggal Produksi',
+    'search' => 'Cari',
+    'search_placeholder' => 'Nama atau Batch...',
+    'reset' => 'Reset',
+    'no' => 'No',
+    'prod_date' => 'Tgl Prod',
+    'batch_code' => 'Kode Batch',
+    'production_name' => 'Nama Produksi',
+    'materials' => 'Bahan Baku',
+    'products' => 'Produk',
+    'action' => 'Aksi',
+    'detail' => 'Detail',
+    'items_count' => ':count item',
+    'no_records' => 'Data produksi tidak ditemukan.',
+    'show' => 'Tampilkan',
+    'results' => 'hasil',
+
+    // Create page
+    'record_production' => 'Catat Produksi',
+    'create_subtitle' => 'Buat batch produksi baru dan perbarui stok',
+    'cancel' => 'Batal',
+    'save_production' => 'Simpan Produksi',
+    'general_info' => 'Informasi Umum',
+    'production_label' => 'Label / Nama Produksi',
+    'production_label_placeholder' => 'misal. Kaos Polos Batch A',
+    'auto_generated_format' => 'Format otomatis: DDMMYY-NNNN',
+    'material_consumption' => 'Konsumsi Bahan Baku (Stok Keluar)',
+    'add_material' => 'Tambah Bahan Baku',
+    'select_material' => 'Pilih Bahan Baku',
+    'qty' => 'Jumlah',
+    'no_materials' => 'Belum ada bahan baku yang ditambahkan. Klik "Tambah Bahan Baku" untuk memulai.',
+    'product_output' => 'Output Produk (Stok Masuk)',
+    'add_product' => 'Tambah Produk',
+    'select_product' => 'Pilih Produk',
+    'select_variant' => 'Pilih Varian',
+    'select_size' => 'Pilih Ukuran',
+    'variant' => 'Varian',
+    'size' => 'Ukuran',
+    'no_products' => 'Belum ada produk yang ditambahkan. Klik "Tambah Produk" untuk memulai.',
+
+    // Show page
+    'production_details' => 'Detail Produksi',
+    'details_subtitle' => 'Meninjau batch produksi: :batch',
+    'back_to_list' => 'Kembali ke Daftar',
+
+    // Controller responses
+    'store_success' => 'Produksi berhasil dicatat dan stok diperbarui.',
+    'store_failed' => 'Gagal menyimpan produksi: :message',
+];

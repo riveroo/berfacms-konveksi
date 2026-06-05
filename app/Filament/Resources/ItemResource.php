@@ -40,6 +40,7 @@ class ItemResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('item_id')
+                    ->label(fn () => __('item.item_id'))
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255)
@@ -61,25 +62,32 @@ class ItemResource extends Resource
                     ->disabled()
                     ->dehydrated(true),
                 Forms\Components\TextInput::make('item_name')
+                    ->label(fn () => __('item.item_name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('item_code')
+                    ->label(fn () => __('item.item_code'))
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\Select::make('product_type_id')
+                    ->label(fn () => __('item.product_type'))
                     ->relationship('productType', 'name')
                     ->required(),
                 Forms\Components\Select::make('unit_id')
+                    ->label(fn () => __('item.unit'))
                     ->relationship('unit', 'name')
                     ->required(),
                 Forms\Components\Select::make('supplier_id')
+                    ->label(fn () => __('item.supplier'))
                     ->relationship('supplier', 'name'),
                 Forms\Components\TextInput::make('minimum_stock')
+                    ->label(fn () => __('item.minimum_stock'))
                     ->required()
                     ->numeric()
                     ->default(0),
                 Forms\Components\TextInput::make('price')
+                    ->label(fn () => __('item.price'))
                     ->required()
                     ->numeric()
                     ->prefix('Rp')
@@ -92,19 +100,26 @@ class ItemResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('item_name')
+                    ->label(fn () => __('item.item_name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('item_code')
+                    ->label(fn () => __('item.item_code'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('productType.name')
+                    ->label(fn () => __('item.product_type'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('unit.name')
+                    ->label(fn () => __('item.unit'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('supplier.name')
+                    ->label(fn () => __('item.supplier'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('minimum_stock')
+                    ->label(fn () => __('item.minimum_stock'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
+                    ->label(fn () => __('item.price'))
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -119,7 +134,7 @@ class ItemResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('supplier_id')
                     ->relationship('supplier', 'name')
-                    ->label('Supplier'),
+                    ->label(fn () => __('item.supplier')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -132,8 +147,8 @@ class ItemResource extends Resource
                             \DB::table('production_materials')->where('item_id', $record->id)->exists()
                         ) {
                             \Filament\Notifications\Notification::make()
-                                ->title('Cannot Delete Item')
-                                ->body("The item \"{$record->item_name}\" cannot be deleted because it is in use by transactions or production.")
+                                ->title(__('item.cannot_delete_item'))
+                                ->body(__('item.cannot_delete_item_msg', ['name' => $record->item_name]))
                                 ->danger()
                                 ->send();
 
@@ -153,8 +168,8 @@ class ItemResource extends Resource
                                     \DB::table('production_materials')->where('item_id', $record->id)->exists()
                                 ) {
                                     \Filament\Notifications\Notification::make()
-                                        ->title('Cannot Delete Selected Items')
-                                        ->body("One or more of the selected items cannot be deleted because they are in use by transactions or production.")
+                                        ->title(__('item.cannot_delete_selected'))
+                                        ->body(__('item.cannot_delete_selected_msg'))
                                         ->danger()
                                         ->send();
 

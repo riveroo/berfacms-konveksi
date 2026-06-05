@@ -4,11 +4,11 @@
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
-                <x-text variant="title">Create Transaction</x-text>
-                <x-text variant="muted">Create direct POS transaction</x-text>
+                <x-text variant="title">{{ __('transaction.create_transaction') }}</x-text>
+                <x-text variant="muted">{{ __('transaction.create_direct_pos_transaction') }}</x-text>
             </div>
             <x-button variant="outline" href="{{ route('transactions.index') }}">
-                Back to Transactions
+                {{ __('transaction.back_to_transactions') }}
             </x-button>
         </div>
 
@@ -17,7 +17,7 @@
             <!-- Client Information -->
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-6">
-                    <x-text variant="heading">Customer Information</x-text>
+                    <x-text variant="heading">{{ __('transaction.customer_info') }}</x-text>
                 </div>
 
                 <!-- Initial State: Only Show Button -->
@@ -27,17 +27,17 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                        Search Customer
+                        {{ __('transaction.search_customer') }}
                     </x-button>
                     <x-text variant="muted" class="mt-4 text-center">
-                        Search for an existing customer or enter a new one manually.
+                        {{ __('transaction.search_customer_help') }}
                     </x-text>
                 </div>
 
                 <!-- Form State: Show Fields -->
                 <div x-show="clientFormVisible" style="display: none;" class="space-y-5">
                     <div>
-                        <x-text variant="label" class="mb-1.5">Phone Number</x-text>
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.phone_number') }}</x-text>
                         <div class="relative">
                             <input type="text" x-model="clientPhone" :readonly="clientFound"
                                 class="w-full h-10 pl-3 pr-10 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition disabled:opacity-50 read-only:bg-gray-100 dark:read-only:bg-gray-800/50">
@@ -50,12 +50,12 @@
                         </div>
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5">Customer Name</x-text>
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.customer_name') }}</x-text>
                         <input type="text" x-model="clientName" :readonly="clientFound"
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition read-only:bg-gray-100 dark:read-only:bg-gray-800/50">
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5">Information</x-text>
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.information') }}</x-text>
                         <textarea x-model="clientInfo" :readonly="clientFound" rows="3"
                             class="w-full p-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition read-only:bg-gray-100 dark:read-only:bg-gray-800/50"></textarea>
                     </div>
@@ -65,41 +65,41 @@
             <!-- Transaction Information -->
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 shadow-sm">
                 <div class="flex justify-between items-center mb-6">
-                    <x-text variant="heading">Transaction Information</x-text>
+                    <x-text variant="heading">{{ __('transaction.trx_information') }}</x-text>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <x-text variant="label" class="mb-1.5">No Invoice</x-text>
-                        <input type="text" value="Auto-generated on save" readonly
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.no_invoice') }}</x-text>
+                        <input type="text" value="{{ __('transaction.auto_generated_on_save') }}" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5">Transaction Type</x-text>
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.trx_type') }}</x-text>
                         @php
                             $trxType = request('type', 'direct_order');
-                            $trxTypeFormatted = ucwords(str_replace('_', ' ', $trxType));
+                            $trxTypeFormatted = $trxType === 'pre_order' ? __('transaction.pre_order') : __('transaction.direct_order');
                         @endphp
                         <input type="text" value="{{ $trxTypeFormatted }}" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5">Transaction Date</x-text>
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.trx_date') }}</x-text>
                         <input type="text" value="-" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5">Last Update</x-text>
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.last_update') }}</x-text>
                         <input type="text" value="-" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500">
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5">Item Status</x-text>
-                        <input type="text" value="In Progress" readonly
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.item_status') }}</x-text>
+                        <input type="text" value="{{ __('transaction.in_progress') }}" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5">Payment Status</x-text>
-                        <input type="text" value="Unpaid" readonly
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.payment_status') }}</x-text>
+                        <input type="text" value="{{ __('transaction.unpaid') }}" readonly
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 focus:outline-none text-gray-500 font-semibold">
                     </div>
                 </div>
@@ -110,12 +110,12 @@
         <div class="w-full">
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden flex flex-col">
                 <div class="p-5 border-b border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 flex justify-between items-center">
-                    <x-text variant="heading">Order Items List</x-text>
+                    <x-text variant="heading">{{ __('transaction.order_items_list') }}</x-text>
                     <x-button type="button" @click="productModalOpen = true" variant="primary" size="sm">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                         </svg>
-                        Add Product
+                        {{ __('transaction.add_product') }}
                     </x-button>
                 </div>
 
@@ -123,25 +123,25 @@
                     <table class="w-full text-sm text-left">
                         <thead class="text-xs uppercase bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400">
                             <tr>
-                                <th class="px-5 py-4">Product</th>
-                                <th class="px-4 py-4">Variant/Size</th>
-                                <th class="px-4 py-4 text-right">Price</th>
-                                <th class="px-4 py-4 text-center">Qty</th>
-                                <th class="px-4 py-4 text-right">Disc.</th>
-                                <th class="px-4 py-4 text-right">Subtotal</th>
-                                <th class="px-4 py-4 text-center">Act</th>
+                                <th class="px-5 py-4">{{ __('transaction.product') }}</th>
+                                <th class="px-4 py-4">{{ __('transaction.variant_size') }}</th>
+                                <th class="px-4 py-4 text-right">{{ __('transaction.price') }}</th>
+                                <th class="px-4 py-4 text-center">{{ __('transaction.qty') }}</th>
+                                <th class="px-4 py-4 text-right">{{ __('transaction.disc') }}</th>
+                                <th class="px-4 py-4 text-right">{{ __('transaction.subtotal') }}</th>
+                                <th class="px-4 py-4 text-center">{{ __('transaction.action') }}</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-850">
                             <template x-for="(item, index) in items" :key="index">
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition border-b border-transparent"
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-850/50 transition border-b border-transparent"
                                     :class="{ 'border-rose-300 bg-rose-50/50 dark:bg-rose-900/10 dark:border-rose-900/30': errors['items.'+index+'.qty'] }">
                                     <td class="px-5 py-4">
                                         <div class="font-medium text-gray-900 dark:text-white" x-text="item.product_name"></div>
                                     </td>
                                     <td class="px-4 py-4">
                                         <div class="text-gray-600 dark:text-gray-400 font-medium" x-text="item.variant_name"></div>
-                                        <div class="text-xs text-indigo-500 font-bold mt-0.5" x-text="'Size ' + item.size_name"></div>
+                                        <div class="text-xs text-indigo-500 font-bold mt-0.5" x-text="'{{ __('transaction.size') }} ' + item.size_name"></div>
                                     </td>
                                     <!-- Price Input -->
                                     <td class="px-4 py-4 text-right min-w-[130px]">
@@ -174,7 +174,7 @@
                                     <!-- Action -->
                                     <td class="px-4 py-4 text-center">
                                         <div class="flex items-center justify-center">
-                                            <button type="button" @click="removeItem(index)" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 rounded-md transition tooltip" title="Remove">
+                                            <button type="button" @click="removeItem(index)" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 rounded-md transition tooltip" title="{{ __('transaction.remove') }}">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -189,7 +189,7 @@
                                     <svg class="mx-auto h-12 w-12 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
-                                    <p>No order items added yet. Please use the button above to add products.</p>
+                                    <p>{{ __('transaction.no_items_added') }}</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -203,26 +203,26 @@
                     <div class="w-full md:w-auto mt-6 md:mt-0 order-2 md:order-1 flex gap-3 flex-col sm:flex-row pt-4 md:pt-0">
                         <x-button type="button" @click="submitOrder('{{ route('transactions.index') }}')"
                             variant="primary" x-bind:disabled="items.length === 0" class="justify-center h-11 px-6">
-                            Create Order
+                            {{ __('transaction.create_order') }}
                         </x-button>
                     </div>
 
                     <!-- Right Side Totals -->
                     <div class="w-full md:w-96 space-y-3 order-1 md:order-2">
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-500 dark:text-gray-400">Subtotal</span>
+                            <span class="text-gray-500 dark:text-gray-400">{{ __('transaction.subtotal') }}</span>
                             <span class="font-bold text-gray-900 dark:text-gray-100" x-text="formatRupiah(subtotal)"></span>
                         </div>
 
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-gray-500 dark:text-gray-400 pt-1">Overall Discount</span>
+                            <span class="text-gray-500 dark:text-gray-400 pt-1">{{ __('transaction.overall_discount') }}</span>
                             <input type="number" x-model.number="overallDiscount" @input="if(overallDiscount < 0) overallDiscount = 0"
                                 class="w-32 h-9 px-3 text-right text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500/50 outline-none transition"
                                 min="0" placeholder="0">
                         </div>
 
                         <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                            <span class="font-extrabold text-gray-900 dark:text-gray-100 uppercase tracking-wider text-sm">Grand Total</span>
+                            <span class="font-extrabold text-gray-900 dark:text-gray-100 uppercase tracking-wider text-sm">{{ __('transaction.grand_total') }}</span>
                             <span class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 leading-none"
                                 x-text="formatRupiah(grandTotal)"></span>
                         </div>
@@ -238,7 +238,7 @@
             <div @click.away="clientModalOpen = false"
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-sm p-6 flex flex-col max-h-[90vh]">
                 <div class="flex justify-between items-center mb-4">
-                    <x-text variant="heading">Search Customer</x-text>
+                    <x-text variant="heading">{{ __('transaction.search_customer') }}</x-text>
                     <button type="button" @click="clientModalOpen = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -248,10 +248,10 @@
 
                 <div class="space-y-4 flex-1 overflow-hidden flex flex-col">
                     <div>
-                        <x-text variant="label" class="mb-1.5">Search Name or Phone Number</x-text>
+                        <x-text variant="label" class="mb-1.5">{{ __('transaction.search_name_phone_number') }}</x-text>
                         <div class="relative">
                             <input type="text" x-model="searchQuery" 
-                                placeholder="Type name or phone..."
+                                placeholder="{{ __('transaction.type_name_phone') }}"
                                 class="w-full h-10 pl-9 pr-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -270,11 +270,11 @@
                                     <div class="text-sm font-semibold text-gray-850 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" x-text="client.client_name"></div>
                                     <div class="text-xs text-gray-500 font-mono" x-text="client.phone_number"></div>
                                 </div>
-                                <span class="text-[10px] bg-gray-200/70 dark:bg-gray-800 text-gray-605 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-650 dark:group-hover:text-indigo-300 transition">Select</span>
+                                <span class="text-[10px] bg-gray-200/70 dark:bg-gray-800 text-gray-605 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/50 group-hover:text-indigo-650 dark:group-hover:text-indigo-300 transition" x-text="'{{ __('transaction.select') }}'"></span>
                             </button>
                         </template>
                         <div x-show="filteredClients.length === 0" class="p-6 text-center text-xs text-gray-450 dark:text-gray-500">
-                            No customers match your search.
+                            {{ __('transaction.no_customers_match') }}
                         </div>
                     </div>
 
@@ -283,11 +283,11 @@
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                             </svg>
-                            Create New Customer
+                            {{ __('transaction.create_new_customer') }}
                         </x-button>
                         
                         <x-button type="button" @click="clientModalOpen = false" variant="outline" class="w-full h-10">
-                            Close
+                            {{ __('transaction.close') }}
                         </x-button>
                     </div>
                 </div>
@@ -300,7 +300,7 @@
             <div @click.away="productModalOpen = false; resetProductForm()"
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-4xl p-6 flex flex-col max-h-[90vh] overflow-hidden">
                 <div class="flex justify-between items-center mb-6">
-                    <x-text variant="heading">Search & Add Products</x-text>
+                    <x-text variant="heading">{{ __('transaction.search_add_products') }}</x-text>
                     <button type="button" @click="productModalOpen = false; resetProductForm()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -311,17 +311,17 @@
                 <!-- Filter Section (Dropdown & Search Variant) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-150 dark:border-gray-700/50">
                     <div>
-                        <x-text variant="label" class="mb-1.5 ml-0.5">Filter by Product Name</x-text>
+                        <x-text variant="label" class="mb-1.5 ml-0.5">{{ __('transaction.filter_product_name') }}</x-text>
                         <select x-model="filterProduct" class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 outline-none cursor-pointer">
-                            <option value="">All Products</option>
+                            <option value="">{{ __('transaction.all_products') }}</option>
                             <template x-for="p in products" :key="p.id">
                                 <option :value="p.id" x-text="p.product_name"></option>
                             </template>
                         </select>
                     </div>
                     <div>
-                        <x-text variant="label" class="mb-1.5 ml-0.5">Search Variant Name</x-text>
-                        <input type="text" x-model="filterVariant" placeholder="Type variant name..." 
+                        <x-text variant="label" class="mb-1.5 ml-0.5">{{ __('transaction.search_variant_name') }}</x-text>
+                        <input type="text" x-model="filterVariant" placeholder="{{ __('transaction.type_variant_name') }}" 
                             class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 outline-none">
                     </div>
                 </div>
@@ -334,12 +334,12 @@
                                 <th class="px-4 py-3 text-center w-12">
                                     <input type="checkbox" @change="toggleSelectAll($event)" class="rounded border-gray-300 dark:border-gray-700 text-indigo-650 focus:ring-indigo-500 focus:ring-2">
                                 </th>
-                                <th class="px-4 py-3">Product Name</th>
-                                <th class="px-4 py-3">Variant Name</th>
-                                <th class="px-4 py-3">Product Type</th>
-                                <th class="px-4 py-3 text-center">Size</th>
-                                <th class="px-4 py-3 text-center">Stock</th>
-                                <th class="px-4 py-3 text-right">Price</th>
+                                <th class="px-4 py-3">{{ __('transaction.product_name') }}</th>
+                                <th class="px-4 py-3">{{ __('transaction.variant_name') }}</th>
+                                <th class="px-4 py-3">{{ __('transaction.product_type') }}</th>
+                                <th class="px-4 py-3 text-center">{{ __('transaction.size') }}</th>
+                                <th class="px-4 py-3 text-center">{{ __('transaction.stock') }}</th>
+                                <th class="px-4 py-3 text-right">{{ __('transaction.price') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-850">
@@ -368,7 +368,7 @@
                             </template>
                             <tr x-show="filteredSelectableItems.length === 0">
                                 <td colspan="7" class="px-4 py-12 text-center text-gray-400 dark:text-gray-500">
-                                    No products matching search filters.
+                                    {{ __('transaction.no_products_matching') }}
                                 </td>
                             </tr>
                         </tbody>
@@ -377,10 +377,10 @@
 
                 <div class="pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3 mt-4">
                     <x-button type="button" @click="productModalOpen = false; resetProductForm()" variant="outline" class="h-10 px-5">
-                        Cancel
+                        {{ __('transaction.cancel') }}
                     </x-button>
                     <x-button type="button" @click="addSelectedItems" variant="indigo" class="h-10 px-6">
-                        Add Selected Items
+                        {{ __('transaction.add_selected_items') }}
                     </x-button>
                 </div>
             </div>
@@ -532,7 +532,7 @@
                     });
                     
                     if (addedCount === 0) {
-                        alert('Please select at least one new item to add.');
+                        alert('{{ __('transaction.select_at_least_one') }}');
                         return;
                     }
                     
@@ -561,7 +561,7 @@
                         }
                         
                         if (item.qty > maxStock) {
-                            alert('Quantity cannot exceed available stock (' + maxStock + ') for Direct Orders.');
+                            alert('{{ __('transaction.qty_exceed_stock') }} (' + maxStock + ').');
                             item.qty = maxStock > 0 ? maxStock : 1;
                         }
                     }
@@ -576,7 +576,7 @@
                         item.discount = 0;
                     }
                     if (item.discount > item.price) {
-                        alert('Discount cannot exceed the selling price.');
+                        alert('{{ __('transaction.discount_exceed_price') }}');
                         item.discount = item.price;
                     }
                 },
@@ -634,7 +634,7 @@
                 async submitOrder(redirectUrl) {
                     if (this.items.length === 0) return;
                     if (!this.clientName || !this.clientPhone) {
-                        alert('Please fill customer phone and name');
+                        alert('{{ __('transaction.fill_phone_name') }}');
                         return;
                     }
                     
@@ -664,7 +664,7 @@
                             if (window.FilamentNotification) {
                                 // Or a toast system if configured
                             } else {
-                                alert('Transaction created successfully!');
+                                alert('{{ __('transaction.transaction_created') }}');
                             }
                             
                             if (result.redirect_url) {
@@ -675,12 +675,12 @@
                         } else if (response.status === 422) {
                             // Validation error
                             this.errors = result.errors || {};
-                            alert('Stock not sufficient or validation failed. Please check the items.');
+                            alert('{{ __('transaction.validation_failed_stock') }}');
                         } else {
-                            alert(result.message || 'Failed to create order. Please check the data.');
+                            alert(result.message || '{{ __('transaction.failed_create') }}');
                         }
                     } catch (error) {
-                        alert('Network error occurred.');
+                        alert('{{ __('transaction.network_error') }}');
                     }
                 }
             }));

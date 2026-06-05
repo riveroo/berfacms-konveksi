@@ -11,12 +11,21 @@ use Illuminate\Support\Facades\DB;
 class BalanceSheet extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
-    protected static ?string $navigationLabel = 'Balance Sheet';
     protected static ?string $slug = 'balance-sheet';
     protected static string $view = 'filament.pages.balance-sheet';
 
     // Navigation registration is manually handled in AdminPanelProvider for exact sorting order
     protected static bool $shouldRegisterNavigation = false;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.Balance Sheet');
+    }
+
+    public function getTitle(): string | \Illuminate\Contracts\Support\Htmlable
+    {
+        return __('sidebar.Balance Sheet');
+    }
 
     public ?string $period = null;
 
@@ -54,6 +63,8 @@ class BalanceSheet extends Page
         $parts = explode('-', $this->period);
         $year = isset($parts[0]) ? intval($parts[0]) : now()->year;
         $month = isset($parts[1]) ? intval($parts[1]) : now()->month;
+
+        app(\App\Services\Accounting\MonthlyBalanceService::class)->ensureSnapshotsUpTo($year, $month);
 
         $startDate = Carbon::createFromDate($year, 1, 1)->startOfDay();
         $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth();

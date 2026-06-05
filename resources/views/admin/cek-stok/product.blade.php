@@ -2,8 +2,8 @@
     <div class="space-y-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div>
-                <x-text variant="title">Cek Stok Product</x-text>
-                <x-text variant="muted" class="mt-1">Laporan stok per varian dan ukuran</x-text>
+                <x-text variant="title">{{ __('product.stock_check_product') }}</x-text>
+                <x-text variant="muted" class="mt-1">{{ __('product.stock_report_desc') }}</x-text>
             </div>
             @if (canAccessMenu('admin/import-export'))
             <div class="flex flex-col sm:flex-row items-center gap-3">
@@ -14,7 +14,7 @@
                             d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                         </path>
                     </svg>
-                    Download Template
+                    {{ __('product.download_template') }}
                 </x-button>
 
                 <div x-data="{ isModalOpen: false }">
@@ -24,7 +24,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                         </svg>
-                        Import Stock
+                        {{ __('product.import_stock') }}
                     </x-button>
 
                     <!-- Import Modal -->
@@ -38,11 +38,11 @@
                                 @csrf
 
                                 <!-- Title -->
-                                <x-text variant="heading">Import Stock</x-text>
+                                <x-text variant="heading">{{ __('product.import_stock') }}</x-text>
 
                                 <!-- Description -->
                                 <x-text variant="muted" class="mt-1">
-                                    Only stock values will be updated. Please edit values from the downloaded template.
+                                    {{ __('product.import_stock_desc') }}
                                 </x-text>
 
                                 <!-- File Input -->
@@ -55,10 +55,10 @@
                                 <div
                                     class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700 mt-4">
                                     <x-button type="button" @click="isModalOpen = false" variant="outline">
-                                        Cancel
+                                        {{ __('product.batal') }}
                                     </x-button>
                                     <x-button type="submit" @click="setTimeout(() => isModalOpen = false, 150)" variant="primary">
-                                        Import
+                                        {{ __('product.impor') }}
                                     </x-button>
                                 </div>
                             </form>
@@ -74,10 +74,10 @@
             class="flex flex-wrap items-end gap-4 mb-6 bg-white dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
             <!-- Filter Product -->
             <div class="w-full sm:w-64">
-                <x-text variant="label" class="mb-1.5 ml-1 text-[10px]">Filter Product</x-text>
+                <x-text variant="label" class="mb-1.5 ml-1 text-[10px]">{{ __('product.filter_product') }}</x-text>
                 <select name="product_id" onchange="this.form.submit()"
                     class="w-full h-10 px-3 rounded-lg border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none cursor-pointer">
-                    <option value="">All Products</option>
+                    <option value="">{{ __('product.all_products') }}</option>
                     @foreach($products as $prod)
                         <option value="{{ $prod->id }}" {{ request('product_id') == $prod->id ? 'selected' : '' }}>
                             {{ $prod->product_name }}
@@ -88,11 +88,11 @@
 
             <!-- Search Input -->
             <div class="flex-1 min-w-[240px]">
-                <x-text variant="label" class="mb-1.5 ml-1 text-[10px]">Search Keyword</x-text>
+                <x-text variant="label" class="mb-1.5 ml-1 text-[10px]">{{ __('product.search_keyword') }}</x-text>
                 <div class="relative">
 
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search name or code..."
+                        placeholder="{{ __('product.search_name_code') }}"
                         class="w-full h-10 pl-10 pr-3 rounded-lg border border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-white sm:text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none">
                 </div>
             </div>
@@ -100,11 +100,11 @@
             <!-- Action Buttons -->
             <div class="flex items-center gap-2">
                 <x-button type="submit" variant="indigo" class="h-10 px-5">
-                    Apply Filter
+                    {{ __('product.apply_filter') }}
                 </x-button>
                 @if(request('search') || request('product_id'))
                     <x-button href="{{ route('cek-stok.product') }}" variant="outline" class="h-10 px-4">
-                        Reset
+                        {{ __('product.reset') }}
                     </x-button>
                 @endif
             </div>
@@ -118,15 +118,15 @@
                         class="bg-gray-50 dark:bg-gray-800/50 uppercase text-[10px] text-gray-500 font-bold tracking-wider sticky top-0 z-10 shadow-sm shadow-gray-200/50 dark:shadow-gray-900/50">
                         <tr>
                             <th scope="col"
-                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">ID</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">{{ __('product.id_code') }}</th>
                             <th scope="col"
-                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Product Name</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">{{ __('product.product_name') }}</th>
                             <th scope="col"
-                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Variant Name</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">{{ __('product.variant_name') }}</th>
                             <th scope="col"
-                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">Color</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50">{{ __('product.color') }}</th>
                             <th scope="col"
-                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700">Type</th>
+                                class="px-3 py-2 text-left whitespace-nowrap bg-gray-50 dark:bg-gray-800/50 border-r border-gray-200 dark:border-gray-700">{{ __('product.type') }}</th>
                             @foreach($sizes as $size)
                                 <th scope="col"
                                     class="px-3 py-2 text-center whitespace-nowrap bg-gray-50 dark:bg-gray-800/50 border-l border-gray-100 dark:border-gray-800">
@@ -187,7 +187,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                             d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                     </svg>
-                                    Tidak ada data stok.
+                                    {{ __('product.no_stock_data') }}
                                 </td>
                             </tr>
                         @endif

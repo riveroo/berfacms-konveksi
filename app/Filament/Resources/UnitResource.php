@@ -39,6 +39,7 @@ class UnitResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('master.name'))
                     ->required()
                     ->maxLength(255),
             ]);
@@ -49,12 +50,15 @@ class UnitResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('master.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('master.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('master.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

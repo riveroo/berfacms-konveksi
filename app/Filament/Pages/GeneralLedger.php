@@ -20,12 +20,21 @@ class GeneralLedger extends Page implements HasTable
     use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-table-cells';
-    protected static ?string $navigationLabel = 'General Ledger';
     protected static ?string $slug = 'general-ledger';
     protected static string $view = 'filament.pages.general-ledger';
 
     // Navigation registration is manually handled in AdminPanelProvider for exact sorting order
     protected static bool $shouldRegisterNavigation = false;
+
+    public static function getNavigationLabel(): string
+    {
+        return __('sidebar.General Ledger');
+    }
+
+    public function getTitle(): string | \Illuminate\Contracts\Support\Htmlable
+    {
+        return __('sidebar.General Ledger');
+    }
 
     public ?string $accountId = null;
     public ?string $period = null;
@@ -73,6 +82,8 @@ class GeneralLedger extends Page implements HasTable
         $year = isset($parts[0]) ? intval($parts[0]) : now()->year;
         $month = isset($parts[1]) ? intval($parts[1]) : now()->month;
 
+        app(\App\Services\Accounting\MonthlyBalanceService::class)->ensureSnapshotsUpTo($year, $month);
+
         $account = Account::findOrFail($this->accountId);
 
         // Fetch journal details
@@ -93,10 +104,29 @@ class GeneralLedger extends Page implements HasTable
             ->orderBy('journal_details.id', 'asc')
             ->get();
 
-        $runningBalance = 0.0;
+        $startDate = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $prevMonthDate = $startDate->copy()->subDay()->format('Y-m-d');
+
+        $snapshot = \App\Models\AccountMonthlyBalance::where('account_id', $this->accountId)
+            ->where('period_year', $year)
+            ->where('period_month', $month)
+            ->first();
+        $startingBalance = $snapshot ? floatval($snapshot->opening_balance) : 0.00;
+
+        $runningBalance = $startingBalance;
         $isAssetOrExpense = in_array($account->type, ['asset', 'expense']);
 
         $rows = [];
+        // Prepend Saldo Awal row
+        $rows[] = [
+            'date' => $prevMonthDate,
+            'code' => $account->code,
+            'name' => $account->name . ' (' . __('finance.opening_balance') . ')',
+            'debit' => 0.0,
+            'credit' => 0.0,
+            'balance' => $runningBalance,
+        ];
+
         $totalDebit = 0.0;
         $totalCredit = 0.0;
 
@@ -158,8 +188,19 @@ class GeneralLedger extends Page implements HasTable
         $year = isset($parts[0]) ? intval($parts[0]) : now()->year;
         $month = isset($parts[1]) ? intval($parts[1]) : now()->month;
 
+        app(\App\Services\Accounting\MonthlyBalanceService::class)->ensureSnapshotsUpTo($year, $month);
+
         $account = Account::find($this->accountId);
         if (!$account) return;
+
+        $snapshot = \App\Models\AccountMonthlyBalance::where('account_id', $this->accountId)
+            ->where('period_year', $year)
+            ->where('period_month', $month)
+            ->first();
+        $startingBalance = $snapshot ? floatval($snapshot->opening_balance) : 0.00;
+
+        // Populate virtual opening balance row's balance
+        $this->balancesCache[0] = $startingBalance;
 
         $details = JournalDetail::query()
             ->join('journal_entries', 'journal_entries.id', '=', 'journal_details.journal_entry_id')
@@ -171,7 +212,7 @@ class GeneralLedger extends Page implements HasTable
             ->select('journal_details.*')
             ->get();
 
-        $runningBalance = 0.0;
+        $runningBalance = $startingBalance;
         $isAssetOrExpense = in_array($account->type, ['asset', 'expense']);
 
         foreach ($details as $detail) {
@@ -205,49 +246,76 @@ class GeneralLedger extends Page implements HasTable
                 $parts = explode('-', $this->period);
                 $year = isset($parts[0]) ? intval($parts[0]) : now()->year;
                 $month = isset($parts[1]) ? intval($parts[1]) : now()->month;
+                $startDate = Carbon::createFromDate($year, $month, 1)->startOfDay();
+                $prevMonthDate = $startDate->copy()->subDay()->format('Y-m-d');
 
-                return JournalDetail::query()
-                    ->select(
-                        'journal_details.*', 
-                        'journal_entries.date as entry_date', 
+                $openingQuery = DB::table('accounts')
+                    ->select([
+                        DB::raw('0 as id'),
+                        DB::raw('0 as journal_entry_id'),
+                        DB::raw('accounts.id as account_id'),
+                        DB::raw('0.00 as debit'),
+                        DB::raw('0.00 as credit'),
+                        DB::raw('NULL as created_at'),
+                        DB::raw('NULL as updated_at'),
+                        DB::raw("'$prevMonthDate' as entry_date"),
+                        DB::raw("'Saldo Awal' as entry_description"),
+                        DB::raw('accounts.name as account_name'),
+                        DB::raw('accounts.code as account_code'),
+                    ])
+                    ->where('accounts.id', $this->accountId);
+
+                $detailsQuery = JournalDetail::query()
+                    ->select([
+                        'journal_details.id',
+                        'journal_details.journal_entry_id',
+                        'journal_details.account_id',
+                        'journal_details.debit',
+                        'journal_details.credit',
+                        'journal_details.created_at',
+                        'journal_details.updated_at',
+                        'journal_entries.date as entry_date',
                         'journal_entries.description as entry_description',
-                        'accounts.name as account_name', 
+                        'accounts.name as account_name',
                         'accounts.code as account_code'
-                    )
+                    ])
                     ->join('journal_entries', 'journal_entries.id', '=', 'journal_details.journal_entry_id')
                     ->join('accounts', 'accounts.id', '=', 'journal_details.account_id')
                     ->where('journal_details.account_id', $this->accountId)
                     ->whereYear('journal_entries.date', $year)
                     ->whereMonth('journal_entries.date', $month);
+
+                return JournalDetail::fromSub($openingQuery->unionAll($detailsQuery), 'journal_details');
             })
             ->columns([
                 TextColumn::make('entry_date')
-                    ->label('Trx Date')
+                    ->label(__('finance.trx_date'))
                     ->date('d M Y')
                     ->sortable(),
                 TextColumn::make('account_code')
-                    ->label('COA Code'),
+                    ->label(__('finance.code')),
                 TextColumn::make('account_name')
-                    ->label('Account Name'),
+                    ->label(__('finance.name'))
+                    ->formatStateUsing(fn ($record, $state) => $record->id == 0 ? $state . ' (' . __('finance.opening_balance') . ')' : $state),
                 TextColumn::make('debit')
-                    ->label('Debit')
+                    ->label(__('finance.debit'))
                     ->formatStateUsing(fn ($state) => $state > 0 ? 'Rp ' . number_format($state, 0, ',', '.') : '-')
                     ->alignEnd()
-                    ->summarize(\Filament\Tables\Columns\Summarizers\Sum::make()->label('Total Debit')->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))),
+                    ->summarize(\Filament\Tables\Columns\Summarizers\Sum::make()->label(__('finance.total_debit'))->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))),
                 TextColumn::make('credit')
-                    ->label('Credit')
+                    ->label(__('finance.credit'))
                     ->formatStateUsing(fn ($state) => $state > 0 ? 'Rp ' . number_format($state, 0, ',', '.') : '-')
                     ->alignEnd()
-                    ->summarize(\Filament\Tables\Columns\Summarizers\Sum::make()->label('Total Credit')->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))),
+                    ->summarize(\Filament\Tables\Columns\Summarizers\Sum::make()->label(__('finance.total_credit'))->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))),
                 TextColumn::make('balance')
-                    ->label('Balance')
+                    ->label(__('finance.balance'))
                     ->state(fn ($record) => $this->balancesCache[$record->id] ?? 0.0)
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->alignEnd()
                     ->weight('bold')
-                    ->summarize(\Filament\Tables\Columns\Summarizers\Summarizer::make()->label('Ending Balance')->using(fn () => $this->endingBalanceValue)->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))),
+                    ->summarize(\Filament\Tables\Columns\Summarizers\Summarizer::make()->label(__('finance.ending_balance'))->using(fn () => $this->endingBalanceValue)->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))),
             ])
-            ->defaultSort('journal_entries.date', 'asc')
+            ->defaultSort('entry_date', 'asc')
             ->paginated(false); // Disable pagination to compute continuous running balance cleanly
     }
 }

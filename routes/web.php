@@ -186,6 +186,11 @@ Route::middleware([
     Route::get('/admin/general-ledger/export-excel', [\App\Http\Controllers\GeneralLedgerController::class, 'exportExcel'])->name('admin.general-ledger.export-excel');
     Route::get('/admin/general-ledger/export-pdf', [\App\Http\Controllers\GeneralLedgerController::class, 'exportPdf'])->name('admin.general-ledger.export-pdf');
 
+    // Trial Balance Module
+    Route::get('/admin/trial-balance', \App\Filament\Pages\TrialBalance::class)->name('filament.admin.pages.trial-balance');
+    Route::get('/admin/trial-balance/export-excel', [\App\Http\Controllers\TrialBalanceController::class, 'exportExcel'])->name('admin.trial-balance.export-excel');
+    Route::get('/admin/trial-balance/export-pdf', [\App\Http\Controllers\TrialBalanceController::class, 'exportPdf'])->name('admin.trial-balance.export-pdf');
+
     // Balance Sheet Module Exports
     Route::get('/admin/balance-sheet/export-excel', [\App\Http\Controllers\BalanceSheetController::class, 'exportExcel'])->name('admin.balance-sheet.export-excel');
     Route::get('/admin/balance-sheet/export-pdf', [\App\Http\Controllers\BalanceSheetController::class, 'exportPdf'])->name('admin.balance-sheet.export-pdf');

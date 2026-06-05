@@ -69,9 +69,9 @@ class InventoryOverviewController extends Controller
             $results = $service->getResults();
             $total = $results['success'] + $results['failed'];
             
-            $body = "Total processed: {$total} rows.<br>" . 
-                    "Successfully updated: {$results['success']}.<br>" . 
-                    "Failed: {$results['failed']}.";
+            $body = __('inventory.total_processed', ['total' => $total]) . "<br>" . 
+                    __('inventory.successfully_updated', ['success' => $results['success']]) . "<br>" . 
+                    __('inventory.failed_rows', ['failed' => $results['failed']]);
                     
             if ($results['failed'] > 0) {
                 // Formatting error list
@@ -83,17 +83,17 @@ class InventoryOverviewController extends Controller
                     $errorList .= "<br>... and more.";
                 }
                 
-                $body .= "<br><br><b>Errors:</b><br>" . $errorList;
+                $body .= "<br><br><b>" . __('inventory.errors_label') . "</b><br>" . $errorList;
 
                 \Filament\Notifications\Notification::make()
-                    ->title('Import Completed with Errors')
+                    ->title(__('inventory.import_completed_errors'))
                     ->body($body)
                     ->warning()
                     ->persistent()
                     ->send();
             } else {
                 \Filament\Notifications\Notification::make()
-                    ->title('Import Successful')
+                    ->title(__('inventory.import_successful'))
                     ->body($body)
                     ->success()
                     ->send();
@@ -103,8 +103,8 @@ class InventoryOverviewController extends Controller
 
         } catch (\Exception $e) {
             \Filament\Notifications\Notification::make()
-                ->title('Import Failed')
-                ->body('An error occurred during import: ' . $e->getMessage())
+                ->title(__('inventory.import_failed'))
+                ->body(__('inventory.import_error_occurred', ['message' => $e->getMessage()]))
                 ->danger()
                 ->send();
                 

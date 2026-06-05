@@ -4,15 +4,15 @@
             {{-- Header Section --}}
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Cash Book</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Manage cash in and cash out transactions.</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ __('finance.cash_book') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('finance.manage_cash_transactions') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <x-button href="{{ route('cash-book.create') }}" variant="primary">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Record Transaction
+                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                         </svg>
+                         {{ __('finance.record_transaction') }}
                     </x-button>
                 </div>
             </div>
@@ -21,7 +21,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Money In</p>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('finance.total_money_in') }}</p>
                         <h3 class="text-2xl font-bold text-success-600 mt-1">Rp {{ number_format($totalIn, 0, ',', '.') }}</h3>
                     </div>
                     <div class="p-3 bg-success-50 dark:bg-success-900/20 rounded-full">
@@ -30,16 +30,16 @@
                 </div>
                 <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Money Out</p>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('finance.total_money_out') }}</p>
                         <h3 class="text-2xl font-bold text-danger-600 mt-1">Rp {{ number_format($totalOut, 0, ',', '.') }}</h3>
                     </div>
                     <div class="p-3 bg-danger-50 dark:bg-danger-900/20 rounded-full">
-                        <svg class="w-6 h-6 text-danger-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+                         <svg class="w-6 h-6 text-danger-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
                     </div>
                 </div>
                 <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Balance</p>
+                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('finance.balance') }}</p>
                         <h3 class="text-2xl font-bold {{ $balance >= 0 ? 'text-primary-600' : 'text-danger-600' }} mt-1">Rp {{ number_format($balance, 0, ',', '.') }}</h3>
                     </div>
                     <div class="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-full">
@@ -52,25 +52,25 @@
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm p-4">
                 <form method="GET" action="{{ route('cash-book.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Account</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.from_account') }}</label>
                         <select name="account_id" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                            <option value="">All Cash/Bank Accounts</option>
+                            <option value="">{{ __('finance.all_cash_bank_accounts') }}</option>
                             @foreach($accounts as $account)
                                 <option value="{{ $account->id }}" {{ request('account_id') == $account->id ? 'selected' : '' }}>{{ $account->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.start_date') }}</label>
                         <input type="date" name="start_date" value="{{ request('start_date') }}" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.end_date') }}</label>
                         <input type="date" name="end_date" value="{{ request('end_date') }}" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     </div>
                     <div class="flex items-end gap-2">
-                        <input type="text" name="search" placeholder="Search desc..." value="{{ request('search') }}" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                        <button type="submit" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-200">Filter</button>
+                        <input type="text" name="search" placeholder="{{ __('finance.search_desc') }}" value="{{ request('search') }}" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                        <button type="submit" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-lg border border-gray-300 dark:border-gray-700 hover:bg-gray-200">{{ __('finance.filter') }}</button>
                     </div>
                 </form>
             </div>
@@ -81,14 +81,14 @@
                     <table class="w-full text-left divide-y divide-gray-200 dark:divide-gray-800">
                         <thead class="bg-gray-50 dark:bg-gray-800/50">
                             <tr>
-                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">No</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Date</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Description</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-right text-success-600">Debit</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-right text-danger-600">Credit</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Account</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Category</th>
-                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">Customer</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">{{ __('finance.no') }}</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">{{ __('finance.date') }}</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">{{ __('finance.description') }}</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-right text-success-600">{{ __('finance.debit') }}</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-right text-danger-600">{{ __('finance.credit') }}</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">{{ __('finance.from_account') }}</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">{{ __('finance.category') }}</th>
+                                <th class="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white">{{ __('finance.customer') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-800 whitespace-nowrap">
@@ -125,7 +125,7 @@
                             @empty
                             <tr>
                                 <td colspan="8" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                    No transactions found.
+                                    {{ __('finance.no_transactions_found') }}
                                 </td>
                             </tr>
                             @endforelse

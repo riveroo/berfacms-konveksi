@@ -32,6 +32,7 @@ return [
     'Journal' => 'Journal',
     'Balance Sheet' => 'Balance Sheet',
     'General Ledger' => 'General Ledger',
+    'Trial Balance' => 'Trial Balance',
     'Profit & Loss' => 'Profit & Loss',
     'Master Data' => 'Master Data',
     'Product Type' => 'Product Type',
@@ -40,4 +41,7 @@ return [
     'User Management' => 'User Management',
     'Account' => 'Account',
     'Roles & Permission' => 'Roles & Permission',
+    'Product Inventory' => 'Product Inventory',
+    'Import / Export' => 'Import / Export',
+    'Pre Order' => 'Pre Order',
 ];

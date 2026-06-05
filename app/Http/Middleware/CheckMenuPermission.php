@@ -55,6 +55,7 @@ class CheckMenuPermission
             'admin/cash-book',
             'admin/journal',
             'admin/general-ledger',
+            'admin/trial-balance',
             'admin/balance-sheet',
             'admin/reports/profit-loss',
             'admin/reports/profit-loss/drilldown',

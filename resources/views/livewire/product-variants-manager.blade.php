@@ -5,8 +5,8 @@
         <!-- Header & Add Button -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 dark:border-gray-800 pb-4">
             <div>
-                <x-text variant="heading" class="text-gray-900 dark:text-white">Product Variants</x-text>
-                <x-text variant="muted" class="mt-1">Manage styles, codes, product types, and size/stock combinations.</x-text>
+                <x-text variant="heading" class="text-gray-900 dark:text-white">{{ __('product.variants') }}</x-text>
+                <x-text variant="muted" class="mt-1">Kelola gaya, kode, tipe produk, dan kombinasi ukuran/stok.</x-text>
             </div>
             
             @if (!$isReadOnly)
@@ -14,7 +14,7 @@
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    Add Variant
+                    Tambah Varian
                 </x-button>
             @endif
         </div>
@@ -29,7 +29,7 @@
             <input 
                 type="text" 
                 wire:model.live.debounce.300ms="search" 
-                placeholder="Search variant name..." 
+                placeholder="Cari nama varian..." 
                 class="w-full pl-10 pr-10 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
             />
             @if(filled($search))
@@ -46,14 +46,14 @@
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs uppercase bg-gray-50/50 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800">
                     <tr>
-                        <th scope="col" class="px-6 py-4">Image</th>
-                        <th scope="col" class="px-6 py-4">Variant Code</th>
-                        <th scope="col" class="px-6 py-4">Variant Name</th>
-                        <th scope="col" class="px-6 py-4">Product Type</th>
-                        <th scope="col" class="px-6 py-4">Color</th>
-                        <th scope="col" class="px-6 py-4">Sizes</th>
+                        <th scope="col" class="px-6 py-4">Gambar</th>
+                        <th scope="col" class="px-6 py-4">{{ __('product.variant_code') }}</th>
+                        <th scope="col" class="px-6 py-4">{{ __('product.variant_name') }}</th>
+                        <th scope="col" class="px-6 py-4">{{ __('product.product_type') }}</th>
+                        <th scope="col" class="px-6 py-4">{{ __('product.color') }}</th>
+                        <th scope="col" class="px-6 py-4">{{ __('product.sizes') }}</th>
                         @if (!$isReadOnly)
-                            <th scope="col" class="px-6 py-4 text-center">Action</th>
+                            <th scope="col" class="px-6 py-4 text-center">Aksi</th>
                         @endif
                     </tr>
                 </thead>
@@ -171,8 +171,8 @@
 
                 <!-- Modal Title -->
                 <div>
-                    <x-text variant="title" class="text-xl font-bold">{{ $editingVariantId ? 'Edit Variant' : 'Add Variant' }}</x-text>
-                    <x-text variant="muted" class="text-xs mt-1">Configure standard details and active sizes for this variant.</x-text>
+                    <x-text variant="title" class="text-xl font-bold">{{ $editingVariantId ? 'Ubah Varian' : 'Tambah Varian' }}</x-text>
+                    <x-text variant="muted" class="text-xs mt-1">Konfigurasi detail standar dan ukuran aktif untuk varian ini.</x-text>
                 </div>
 
                 <!-- Form Content -->
@@ -181,16 +181,16 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <!-- Variant Code -->
                         <div>
-                            <x-text variant="label" class="mb-1.5">Variant Code</x-text>
-                            <input type="text" wire:model="variantCode" placeholder="Auto-generated if empty"
+                            <x-text variant="label" class="mb-1.5">{{ __('product.variant_code') }}</x-text>
+                            <input type="text" wire:model="variantCode" placeholder="Dibuat otomatis jika kosong"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition duration-150">
                             @error('variantCode') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Variant Name -->
                         <div>
-                            <x-text variant="label" class="mb-1.5">Variant Name <span class="text-red-500">*</span></x-text>
-                            <input type="text" wire:model="variantName" placeholder="e.g. Navy Blue"
+                            <x-text variant="label" class="mb-1.5">{{ __('product.variant_name') }} <span class="text-red-500">*</span></x-text>
+                            <input type="text" wire:model="variantName" placeholder="Contoh: Biru Dongker"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition duration-150">
                             @error('variantName') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -199,10 +199,10 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <!-- Product Type -->
                         <div>
-                            <x-text variant="label" class="mb-1.5">Product Type <span class="text-red-500">*</span></x-text>
+                            <x-text variant="label" class="mb-1.5">{{ __('product.product_type') }} <span class="text-red-500">*</span></x-text>
                             <select wire:model="productTypeId"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition duration-150 cursor-pointer">
-                                <option value="">-- Select Product Type --</option>
+                                <option value="">-- Pilih Tipe Produk --</option>
                                 @foreach($productTypes as $type)
                                     <option value="{{ $type->id }}">{{ $type->name }}</option>
                                 @endforeach
@@ -212,11 +212,11 @@
 
                         <!-- Color -->
                         <div>
-                            <x-text variant="label" class="mb-1.5">Color Hex <span class="text-red-500">*</span></x-text>
+                            <x-text variant="label" class="mb-1.5">{{ __('product.color') }} Hex <span class="text-red-500">*</span></x-text>
                             <div class="flex items-center gap-3">
                                 <input type="color" wire:model="color" class="w-10 h-10 rounded-lg cursor-pointer border border-gray-300 dark:border-gray-600 p-0.5 bg-white dark:bg-gray-900">
                                 <input type="text" wire:model="color" placeholder="#4F46E5" maxlength="7"
-                                    class="flex-1 h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition duration-150 font-mono">
+                                    class="flex-1 h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition duration-150 font-mono font-bold">
                             </div>
                             @error('color') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
@@ -224,7 +224,7 @@
 
                     <!-- Image Upload -->
                     <div>
-                        <x-text variant="label" class="mb-1.5">Upload Image</x-text>
+                        <x-text variant="label" class="mb-1.5">Unggah Gambar</x-text>
                         <div class="flex flex-col sm:flex-row items-center gap-4 p-4 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50/50 dark:bg-gray-900/30">
                             @if ($imageFile)
                                 <img src="{{ $imageFile->temporaryUrl() }}" class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -248,7 +248,7 @@
 
                     <!-- Size Checklist -->
                     <div>
-                        <x-text variant="label" class="mb-3">Active Sizes <span class="text-red-500">*</span></x-text>
+                        <x-text variant="label" class="mb-3">{{ __('product.sizes') }} Aktif <span class="text-red-500">*</span></x-text>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                             @foreach ($sizeOptions as $size)
                                 <label for="size_{{ $size->id }}" class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition shadow-sm select-none">
@@ -265,10 +265,10 @@
                     <!-- Actions -->
                     <div class="flex justify-end gap-3 pt-5 border-t border-gray-100 dark:border-gray-800 mt-6">
                         <x-button type="button" @click="open = false" variant="outline">
-                            Cancel
+                            Batal
                         </x-button>
                         <x-button type="button" wire:click="saveVariant" variant="indigo">
-                            {{ $editingVariantId ? 'Save Changes' : 'Create Variant' }}
+                            {{ $editingVariantId ? 'Simpan Perubahan' : 'Tambah Varian' }}
                         </x-button>
                     </div>
 

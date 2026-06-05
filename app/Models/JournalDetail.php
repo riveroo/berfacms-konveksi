@@ -25,4 +25,21 @@ class JournalDetail extends Model
     {
         return $this->belongsTo(JournalEntry::class);
     }
+
+    protected static function booted()
+    {
+        static::saved(function ($detail) {
+            $detail->loadMissing('journalEntry');
+            if ($detail->journalEntry) {
+                app(\App\Services\Accounting\MonthlyBalanceService::class)->markAsDirtyFrom($detail->journalEntry->date);
+            }
+        });
+
+        static::deleted(function ($detail) {
+            $detail->loadMissing('journalEntry');
+            if ($detail->journalEntry) {
+                app(\App\Services\Accounting\MonthlyBalanceService::class)->markAsDirtyFrom($detail->journalEntry->date);
+            }
+        });
+    }
 }

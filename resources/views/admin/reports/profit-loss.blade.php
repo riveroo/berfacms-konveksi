@@ -29,8 +29,8 @@
             {{-- Header --}}
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">Profit & Loss Statement</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Simple and dynamic financial insights for your business.</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ __('finance.profit_loss_statement') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('finance.pl_subtitle') }}</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                     <x-button 
@@ -41,7 +41,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
-                        Download Excel
+                        {{ __('finance.download_excel') }}
                     </x-button>
                     <x-button 
                         href="{{ route('reports.profit-loss.export-pdf', request()->query()) }}" 
@@ -50,7 +50,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
-                        Export PDF
+                        {{ __('finance.export_pdf') }}
                     </x-button>
                 </div>
             </div>
@@ -61,21 +61,21 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         {{-- Filter Type selector --}}
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Period Selection</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.period_selection') }}</label>
                             <select 
                                 name="filter_type" 
                                 x-model="filterType"
                                 class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 dark:text-white"
                             >
-                                <option value="monthly">Monthly</option>
-                                <option value="yearly">Yearly</option>
-                                <option value="custom">Custom Date Range</option>
+                                <option value="monthly">{{ __('finance.monthly') }}</option>
+                                <option value="yearly">{{ __('finance.yearly') }}</option>
+                                <option value="custom">{{ __('finance.custom') }}</option>
                             </select>
                         </div>
 
                         {{-- Monthly Form Inputs --}}
                         <div x-show="filterType === 'monthly'">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Month</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.select_month') }}</label>
                             <input 
                                 type="month" 
                                 name="filter_month" 
@@ -86,7 +86,7 @@
 
                         {{-- Yearly Form Inputs --}}
                         <div x-show="filterType === 'yearly'" x-cloak>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Select Year</label>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.select_year') }}</label>
                             <select 
                                 name="filter_year" 
                                 class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500 text-gray-900 dark:text-white"
@@ -100,7 +100,7 @@
                         {{-- Custom Date Inputs --}}
                         <div x-show="filterType === 'custom'" class="grid grid-cols-2 gap-2" x-cloak>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.start_date') }}</label>
                                 <input 
                                     type="date" 
                                     name="start_date" 
@@ -109,7 +109,7 @@
                                 >
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.end_date') }}</label>
                                 <input 
                                     type="date" 
                                     name="end_date" 
@@ -125,13 +125,13 @@
                                 type="submit" 
                                 class="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white font-medium rounded-lg text-sm transition"
                             >
-                                Search
+                                {{ __('finance.search') }}
                             </button>
                             <a 
                                 href="{{ route('reports.profit-loss') }}" 
                                 class="flex-1 text-center px-4 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-medium rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                             >
-                                Reset
+                                {{ __('finance.reset') }}
                             </a>
                         </div>
                     </div>
@@ -145,7 +145,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Income</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('finance.total_income') }}</p>
                         <p class="text-xl font-black text-gray-900 dark:text-white whitespace-nowrap mt-0.5">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -155,7 +155,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Expenses</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('finance.total_expenses') }}</p>
                         <p class="text-xl font-black text-gray-900 dark:text-white whitespace-nowrap mt-0.5">Rp {{ number_format($totalExpense, 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Profit / Loss</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('finance.profit_loss') }}</p>
                         <p class="text-xl font-black {{ $netProfit >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }} whitespace-nowrap mt-0.5">Rp {{ number_format($netProfit, 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -175,7 +175,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.003 9.003 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Profit Margin</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">{{ __('finance.profit_margin') }}</p>
                         <p class="text-xl font-black text-indigo-600 dark:text-indigo-400 whitespace-nowrap mt-0.5">{{ number_format($profitMargin, 2, ',', '.') }}%</p>
                     </div>
                 </div>
@@ -183,7 +183,7 @@
 
             {{-- Trend Visualization Card --}}
             <div class="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
-                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">P&L Trends ({{ $period_label }})</h3>
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">{{ __('finance.pl_trends', ['period' => $period_label]) }}</h3>
                 <div class="h-80 w-full">
                     <canvas id="trendsChart"></canvas>
                 </div>
@@ -192,23 +192,23 @@
             {{-- Profit & Loss Dynamic Statement Table --}}
             <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm overflow-hidden p-6">
                 <div class="text-center pb-6 border-b border-gray-100 dark:border-gray-800">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Profit & Loss Statement</h3>
-                    <p class="text-xs text-gray-500 mt-0.5">Selected Period: {{ $period_label }}</p>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{ __('finance.profit_loss_statement') }}</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">{{ __('finance.selected_period') ?? 'Selected Period' }}: {{ $period_label }}</p>
                 </div>
                 
                 <div class="overflow-x-auto mt-4">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50/50 dark:bg-gray-800/40 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 dark:border-gray-800">
-                                <th class="px-6 py-3 w-1/3">Category / Account</th>
-                                <th class="px-6 py-3 w-1/3">Code</th>
-                                <th class="px-6 py-3 text-right w-1/3">Balance</th>
+                                <th class="px-6 py-3 w-1/3">{{ __('finance.category_account') }}</th>
+                                <th class="px-6 py-3 w-1/3">{{ __('finance.code') }}</th>
+                                <th class="px-6 py-3 text-right w-1/3">{{ __('finance.balance') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800/50">
                             {{-- INCOME SECTION --}}
                             <tr class="bg-gray-50/20 dark:bg-gray-900/10">
-                                <td colspan="3" class="px-6 py-3 text-sm font-black text-gray-900 dark:text-white uppercase tracking-wide">Income</td>
+                                <td colspan="3" class="px-6 py-3 text-sm font-black text-gray-900 dark:text-white uppercase tracking-wide">{{ __('finance.income_category') }}</td>
                             </tr>
                             @forelse($revenueAccounts as $account)
                                 <tr class="hover:bg-gray-50/30 dark:hover:bg-gray-800/20 transition">
@@ -223,7 +223,7 @@
                                             type="button" 
                                             @click="fetchDrilldown({{ $account->id }})" 
                                             class="font-bold text-emerald-600 hover:text-emerald-500 border-b border-dashed border-emerald-300 hover:border-emerald-500 outline-none transition"
-                                            title="Click to view detailed transactions"
+                                            title="{{ __('finance.click_to_view_details') }}"
                                         >
                                             Rp {{ number_format($account->balance, 0, ',', '.') }}
                                         </button>
@@ -231,18 +231,18 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-4 text-sm text-gray-400 italic pl-12">No active income accounts loaded</td>
+                                    <td colspan="3" class="px-6 py-4 text-sm text-gray-400 italic pl-12">{{ __('finance.no_income_accounts') }}</td>
                                 </tr>
                             @endforelse
                             <tr class="bg-emerald-50/20 dark:bg-emerald-900/10 font-bold border-t border-gray-200 dark:border-gray-800">
-                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px] pl-8">Total Income</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px] pl-8">{{ __('finance.total_income') }}</td>
                                 <td></td>
                                 <td class="px-6 py-4 text-sm text-right text-emerald-600 dark:text-emerald-400">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</td>
                             </tr>
 
                             {{-- EXPENSES SECTION --}}
                             <tr class="bg-gray-50/20 dark:bg-gray-900/10">
-                                <td colspan="3" class="px-6 py-3 text-sm font-black text-gray-900 dark:text-white uppercase tracking-wide">Expenses</td>
+                                <td colspan="3" class="px-6 py-3 text-sm font-black text-gray-900 dark:text-white uppercase tracking-wide">{{ __('finance.expenses_category') }}</td>
                             </tr>
                             @forelse($expenseAccounts as $account)
                                 <tr class="hover:bg-gray-50/30 dark:hover:bg-gray-800/20 transition">
@@ -257,7 +257,7 @@
                                             type="button" 
                                             @click="fetchDrilldown({{ $account->id }})" 
                                             class="font-bold text-rose-600 hover:text-rose-500 border-b border-dashed border-rose-300 hover:border-rose-500 outline-none transition"
-                                            title="Click to view detailed transactions"
+                                            title="{{ __('finance.click_to_view_details') }}"
                                         >
                                             Rp {{ number_format($account->balance, 0, ',', '.') }}
                                         </button>
@@ -265,18 +265,18 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-4 text-sm text-gray-400 italic pl-12">No active expense accounts loaded</td>
+                                    <td colspan="3" class="px-6 py-4 text-sm text-gray-400 italic pl-12">{{ __('finance.no_expense_accounts') }}</td>
                                 </tr>
                             @endforelse
                             <tr class="bg-rose-50/20 dark:bg-rose-900/10 font-bold border-t border-gray-200 dark:border-gray-800">
-                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px] pl-8">Total Expenses</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px] pl-8">{{ __('finance.total_expenses') }}</td>
                                 <td></td>
                                 <td class="px-6 py-4 text-sm text-right text-rose-600 dark:text-rose-400">Rp {{ number_format($totalExpense, 0, ',', '.') }}</td>
                             </tr>
 
                             {{-- NET PROFIT SECTION --}}
                             <tr class="bg-gray-100/50 dark:bg-gray-800 font-black border-t-2 border-b-2 border-gray-900 dark:border-gray-700">
-                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px]">Net Profit / Loss</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px]">{{ __('finance.net_profit_loss') }}</td>
                                 <td></td>
                                 <td class="px-6 py-4 text-sm text-right {{ $netProfit >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }}">
                                     Rp {{ number_format($netProfit, 0, ',', '.') }}
@@ -300,7 +300,7 @@
                 @click.away="isOpen = false"
             >
                 <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
-                    <h3 class="font-bold text-gray-900 dark:text-white" x-text="accountName + ' Transactions'"></h3>
+                    <h3 class="font-bold text-gray-900 dark:text-white" x-text="'{{ __('finance.transactions_drilldown', ['account' => 'PLACEHOLDER']) }}'.replace('PLACEHOLDER', accountName)"></h3>
                     <button @click="isOpen = false" class="text-gray-400 hover:text-gray-500">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -317,10 +317,10 @@
                         <table class="w-full text-sm text-left">
                             <thead class="bg-gray-50 dark:bg-gray-800/50 text-gray-500 uppercase text-[10px] font-bold">
                                 <tr>
-                                    <th class="px-4 py-2.5 text-left">Date</th>
-                                    <th class="px-4 py-2.5 text-left">Description</th>
-                                    <th class="px-4 py-2.5 text-left">Reference</th>
-                                    <th class="px-4 py-2.5 text-right">Amount</th>
+                                    <th class="px-4 py-2.5 text-left">{{ __('finance.date') }}</th>
+                                    <th class="px-4 py-2.5 text-left">{{ __('finance.description') }}</th>
+                                    <th class="px-4 py-2.5 text-left">{{ __('finance.reference') }}</th>
+                                    <th class="px-4 py-2.5 text-right">{{ __('finance.amount') }}</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
@@ -333,7 +333,7 @@
                                     </tr>
                                 </template>
                                 <tr x-show="transactions.length === 0">
-                                    <td colspan="4" class="px-4 py-8 text-center text-gray-400 italic">No transactions found for this period</td>
+                                    <td colspan="4" class="px-4 py-8 text-center text-gray-400 italic">{{ __('finance.no_transactions') }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -345,7 +345,7 @@
                         @click="isOpen = false" 
                         class="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700"
                     >
-                        Close
+                        {{ __('finance.close') }}
                     </button>
                 </div>
             </div>
@@ -363,7 +363,7 @@
                     labels: @json($trends['labels']),
                     datasets: [
                         {
-                            label: 'Income',
+                            label: '{{ __('finance.income_category') }}',
                             data: @json($trends['revenue']),
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.05)',
@@ -372,7 +372,7 @@
                             fill: true
                         },
                         {
-                            label: 'Expenses',
+                            label: '{{ __('finance.expenses_category') }}',
                             data: @json($trends['expense']),
                             borderColor: '#ef4444',
                             backgroundColor: 'rgba(239, 68, 68, 0.05)',
@@ -381,7 +381,7 @@
                             fill: true
                         },
                         {
-                            label: 'Profit',
+                            label: '{{ __('finance.profit_loss') }}',
                             data: @json($trends['profit']),
                             borderColor: '#6366f1',
                             backgroundColor: 'rgba(99, 102, 241, 0.05)',

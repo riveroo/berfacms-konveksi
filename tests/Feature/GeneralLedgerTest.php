@@ -119,9 +119,9 @@ class GeneralLedgerTest extends TestCase
             ->assertSet('totalCreditValue', 300.00)
             ->assertSet('endingBalanceValue', 1200.00)
             ->assertViewHas('balancesCache', function ($cache) {
-                // Assert running balances: Row 1 = 1000, Row 2 = 700, Row 3 = 1200
+                // Assert running balances: Row 0 = 0.00 (Opening Balance), Row 1 = 1000, Row 2 = 700, Row 3 = 1200
                 $balances = array_values($cache);
-                return $balances[0] == 1000.00 && $balances[1] == 700.00 && $balances[2] == 1200.00;
+                return $balances[0] == 0.00 && $balances[1] == 1000.00 && $balances[2] == 700.00 && $balances[3] == 1200.00;
             });
     }
 

@@ -41,24 +41,28 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('master.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__('master.email'))
                     ->email()
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
+                    ->label(__('master.password'))
                     ->password()
                     ->required(fn (string $operation): bool => $operation === 'create')
                     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                     ->dehydrated(fn (?string $state): bool => filled($state))
                     ->maxLength(255),
                 Forms\Components\Select::make('role_id')
+                    ->label(__('master.role'))
                     ->relationship('role', 'name')
                     ->nullable(),
                 Forms\Components\Toggle::make('is_active')
-                    ->label('Active Status')
+                    ->label(__('master.active_status'))
                     ->default(true),
             ]);
     }
@@ -68,12 +72,15 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('master.name'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('master.email'))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role.name')
+                    ->label(__('master.role'))
                     ->badge()
                     ->color(fn (string $state): string => match (strtolower($state)) {
                         'admin' => 'success',
@@ -84,23 +91,24 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean()
-                    ->label('Active'),
+                    ->label(__('master.active')),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('master.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active Status')
+                    ->label(__('master.active_status'))
                     ->boolean()
-                    ->trueLabel('Active')
-                    ->falseLabel('Inactive'),
+                    ->trueLabel(__('master.active'))
+                    ->falseLabel(__('master.inactive')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('reset_password')
-                    ->label('Reset Password')
+                    ->label(__('master.reset_password'))
                     ->icon('heroicon-o-key')
                     ->color('danger')
                     ->requiresConfirmation()
@@ -109,8 +117,8 @@ class UserResource extends Resource
                             'password' => bcrypt('12345678'),
                         ]);
                         \Filament\Notifications\Notification::make()
-                            ->title('Password Reset')
-                            ->body('Password has been reset to 12345678')
+                            ->title(__('master.password_reset_success_title'))
+                            ->body(__('master.password_reset_success_body'))
                             ->success()
                             ->send();
                     }),

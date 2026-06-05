@@ -4,8 +4,8 @@
             {{-- Header Section --}}
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">General Journal</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">View double-entry accounting records grouped by transaction.</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-950 dark:text-white">{{ __('finance.general_journal') }}</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ __('finance.journal_subtitle') }}</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <x-button 
@@ -16,7 +16,7 @@
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
-                        Export PDF
+                        {{ __('finance.export_pdf') }}
                     </x-button>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm p-4">
                 <form method="GET" action="{{ route('journal.index') }}" class="flex flex-col sm:flex-row items-end gap-4">
                     <div class="w-full sm:w-72">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter Month & Year</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.filter_month_year') }}</label>
                         <input 
                             type="month" 
                             name="filter_month" 
@@ -38,13 +38,13 @@
                             type="submit" 
                             class="flex-1 sm:flex-initial px-4 py-2 bg-primary-600 hover:bg-primary-500 text-white font-medium rounded-lg text-sm transition"
                         >
-                            Search
+                            {{ __('finance.search') }}
                         </button>
                         <a 
                             href="{{ route('journal.index') }}" 
                             class="flex-1 sm:flex-initial text-center px-4 py-2 border border-gray-300 dark:border-gray-700 dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-medium rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                         >
-                            Reset
+                            {{ __('finance.reset') }}
                         </a>
                     </div>
                 </form>
@@ -53,24 +53,24 @@
             {{-- Ledger Status Card --}}
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
-                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Debit</p>
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('finance.total_debit') }}</p>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Rp {{ number_format($totalDebit, 0, ',', '.') }}</h3>
                 </div>
                 <div class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
-                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Credit</p>
+                    <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('finance.total_credit') }}</p>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mt-1">Rp {{ number_format($totalCredit, 0, ',', '.') }}</h3>
                 </div>
                 <div class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</p>
+                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ __('finance.status') }}</p>
                         <div class="mt-1">
                             @if($totalDebit === $totalCredit)
                                 <span class="inline-flex items-center gap-1 text-sm font-bold text-success-600 dark:text-success-400">
-                                    Balanced
+                                    {{ __('finance.balanced') }}
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1 text-sm font-bold text-danger-600 dark:text-danger-400">
-                                    Unbalanced
+                                    {{ __('finance.unbalanced') }}
                                 </span>
                             @endif
                         </div>
@@ -99,11 +99,11 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                <th class="px-6 py-4 w-3/12">Trx Date</th>
-                                <th class="px-6 py-4 w-4/12">COA</th>
-                                <th class="px-6 py-4 w-1/12">Code</th>
-                                <th class="px-6 py-4 text-right w-2/12">Debit</th>
-                                <th class="px-6 py-4 text-right w-2/12">Credit</th>
+                                <th class="px-6 py-4 w-3/12">{{ __('finance.trx_date') }}</th>
+                                <th class="px-6 py-4 w-4/12">{{ __('finance.coa') }}</th>
+                                <th class="px-6 py-4 w-1/12">{{ __('finance.code') }}</th>
+                                <th class="px-6 py-4 text-right w-2/12">{{ __('finance.debit') }}</th>
+                                <th class="px-6 py-4 text-right w-2/12">{{ __('finance.credit') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-transparent">
@@ -152,7 +152,7 @@
                                             <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                             </svg>
-                                            <span class="font-medium">No journal entries found for {{ \Carbon\Carbon::createFromFormat('Y-m', $filterMonth)->format('F Y') }}</span>
+                                            <span class="font-medium">{{ __('finance.no_journal_entries', ['period' => \Carbon\Carbon::createFromFormat('Y-m', $filterMonth)->format('F Y')]) }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -161,7 +161,7 @@
                         @if($details->isNotEmpty())
                             <tfoot class="bg-gray-50 dark:bg-gray-800/40 border-t border-gray-200 dark:border-gray-800 text-sm font-bold">
                                 <tr>
-                                    <td colspan="3" class="px-6 py-4 text-left text-gray-900 dark:text-white uppercase tracking-wider text-xs">Total Summary</td>
+                                    <td colspan="3" class="px-6 py-4 text-left text-gray-900 dark:text-white uppercase tracking-wider text-xs">{{ __('finance.total_summary') }}</td>
                                     <td class="px-6 py-4 text-right text-gray-900 dark:text-white">Rp {{ number_format($totalDebit, 0, ',', '.') }}</td>
                                     <td class="px-6 py-4 text-right text-gray-900 dark:text-white">Rp {{ number_format($totalCredit, 0, ',', '.') }}</td>
                                 </tr>
