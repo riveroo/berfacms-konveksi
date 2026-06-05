@@ -33,7 +33,7 @@ class StockInResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return canAccessMenu('admin/stock-ins');
+        return canAccessMenu('admin/stock-in');
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool

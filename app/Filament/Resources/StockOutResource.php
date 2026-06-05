@@ -33,7 +33,7 @@ class StockOutResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return canAccessMenu('admin/stock-outs');
+        return canAccessMenu('admin/stock-out');
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool

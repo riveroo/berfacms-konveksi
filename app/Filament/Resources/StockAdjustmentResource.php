@@ -33,7 +33,7 @@ class StockAdjustmentResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return canAccessMenu('admin/adjustments');
+        return canAccessMenu('admin/adjustment');
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
