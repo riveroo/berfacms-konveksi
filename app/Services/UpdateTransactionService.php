@@ -69,16 +69,21 @@ class UpdateTransactionService
             $transaction->details()->delete();
 
             $totalPrice = 0;
-            $itemsDiscount = 0;
+            $minDiscount = 0;
             
             foreach ($data['items'] as $item) {
-                $discount = $item['discount'] ?? 0;
-                $subtotal = ($item['price'] - $discount) * $item['qty'];
+                $subtotal = $item['price'] * $item['qty'];
                 $totalPrice += $subtotal;
-                $itemsDiscount += ($discount * $item['qty']);
+                $minDiscount += (($item['discount'] ?? 0) * $item['qty']);
             }
             
             $overallDiscount = $data['overall_discount'] ?? 0;
+            if ($overallDiscount < $minDiscount) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'overall_discount' => ['Overall discount cannot be less than total item discounts (' . number_format($minDiscount, 0, ',', '.') . ').']
+                ]);
+            }
+            
             $grandTotal = $totalPrice - $overallDiscount;
 
             $transaction->client_id = $client->id;
@@ -114,7 +119,7 @@ class UpdateTransactionService
                     'price' => $item['price'],
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
-                    'subtotal' => ($item['price'] - ($item['discount'] ?? 0)) * $item['qty'],
+                    'subtotal' => $item['price'] * $item['qty'],
                 ]);
 
                 // Reduce stock again if direct_order

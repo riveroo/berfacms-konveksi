@@ -1,3 +1,11 @@
+@php
+    $sumPriceQty = $transaction->details->sum(fn($d) => $d->price * $d->quantity);
+    $isOldCalculation = ($transaction->details->sum('discount') > 0) && (abs($transaction->total_price - $sumPriceQty) > 0.01);
+    $itemDiscountsTotal = $transaction->details->sum(fn($d) => $d->discount * $d->quantity);
+    $initialOverallDiscount = $isOldCalculation 
+        ? max(0, $transaction->total_discount - $itemDiscountsTotal)
+        : $transaction->total_discount;
+@endphp
 <x-filament-panels::layout>
     <div x-data="pos()" class="space-y-6">
 
@@ -195,7 +203,7 @@
                                     </td>
 
                                     <!-- Subtotal -->
-                                    <td class="px-4 py-4 text-right font-extrabold text-indigo-650 dark:text-indigo-400 font-mono" x-text="formatRupiah((item.price - item.discount) * item.qty)"></td>
+                                    <td class="px-4 py-4 text-right font-extrabold text-indigo-650 dark:text-indigo-400 font-mono" x-text="formatRupiah(item.price * item.qty)"></td>
                                     
                                     <!-- Action -->
                                     <td class="px-4 py-4 text-center">
@@ -236,7 +244,7 @@
 
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-gray-500 dark:text-gray-400 pt-1">{{ __('transaction.overall_discount') }}</span>
-                            <input type="number" x-model.number="overallDiscount" @input="if(overallDiscount < 0) overallDiscount = 0" :disabled="('{{ $transaction->status }}' === 'on progress' && '{{ $transaction->item_status }}' === 'collected') || '{{ $transaction->payment_status }}' === 'paid'"
+                            <input type="number" x-model.number="overallDiscount" @change="validateOverallDiscount()" @blur="validateOverallDiscount()" :disabled="('{{ $transaction->status }}' === 'on progress' && '{{ $transaction->item_status }}' === 'collected') || '{{ $transaction->payment_status }}' === 'paid'"
                                 class="w-32 h-9 px-3 text-right text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500/50 outline-none transition disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-800"
                                 min="0" placeholder="0">
                         </div>
@@ -520,6 +528,7 @@
                     
                     this.resetProductForm();
                     this.productModalOpen = false;
+                    this.updateOverallDiscount();
                 },
 
                 validateQty(index) {
@@ -547,6 +556,7 @@
                             item.qty = maxStock > 0 ? maxStock : 1;
                         }
                     }
+                    this.updateOverallDiscount();
                 },
 
                 validateDiscount(index) {
@@ -561,6 +571,7 @@
                         alert('{{ __('transaction.discount_exceed_price') }}');
                         item.discount = item.price;
                     }
+                    this.updateOverallDiscount();
                 },
 
                 validatePrice(index) {
@@ -574,6 +585,7 @@
                     if (item.discount > item.price) {
                         item.discount = item.price;
                     }
+                    this.updateOverallDiscount();
                 },
 
                 items: [
@@ -592,11 +604,29 @@
                     @endforeach
                 ],
                 errors: {},
-                overallDiscount: {{ $transaction->total_discount - $transaction->details->sum('discount') }},
+                overallDiscount: {{ $initialOverallDiscount }},
 
-                // Computed subtotals (using the requested formula: subtotal = (price - disc) * QTY)
+                get minOverallDiscount() {
+                    return this.items.reduce((sum, item) => sum + ((item.discount || 0) * item.qty), 0);
+                },
+
+                validateOverallDiscount() {
+                    let min = this.minOverallDiscount;
+                    if (this.overallDiscount < min) {
+                        this.overallDiscount = min;
+                    }
+                },
+
+                updateOverallDiscount() {
+                    let min = this.minOverallDiscount;
+                    if (this.overallDiscount < min) {
+                        this.overallDiscount = min;
+                    }
+                },
+
+                // Computed subtotals (using the formula: subtotal = price * QTY)
                 get subtotal() {
-                    return this.items.reduce((sum, item) => sum + ((item.price - item.discount) * item.qty), 0);
+                    return this.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
                 },
 
                 get grandTotal() {
@@ -618,6 +648,7 @@
 
                 removeItem(index) {
                     this.items.splice(index, 1);
+                    this.updateOverallDiscount();
                 },
 
                 formatRupiah(number) {
@@ -642,6 +673,7 @@
                 },
 
                 async submitOrder(redirectUrl) {
+                    this.validateOverallDiscount();
                     if (this.items.length === 0) return;
                     if (!this.clientName || !this.clientPhone) {
                         alert('{{ __('transaction.fill_phone_name') }}');
@@ -666,7 +698,7 @@
                                 transaction_type: this.transactionType,
                                 item_status: this.transactionType === 'pre_order' ? 'in_progress' : this.itemStatus,
                                 items: this.items
-                            })
+                             })
                         });
 
                         const result = await response.json();
