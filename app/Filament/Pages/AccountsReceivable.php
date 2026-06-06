@@ -15,9 +15,13 @@ class AccountsReceivable extends Page implements HasTable
     use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
-    protected static ?string $navigationLabel = 'Accounts Receivable';
     protected static ?string $slug = 'accounts-receivable';
     protected static string $view = 'filament.pages.accounts-receivable';
+
+    public function getTitle(): string
+    {
+        return __('accounts_receivable.title');
+    }
 
     // We manually register this inside AdminPanelProvider to enforce exact ordering
     protected static bool $shouldRegisterNavigation = false;
@@ -32,6 +36,11 @@ class AccountsReceivable extends Page implements HasTable
         return [
             \App\Filament\Widgets\AccountsReceivableOverview::class,
         ];
+    }
+
+    public function getHeaderWidgetsColumns(): int | array
+    {
+        return 1;
     }
 
     public function table(\Filament\Tables\Table $table): \Filament\Tables\Table
@@ -63,29 +72,29 @@ class AccountsReceivable extends Page implements HasTable
                     ->label('No')
                     ->rowIndex(),
                 \Filament\Tables\Columns\TextColumn::make('client_name')
-                    ->label('Customer Name')
+                    ->label(__('accounts_receivable.customer_name'))
                     ->searchable()
                     ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('total_transactions')
-                    ->label('Total Transactions')
+                    ->label(__('accounts_receivable.total_transactions'))
                     ->sortable()
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
                 \Filament\Tables\Columns\TextColumn::make('total_paid')
-                    ->label('Total Paid')
+                    ->label(__('accounts_receivable.total_paid'))
                     ->sortable()
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
                 \Filament\Tables\Columns\TextColumn::make('outstanding_receivable')
-                    ->label('Outstanding Receivable')
+                    ->label(__('accounts_receivable.outstanding_receivable'))
                     ->sortable()
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
             ])
             ->defaultSort('outstanding_receivable', 'desc')
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('payment_status')
-                    ->label('Payment Status')
+                    ->label(__('accounts_receivable.payment_status'))
                     ->options([
-                        'paid' => 'Paid',
-                        'unpaid' => 'Unpaid',
+                        'paid' => __('accounts_receivable.paid'),
+                        'unpaid' => __('accounts_receivable.unpaid'),
                     ])
                     ->query(function (Builder $query, array $data) {
                         if ($data['value'] === 'paid') {
@@ -97,13 +106,13 @@ class AccountsReceivable extends Page implements HasTable
             ])
             ->actions([
                 \Filament\Tables\Actions\Action::make('detail')
-                    ->label('Detail')
+                    ->label(__('accounts_receivable.detail'))
                     ->icon('heroicon-o-eye')
                     ->color('primary')
-                    ->modalHeading('Accounts Receivable Detail')
+                    ->modalHeading(__('accounts_receivable.modal_heading'))
                     ->modalWidth('5xl')
                     ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Close')
+                    ->modalCancelActionLabel(__('accounts_receivable.close'))
                     ->modalContent(fn (Client $record) => view('filament.pages.accounts-receivable-detail-modal', [
                         'client' => $record,
                     ])),

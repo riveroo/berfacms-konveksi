@@ -9,6 +9,13 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AccountsReceivableOverview extends BaseWidget
 {
+    protected int | string | array $columnSpan = 'full';
+
+    protected function getColumns(): int
+    {
+        return 3;
+    }
+
     protected function getStats(): array
     {
         $totalTransactions = Transaction::where('status', '!=', 'cancelled')
@@ -21,18 +28,18 @@ class AccountsReceivableOverview extends BaseWidget
         $outstandingReceivable = $totalTransactions - $totalPayments;
 
         return [
-            Stat::make('Total Transactions', 'Rp ' . number_format($totalTransactions, 0, ',', '.'))
-                ->description('Sum of all customer transaction amounts')
+            Stat::make(__('accounts_receivable.overview_total_transactions'), 'Rp ' . number_format($totalTransactions, 0, ',', '.'))
+                ->description(__('accounts_receivable.overview_total_transactions_desc'))
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('primary'),
 
-            Stat::make('Total Payments', 'Rp ' . number_format($totalPayments, 0, ',', '.'))
-                ->description('Sum of all payments received')
+            Stat::make(__('accounts_receivable.overview_total_payments'), 'Rp ' . number_format($totalPayments, 0, ',', '.'))
+                ->description(__('accounts_receivable.overview_total_payments_desc'))
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success'),
 
-            Stat::make('Outstanding Receivables', 'Rp ' . number_format($outstandingReceivable, 0, ',', '.'))
-                ->description('Total remaining outstanding balance')
+            Stat::make(__('accounts_receivable.overview_outstanding_receivables'), 'Rp ' . number_format($outstandingReceivable, 0, ',', '.'))
+                ->description(__('accounts_receivable.overview_outstanding_receivables_desc'))
                 ->descriptionIcon('heroicon-m-scale')
                 ->color($outstandingReceivable > 0 ? 'danger' : 'success'),
         ];
