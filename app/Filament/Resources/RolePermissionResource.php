@@ -56,7 +56,6 @@ class RolePermissionResource extends Resource
             ],
             'Sales' => [
                 ['name' => 'Orders', 'route' => 'admin/transactions'],
-                ['name' => 'Pre Order', 'route' => 'admin/pre-orders'],
                 ['name' => 'Accounts Receivable', 'route' => 'admin/accounts-receivable'],
                 ['name' => 'Sales Dashboard', 'route' => 'admin/transactions/report'],
                 ['name' => 'Sales Report', 'route' => 'admin/sales-report'],

@@ -22,6 +22,11 @@ class CheckMenuPermission
             return $next($request);
         }
 
+        // Explicitly block all pre-orders paths
+        if ($path === 'admin/pre-orders' || str_starts_with($path, 'admin/pre-orders/')) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         // We only want to protect mapped menu paths. Since filament appends things like /create, /edit, 
         // we'll find if the path starts with any of our mapped routes.
         $mappedRoutes = [
@@ -34,7 +39,6 @@ class CheckMenuPermission
             'admin/transactions/report',
             'admin/accounts-receivable',
             'admin/transactions',
-            'admin/pre-orders',
             'admin/customers',
             'admin/items',
             'inventory/overview',

@@ -291,4 +291,15 @@ class CreateTransactionCalculationTest extends TestCase
         $this->assertEquals(35000.00, (float)$transaction->total_discount);
         $this->assertEquals(265000.00, (float)$transaction->grand_total);
     }
+
+    public function test_accessing_pre_orders_is_forbidden(): void
+    {
+        $this->actingAs($this->user);
+
+        $response = $this->get('/admin/pre-orders');
+        $response->assertStatus(403);
+
+        $responseDetail = $this->get('/admin/pre-orders/1');
+        $responseDetail->assertStatus(403);
+    }
 }

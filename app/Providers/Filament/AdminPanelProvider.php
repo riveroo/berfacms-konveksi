@@ -99,13 +99,6 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn() => request()->routeIs('transactions.*') && !request()->routeIs('transactions.report'))
                     ->visible(fn() => canAccessMenu('admin/transactions'))
                     ->sort(1),
-                 \Filament\Navigation\NavigationItem::make(fn() => __('sidebar.Pre Order / Quotation'))
-                    ->group(fn() => __('sidebar.Sales'))
-                    ->url(fn(): string => route('pre-orders.index'))
-                    ->icon('heroicon-o-document-text')
-                    ->isActiveWhen(fn() => request()->routeIs('pre-orders.*'))
-                    ->visible(fn() => canAccessMenu('admin/pre-orders'))
-                    ->sort(2),
                 \Filament\Navigation\NavigationItem::make(fn() => __('sidebar.Accounts Receivable'))
                     ->group(fn() => __('sidebar.Sales'))
                     ->url(fn(): string => route('filament.admin.pages.accounts-receivable'))
