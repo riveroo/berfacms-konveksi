@@ -143,7 +143,7 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::with(['client', 'details.product', 'details.variant', 'details.sizeOption'])->findOrFail($id);
         $transferToAccounts = \App\Models\Account::where('type', 'asset')->where('is_active', true)->get();
-        $categories = \App\Models\Account::where('is_active', true)->get();
+        $categories = \App\Models\Account::where('type', 'revenue')->where('is_active', true)->get();
         return view('admin.transactions.detail', compact('transaction', 'transferToAccounts', 'categories'));
     }
 

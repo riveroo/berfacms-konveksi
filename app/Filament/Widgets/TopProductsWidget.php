@@ -32,8 +32,8 @@ class TopProductsWidget extends BaseWidget
                     ->limit(5)
             )
             ->columns([
-                Tables\Columns\TextColumn::make('product.product_name')
-                    ->label('Product Name')
+                Tables\Columns\TextColumn::make('variant.variant_name')
+                    ->label(__('product.variant_name'))
                     ->weight('bold'),
                 Tables\Columns\TextColumn::make('total_qty')
                     ->label('Total Sold')
