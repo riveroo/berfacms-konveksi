@@ -49,16 +49,21 @@ class CreateTransactionService
             );
 
             $totalPrice = 0;
-            $itemsDiscount = 0;
+            $minDiscount = 0;
             
             foreach ($data['items'] as $item) {
-                $discount = $item['discount'] ?? 0;
-                $subtotal = ($item['price'] - $discount) * $item['qty'];
+                $subtotal = $item['price'] * $item['qty'];
                 $totalPrice += $subtotal;
-                $itemsDiscount += ($discount * $item['qty']);
+                $minDiscount += (($item['discount'] ?? 0) * $item['qty']);
             }
             
             $overallDiscount = $data['overall_discount'] ?? 0;
+            if ($overallDiscount < $minDiscount) {
+                throw ValidationException::withMessages([
+                    'overall_discount' => ['Overall discount cannot be less than total item discounts (' . number_format($minDiscount, 0, ',', '.') . ').']
+                ]);
+            }
+            
             $grandTotal = $totalPrice - $overallDiscount;
 
             $transaction = Transaction::create([
@@ -74,7 +79,6 @@ class CreateTransactionService
             ]);
 
             // If it's a pre_order, perhaps we also need a PreOrder record?
-            // The user requested: "IF transaction_type = pre_order -> redirect to: /admin/pre-orders/{id}"
             // To make this work without breaking the existing PreOrder page, we create a PreOrder.
             $preOrder = null;
             if ($transactionType === 'pre_order') {
@@ -98,7 +102,7 @@ class CreateTransactionService
                     'price' => $item['price'],
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
-                    'subtotal' => ($item['price'] - ($item['discount'] ?? 0)) * $item['qty'],
+                    'subtotal' => $item['price'] * $item['qty'],
                 ]);
 
                 if ($preOrder) {
@@ -110,7 +114,7 @@ class CreateTransactionService
                         'price' => $item['price'],
                         'quantity' => $item['qty'],
                         'discount' => $item['discount'] ?? 0,
-                        'subtotal' => ($item['price'] - ($item['discount'] ?? 0)) * $item['qty'],
+                        'subtotal' => $item['price'] * $item['qty'],
                     ]);
                 }
 
