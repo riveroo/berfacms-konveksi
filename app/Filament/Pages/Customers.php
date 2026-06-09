@@ -35,6 +35,29 @@ class Customers extends Page implements HasTable
     protected function getHeaderActions(): array
     {
         return [
+            \Filament\Actions\CreateAction::make()
+                ->label(fn () => __('transaction.create_new_customer'))
+                ->model(Client::class)
+                ->form([
+                    \Filament\Forms\Components\TextInput::make('client_name')
+                        ->label(fn () => __('transaction.customer_name'))
+                        ->required()
+                        ->maxLength(255),
+                    \Filament\Forms\Components\Hidden::make('type')
+                        ->default('customer'),
+                    \Filament\Forms\Components\TextInput::make('email')
+                        ->label(fn () => __('master.email') ?? 'Email')
+                        ->email()
+                        ->maxLength(255),
+                    \Filament\Forms\Components\TextInput::make('phone_number')
+                        ->label(fn () => __('transaction.phone_number'))
+                        ->required()
+                        ->maxLength(255),
+                    \Filament\Forms\Components\Textarea::make('information')
+                        ->label(fn () => __('transaction.information'))
+                        ->maxLength(65535)
+                        ->columnSpanFull(),
+                ]),
             \Filament\Actions\Action::make('downloadTemplate')
                 ->label(fn () => __('transaction.download_template'))
                 ->icon('heroicon-o-arrow-down-tray')
@@ -42,7 +65,7 @@ class Customers extends Page implements HasTable
                 ->visible(fn () => canAccessMenu('admin/import-export'))
                 ->action(function () {
                     return \Maatwebsite\Excel\Facades\Excel::download(
-                         new \App\Exports\CustomerTemplateExport(),
+                          new \App\Exports\CustomerTemplateExport(),
                         'customer_import_template.xlsx'
                     );
                 }),
@@ -163,6 +186,27 @@ class Customers extends Page implements HasTable
                     ->modalContent(fn (Client $record) => view('filament.pages.accounts-receivable-detail-modal', [
                         'client' => $record,
                     ])),
+                \Filament\Tables\Actions\EditAction::make()
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('client_name')
+                            ->label(fn () => __('transaction.customer_name'))
+                            ->required()
+                            ->maxLength(255),
+                        \Filament\Forms\Components\Hidden::make('type')
+                            ->default('customer'),
+                        \Filament\Forms\Components\TextInput::make('email')
+                            ->label(fn () => __('master.email') ?? 'Email')
+                            ->email()
+                            ->maxLength(255),
+                        \Filament\Forms\Components\TextInput::make('phone_number')
+                            ->label(fn () => __('transaction.phone_number'))
+                            ->required()
+                            ->maxLength(255),
+                        \Filament\Forms\Components\Textarea::make('information')
+                            ->label(fn () => __('transaction.information'))
+                            ->maxLength(65535)
+                            ->columnSpanFull(),
+                    ])
             ]);
     }
 }

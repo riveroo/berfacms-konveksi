@@ -156,4 +156,63 @@ class CustomersModuleTest extends TestCase
             'type' => 'customer',
         ]);
     }
+
+    public function test_authorized_user_can_edit_customer(): void
+    {
+        $permission = Permission::create([
+            'menu_name' => 'Customers',
+            'route' => 'admin/customers',
+            'can_access' => true,
+        ]);
+        $this->role->permissions()->attach($permission->id);
+
+        $this->actingAs($this->user);
+
+        Livewire::test(Customers::class)
+            ->callTableAction('edit', $this->client, [
+                'client_name' => 'Alice Updated',
+                'phone_number' => '08999999999',
+                'email' => 'alice@updated.com',
+                'information' => 'Some updated notes',
+            ])
+            ->assertHasNoTableActionErrors();
+
+        $this->assertDatabaseHas('clients', [
+            'id' => $this->client->id,
+            'client_name' => 'Alice Updated',
+            'phone_number' => '08999999999',
+            'email' => 'alice@updated.com',
+            'type' => 'customer',
+            'information' => 'Some updated notes',
+        ]);
+    }
+
+    public function test_authorized_user_can_create_customer(): void
+    {
+        $permission = Permission::create([
+            'menu_name' => 'Customers',
+            'route' => 'admin/customers',
+            'can_access' => true,
+        ]);
+        $this->role->permissions()->attach($permission->id);
+
+        $this->actingAs($this->user);
+
+        Livewire::test(Customers::class)
+            ->callAction('create', [
+                'client_name' => 'Charlie New',
+                'phone_number' => '08777777777',
+                'email' => 'charlie@new.com',
+                'information' => 'Created via header action',
+            ])
+            ->assertHasNoActionErrors();
+
+        $this->assertDatabaseHas('clients', [
+            'client_name' => 'Charlie New',
+            'phone_number' => '08777777777',
+            'email' => 'charlie@new.com',
+            'type' => 'customer',
+            'information' => 'Created via header action',
+        ]);
+    }
 }
