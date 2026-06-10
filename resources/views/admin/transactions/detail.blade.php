@@ -255,6 +255,16 @@
                             <span class="font-extrabold text-gray-900 dark:text-gray-100 uppercase tracking-wider text-sm">{{ __('transaction.grand_total') }}</span>
                             <span class="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400 leading-none">Rp {{ number_format($transaction->grand_total, 0, ',', '.') }}</span>
                         </div>
+
+                        <div class="flex justify-between items-center text-sm pt-1">
+                            <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'id' ? 'DP (Uang Muka)' : 'Down Payment (DP)' }}</span>
+                            <span class="font-bold text-emerald-600">Rp {{ number_format($transaction->payments()->sum('amount'), 0, ',', '.') }}</span>
+                        </div>
+
+                        <div class="flex justify-between items-center text-sm pt-1">
+                            <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'id' ? 'Sisa Bayar' : 'Remaining Balance' }}</span>
+                            <span class="font-extrabold text-rose-500">Rp {{ number_format(max(0, $transaction->grand_total - $transaction->payments()->sum('amount')), 0, ',', '.') }}</span>
+                        </div>
                     </div>
 
                 </div>

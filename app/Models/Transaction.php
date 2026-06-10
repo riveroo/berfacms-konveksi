@@ -14,6 +14,7 @@ class Transaction extends Model
         'total_discount',
         'grand_total',
         'status',
+        'deadline',
         'bank_name',
         'account_number',
         'account_name',
@@ -21,6 +22,10 @@ class Transaction extends Model
         'transaction_type',
         'item_status',
         'payment_status',
+    ];
+
+    protected $casts = [
+        'deadline' => 'date',
     ];
 
     public const STATUSES = [
