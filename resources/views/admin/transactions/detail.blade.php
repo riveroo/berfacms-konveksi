@@ -339,11 +339,6 @@
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none">
                         </div>
                         <div>
-                            <x-text variant="label" class="mb-1.5">{{ __('transaction.bank_name') }}</x-text>
-                            <input type="text" name="bank_name" placeholder="e.g BCA"
-                                class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">
-                        </div>
-                        <div>
                             <x-text variant="label" class="mb-1.5">{{ __('transaction.account_number') }}</x-text>
                             <input type="text" name="account_number"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500/20 outline-none transition">

@@ -126,7 +126,7 @@ class TransactionPaymentAutoCashBookTest extends TestCase
         $this->assertDatabaseHas('transaction_payments', [
             'transaction_id' => $transaction->id,
             'amount' => 300000.00,
-            'bank_name' => 'Bank BCA',
+            'bank_name' => $this->assetAccount->name,
             'account_number' => '123456789',
         ]);
 

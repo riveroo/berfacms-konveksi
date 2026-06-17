@@ -21,11 +21,14 @@ class PaymentService
                 ]);
             }
 
+            $transferToAccount = \App\Models\Account::find($data['transfer_to_id']);
+            $bankName = $transferToAccount ? $transferToAccount->name : ($data['bank_name'] ?? '-');
+
             $payment = TransactionPayment::create([
                 'transaction_id' => $transaction->id,
                 'payment_date' => $data['payment_date'] ?? now(),
-                'bank_name' => $data['bank_name'],
-                'account_number' => $data['account_number'],
+                'bank_name' => $bankName,
+                'account_number' => $data['account_number'] ?? null,
                 'amount' => $data['amount'],
                 'created_by' => $userId ?? auth()->id(),
             ]);
