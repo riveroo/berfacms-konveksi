@@ -132,6 +132,11 @@ class CustomersModuleTest extends TestCase
                 'description' => 'Pelanggan tetap',
             ],
             [
+                'customer_name' => 'Doni Kusuma',
+                'phone_number' => '', // Blank phone number
+                'description' => 'Tanpa nomor telepon',
+            ],
+            [
                 'customer_name' => 'Alice Smith', // Already exists in setUp, should be skipped
                 'phone_number' => '08122334455',
                 'description' => 'Regular Customer',
@@ -146,13 +151,20 @@ class CustomersModuleTest extends TestCase
         $import = new \App\Imports\CustomerImport();
         $import->collection($rows);
 
-        $this->assertEquals(1, $import->getImportedCount());
+        $this->assertEquals(2, $import->getImportedCount());
         $this->assertEquals(2, $import->getSkippedCount());
 
         $this->assertDatabaseHas('clients', [
             'client_name' => 'Budi Santoso',
             'phone_number' => '081234567890',
             'information' => 'Pelanggan tetap',
+            'type' => 'customer',
+        ]);
+
+        $this->assertDatabaseHas('clients', [
+            'client_name' => 'Doni Kusuma',
+            'phone_number' => '',
+            'information' => 'Tanpa nomor telepon',
             'type' => 'customer',
         ]);
     }

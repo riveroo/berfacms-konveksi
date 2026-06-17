@@ -27,7 +27,7 @@ class CustomerImport implements ToCollection, WithHeadingRow
 
             // Duplicate check: client_name + phone_number already exists -> skip
             $exists = Client::where('client_name', $name)
-                ->where('phone_number', $phone ?: null)
+                ->where('phone_number', $phone)
                 ->exists();
 
             if ($exists) {
@@ -37,7 +37,7 @@ class CustomerImport implements ToCollection, WithHeadingRow
 
             Client::create([
                 'client_name' => $name,
-                'phone_number' => $phone ?: null,
+                'phone_number' => $phone,
                 'information' => $info ?: null,
                 'type' => 'customer',
             ]);

@@ -51,7 +51,6 @@ class Customers extends Page implements HasTable
                         ->maxLength(255),
                     \Filament\Forms\Components\TextInput::make('phone_number')
                         ->label(fn () => __('transaction.phone_number'))
-                        ->required()
                         ->maxLength(255),
                     \Filament\Forms\Components\Textarea::make('information')
                         ->label(fn () => __('transaction.information'))
@@ -200,7 +199,6 @@ class Customers extends Page implements HasTable
                             ->maxLength(255),
                         \Filament\Forms\Components\TextInput::make('phone_number')
                             ->label(fn () => __('transaction.phone_number'))
-                            ->required()
                             ->maxLength(255),
                         \Filament\Forms\Components\Textarea::make('information')
                             ->label(fn () => __('transaction.information'))
