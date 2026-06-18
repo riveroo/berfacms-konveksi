@@ -21,24 +21,34 @@ class PaymentService
                 ]);
             }
 
+            $timezone = $data['device_timezone'] ?? config('app.timezone');
+            $localTime = \Carbon\Carbon::now($timezone);
+            $now = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $localTime->toDateTimeString(), config('app.timezone'));
+
+            // Bila tanggal bayar dipilih dari UI, parse menggunakan timezone klien agar jam-menitnya tepat
+            if (isset($data['payment_date'])) {
+                $localPaymentDate = \Carbon\Carbon::parse($data['payment_date'], $timezone);
+                $paymentDate = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $localPaymentDate->toDateTimeString(), config('app.timezone'));
+            } else {
+                $paymentDate = $now;
+            }
+
             $transferToAccount = \App\Models\Account::find($data['transfer_to_id']);
             $bankName = $transferToAccount ? $transferToAccount->name : ($data['bank_name'] ?? '-');
 
-            $timezone = $data['device_timezone'] ?? config('app.timezone');
-            $now = \Carbon\Carbon::now($timezone);
-
-            $payment = TransactionPayment::create([
+            $payment = new TransactionPayment([
                 'transaction_id' => $transaction->id,
-                'payment_date' => $data['payment_date'] ?? $now,
+                'payment_date' => $paymentDate,
                 'bank_name' => $bankName,
                 'account_number' => $data['account_number'] ?? null,
                 'amount' => $data['amount'],
                 'created_by' => $userId ?? auth()->id(),
-                'created_at' => $now,
-                'updated_at' => $now,
             ]);
+            $payment->created_at = $now;
+            $payment->updated_at = $now;
+            $payment->save();
 
-            $cashTx = \App\Models\CashTransaction::create([
+            $cashTx = new \App\Models\CashTransaction([
                 'date' => $payment->payment_date,
                 'description' => 'Pembayaran transaksi - ' . $transaction->trx_id,
                 'type' => 'money_in',
@@ -48,9 +58,10 @@ class PaymentService
                 'counter_account_id' => $data['category_id'],
                 'reference_type' => 'transaction',
                 'reference_id' => $transaction->trx_id,
-                'created_at' => $now,
-                'updated_at' => $now,
             ]);
+            $cashTx->created_at = $now;
+            $cashTx->updated_at = $now;
+            $cashTx->save();
 
             $cashTx->generateJournal();
 
@@ -76,13 +87,14 @@ class PaymentService
             $transaction->updated_at = $now;
             $transaction->save();
 
-            \App\Models\TransactionLog::create([
+            $log = new \App\Models\TransactionLog([
                 'transaction_id' => $transaction->id,
                 'user_id' => $userId ?? auth()->id(),
                 'action' => 'Updated payment',
-                'created_at' => $now,
-                'updated_at' => $now,
             ]);
+            $log->created_at = $now;
+            $log->updated_at = $now;
+            $log->save();
 
             return $payment;
         });

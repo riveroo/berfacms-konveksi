@@ -56,66 +56,80 @@ class CashTransaction extends Model
             $this->journalEntry->delete();
         }
 
-        $journal = \App\Models\JournalEntry::create([
+        $nowTimestamp = $this->created_at ?? $this->date ?? now();
+
+        $journal = new \App\Models\JournalEntry([
             'date' => $this->date,
             'description' => $this->description,
             'reference_type' => 'cashbook',
             'reference_id' => $this->id,
         ]);
+        $journal->created_at = $nowTimestamp;
+        $journal->updated_at = $nowTimestamp;
+        $journal->save();
 
         if ($this->type === 'money_in' || $this->type === 'in') {
-            \App\Models\JournalDetail::create([
+            $jd1 = new \App\Models\JournalDetail([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $this->account_id,
                 'debit' => $this->amount,
                 'credit' => 0,
-                'created_at' => $this->date,
-                'updated_at' => $this->date,
             ]);
-            \App\Models\JournalDetail::create([
+            $jd1->created_at = $nowTimestamp;
+            $jd1->updated_at = $nowTimestamp;
+            $jd1->save();
+
+            $jd2 = new \App\Models\JournalDetail([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $this->counter_account_id,
                 'debit' => 0,
                 'credit' => $this->amount,
-                'created_at' => $this->date,
-                'updated_at' => $this->date,
             ]);
+            $jd2->created_at = $nowTimestamp;
+            $jd2->updated_at = $nowTimestamp;
+            $jd2->save();
         } elseif ($this->type === 'transfer') {
-            \App\Models\JournalDetail::create([
+            $jd1 = new \App\Models\JournalDetail([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $this->account_id, // destination account
                 'debit' => $this->amount,
                 'credit' => 0,
-                'created_at' => $this->date,
-                'updated_at' => $this->date,
             ]);
-            \App\Models\JournalDetail::create([
+            $jd1->created_at = $nowTimestamp;
+            $jd1->updated_at = $nowTimestamp;
+            $jd1->save();
+
+            $jd2 = new \App\Models\JournalDetail([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $this->counter_account_id, // source account
                 'debit' => 0,
                 'credit' => $this->amount,
-                'created_at' => $this->date,
-                'updated_at' => $this->date,
             ]);
+            $jd2->created_at = $nowTimestamp;
+            $jd2->updated_at = $nowTimestamp;
+            $jd2->save();
         } elseif ($this->type === 'money_out' || $this->type === 'out') {
             // CREDIT (cash/bank)
-            \App\Models\JournalDetail::create([
+            $jd1 = new \App\Models\JournalDetail([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $this->account_id,
                 'debit' => 0,
                 'credit' => $this->amount,
-                'created_at' => $this->date,
-                'updated_at' => $this->date,
             ]);
+            $jd1->created_at = $nowTimestamp;
+            $jd1->updated_at = $nowTimestamp;
+            $jd1->save();
+
             // DEBIT (expense/account)
-            \App\Models\JournalDetail::create([
+            $jd2 = new \App\Models\JournalDetail([
                 'journal_entry_id' => $journal->id,
                 'account_id' => $this->counter_account_id,
                 'debit' => $this->amount,
                 'credit' => 0,
-                'created_at' => $this->date,
-                'updated_at' => $this->date,
             ]);
+            $jd2->created_at = $nowTimestamp;
+            $jd2->updated_at = $nowTimestamp;
+            $jd2->save();
         }
     }
 }

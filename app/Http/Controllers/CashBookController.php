@@ -90,7 +90,7 @@ class CashBookController extends Controller
 
         $balance = $totalIn - $totalOut;
 
-        $accounts = Account::whereIn('subtype', ['cash', 'bank'])->where('is_active', true)->get();
+        $accounts = Account::where('type', 'asset')->where('is_active', true)->get();
 
         return view('cash-book.index', compact('transactions', 'accounts', 'totalIn', 'totalOut', 'balance'));
     }

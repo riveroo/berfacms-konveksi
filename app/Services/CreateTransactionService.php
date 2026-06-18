@@ -67,9 +67,14 @@ class CreateTransactionService
             $grandTotal = $totalPrice - $overallDiscount;
 
             $timezone = $data['device_timezone'] ?? config('app.timezone');
-            $now = \Carbon\Carbon::now($timezone);
+            // Dapatkan waktu lokal saat ini di timezone device klien
+            $localTime = \Carbon\Carbon::now($timezone);
+            // Karena Laravel menyinkronkan data datetime ke database menggunakan zona waktu UTC dari config app.php (default UTC),
+            // kita harus mengemas waktu lokal ini ke dalam objek Carbon bertimezone UTC tanpa mengubah representasi jamnya.
+            // Contoh: Jam 22:00 (Asia/Jakarta) -> Jam 22:00 (UTC).
+            $now = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $localTime->toDateTimeString(), config('app.timezone'));
 
-            $transaction = Transaction::create([
+            $transaction = new Transaction([
                 'trx_id' => 'TRX-' . strtoupper(uniqid()),
                 'client_id' => $client->id,
                 'total_price' => $totalPrice,
@@ -79,15 +84,16 @@ class CreateTransactionService
                 'transaction_type' => $transactionType,
                 'item_status' => 'in_progress',
                 'payment_status' => 'unpaid',
-                'created_at' => $now,
-                'updated_at' => $now,
             ]);
+            $transaction->created_at = $now;
+            $transaction->updated_at = $now;
+            $transaction->save();
 
             // If it's a pre_order, perhaps we also need a PreOrder record?
             // To make this work without breaking the existing PreOrder page, we create a PreOrder.
             $preOrder = null;
             if ($transactionType === 'pre_order') {
-                $preOrder = PreOrder::create([
+                $preOrder = new PreOrder([
                     'po_id' => 'PO-' . strtoupper(uniqid()),
                     'client_id' => $client->id,
                     'transaction_id' => $transaction->id,
@@ -95,13 +101,14 @@ class CreateTransactionService
                     'total_discount' => $overallDiscount,
                     'grand_total' => $grandTotal > 0 ? $grandTotal : 0,
                     'status' => 'on process',
-                    'created_at' => $now,
-                    'updated_at' => $now,
                 ]);
+                $preOrder->created_at = $now;
+                $preOrder->updated_at = $now;
+                $preOrder->save();
             }
 
             foreach ($data['items'] as $item) {
-                TransactionDetail::create([
+                $detail = new TransactionDetail([
                     'transaction_id' => $transaction->id,
                     'product_id' => $item['product_id'],
                     'variant_id' => $item['variant_id'],
@@ -110,12 +117,13 @@ class CreateTransactionService
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
                     'subtotal' => $item['price'] * $item['qty'],
-                    'created_at' => $now,
-                    'updated_at' => $now,
                 ]);
+                $detail->created_at = $now;
+                $detail->updated_at = $now;
+                $detail->save();
 
                 if ($preOrder) {
-                    PreOrderDetail::create([
+                    $poDetail = new PreOrderDetail([
                         'pre_order_id' => $preOrder->id,
                         'product_id' => $item['product_id'],
                         'variant_id' => $item['variant_id'],
@@ -124,9 +132,10 @@ class CreateTransactionService
                         'quantity' => $item['qty'],
                         'discount' => $item['discount'] ?? 0,
                         'subtotal' => $item['price'] * $item['qty'],
-                        'created_at' => $now,
-                        'updated_at' => $now,
                     ]);
+                    $poDetail->created_at = $now;
+                    $poDetail->updated_at = $now;
+                    $poDetail->save();
                 }
 
                 // 3. Stock deduction for direct_order
@@ -140,13 +149,14 @@ class CreateTransactionService
                 }
             }
 
-            \App\Models\TransactionLog::create([
+            $log = new \App\Models\TransactionLog([
                 'transaction_id' => $transaction->id,
                 'user_id' => auth()->id(),
                 'action' => 'Created transaction',
-                'created_at' => $now,
-                'updated_at' => $now,
             ]);
+            $log->created_at = $now;
+            $log->updated_at = $now;
+            $log->save();
 
             return [
                 'transaction' => $transaction,

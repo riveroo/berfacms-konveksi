@@ -164,12 +164,17 @@ class TransactionController extends Controller
             'payment_date' => 'nullable|date',
             'transfer_to_id' => 'required|exists:accounts,id',
             'category_id' => 'required|exists:accounts,id',
+            'device_timezone' => 'nullable|string',
         ]);
 
         $transaction = Transaction::findOrFail($id);
         
         try {
-            $paymentService->createPayment($transaction, $request->all());
+            $data = $request->all();
+            if ($request->has('device_timezone')) {
+                $data['device_timezone'] = $request->input('device_timezone');
+            }
+            $paymentService->createPayment($transaction, $data);
             return back()->with('success', 'Payment inputted successfully.');
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
@@ -245,7 +250,11 @@ class TransactionController extends Controller
         ]);
 
         try {
-            $result = $createTransactionService->execute($request->all());
+            $data = $request->all();
+            if ($request->has('device_timezone')) {
+                $data['device_timezone'] = $request->input('device_timezone');
+            }
+            $result = $createTransactionService->execute($data);
             
             $redirectUrl = route('transactions.detail', $result['transaction']->id);
 
@@ -303,7 +312,11 @@ class TransactionController extends Controller
         ]);
 
         try {
-            $updateTransactionService->update($transaction, $request->all());
+            $data = $request->all();
+            if ($request->has('device_timezone')) {
+                $data['device_timezone'] = $request->input('device_timezone');
+            }
+            $updateTransactionService->update($transaction, $data);
 
             return response()->json([
                 'success' => true,

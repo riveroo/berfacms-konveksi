@@ -25,7 +25,7 @@
         </div>
 
         {{-- Filter Section --}}
-        <form method="GET" action="{{ route('transactions.index') }}"
+        <form id="transactionFilterForm" method="GET" action="{{ route('transactions.index') }}"
             class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 shadow-sm">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
@@ -105,22 +105,8 @@
                         class="w-full h-10 px-4 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 outline-none transition">
                 </div>
 
-                {{-- Row 3: Per Page --}}
-                <div class="flex items-end gap-2 md:col-span-2">
-                    <div class="flex-1">
-                        <x-text variant="label" class="mb-1.5">{{ __('transaction.per_page') }}</x-text>
-                        <select name="perPage" onchange="this.form.submit()"
-                            class="w-full h-10 px-4 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-gray-900/20 focus:border-gray-900 outline-none transition cursor-pointer">
-                            <option value="10" {{ request('perPage') == '10' ? 'selected' : '' }}>10</option>
-                            <option value="25" {{ request('perPage') == '25' ? 'selected' : '' }}>25</option>
-                            <option value="50" {{ request('perPage') == '50' ? 'selected' : '' }}>50</option>
-                            <option value="100" {{ request('perPage') == '100' ? 'selected' : '' }}>100</option>
-                        </select>
-                    </div>
-                </div>
-
                 {{-- Row 3: Action Buttons --}}
-                <div class="flex items-end gap-2 md:col-span-2">
+                <div class="flex items-end gap-2 md:col-span-4">
                     <x-button type="submit" variant="indigo" class="flex-1 h-10">
                         {{ __('transaction.apply') }}
                     </x-button>
@@ -293,11 +279,33 @@
                 </table>
             </div>
 
-            @if ($transactions->hasPages())
-                <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+            <div class="px-4 py-3 border-t border-gray-250 dark:border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                {{-- Left: Showing entries --}}
+                <div class="text-sm text-gray-700 dark:text-gray-400">
+                    Showing 
+                    <span class="font-medium">{{ $transactions->firstItem() ?? 0 }}</span> 
+                    to 
+                    <span class="font-medium">{{ $transactions->lastItem() ?? 0 }}</span> 
+                    of 
+                    <span class="font-medium">{{ $transactions->total() }}</span> 
+                    entries
+                </div>
+
+                {{-- Center: perPage Selector --}}
+                <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400">
+                    <label class="whitespace-nowrap">{{ app()->getLocale() === 'id' ? 'per halaman' : 'per page' }}</label>
+                    <select name="perPage" form="transactionFilterForm" onchange="this.form.submit()" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg py-1 pl-3 pr-8 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 appearance-none bg-no-repeat bg-right bg-white dark:bg-gray-800" style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3E%3Cpath stroke=\'%236B7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3E%3C/svg%3E'); background-size: 1.25rem; background-position: right 0.5rem center;">
+                        @foreach([5, 10, 25, 50, 100] as $size)
+                            <option value="{{ $size }}" {{ request('perPage', 10) == $size ? 'selected' : '' }}>{{ $size }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Right: Pagination links --}}
+                <div>
                     {{ $transactions->links() }}
                 </div>
-            @endif
+            </div>
         </div>
 
     </div>

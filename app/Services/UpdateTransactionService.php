@@ -87,7 +87,8 @@ class UpdateTransactionService
             $grandTotal = $totalPrice - $overallDiscount;
 
             $timezone = $data['device_timezone'] ?? config('app.timezone');
-            $now = \Carbon\Carbon::now($timezone);
+            $localTime = \Carbon\Carbon::now($timezone);
+            $now = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $localTime->toDateTimeString(), config('app.timezone'));
 
             $transaction->client_id = $client->id;
             $transaction->total_price = $totalPrice;
@@ -115,7 +116,7 @@ class UpdateTransactionService
             $transaction->save();
 
             foreach ($data['items'] as $item) {
-                \App\Models\TransactionDetail::create([
+                $detail = new \App\Models\TransactionDetail([
                     'transaction_id' => $transaction->id,
                     'product_id' => $item['product_id'],
                     'variant_id' => $item['variant_id'],
@@ -124,9 +125,10 @@ class UpdateTransactionService
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
                     'subtotal' => $item['price'] * $item['qty'],
-                    'created_at' => $now,
-                    'updated_at' => $now,
                 ]);
+                $detail->created_at = $now;
+                $detail->updated_at = $now;
+                $detail->save();
 
                 // Reduce stock again if direct_order
                 if ($newType === 'direct_order') {
@@ -139,13 +141,14 @@ class UpdateTransactionService
                 }
             }
 
-            TransactionLog::create([
+            $log = new TransactionLog([
                 'transaction_id' => $transaction->id,
                 'user_id' => auth()->id(),
                 'action' => 'Updated transaction details',
-                'created_at' => $now,
-                'updated_at' => $now,
             ]);
+            $log->created_at = $now;
+            $log->updated_at = $now;
+            $log->save();
 
             return $transaction;
         });
