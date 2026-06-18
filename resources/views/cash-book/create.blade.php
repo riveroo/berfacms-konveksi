@@ -60,7 +60,7 @@
                         <select name="account_id" id="account_id" x-model="accountId" required class="searchable-select">
                             <option value="">{{ __('finance.select_account') }}</option>
                             @foreach($accounts as $account)
-                                <option value="{{ $account->id }}">{{ $account->name }}</option>
+                                <option value="{{ $account->id }}">{{ $account->name }} ({{ $account->code }})</option>
                             @endforeach
                         </select>
                     </div>

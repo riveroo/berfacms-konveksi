@@ -697,6 +697,7 @@
                                 overall_discount: isNaN(parseFloat(this.overallDiscount)) ? 0 : parseFloat(this.overallDiscount),
                                 transaction_type: this.transactionType,
                                 item_status: this.transactionType === 'pre_order' ? 'in_progress' : this.itemStatus,
+                                device_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                                 items: this.items
                              })
                         });

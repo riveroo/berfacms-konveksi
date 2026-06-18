@@ -66,6 +66,9 @@ class CreateTransactionService
             
             $grandTotal = $totalPrice - $overallDiscount;
 
+            $timezone = $data['device_timezone'] ?? config('app.timezone');
+            $now = \Carbon\Carbon::now($timezone);
+
             $transaction = Transaction::create([
                 'trx_id' => 'TRX-' . strtoupper(uniqid()),
                 'client_id' => $client->id,
@@ -76,6 +79,8 @@ class CreateTransactionService
                 'transaction_type' => $transactionType,
                 'item_status' => 'in_progress',
                 'payment_status' => 'unpaid',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             // If it's a pre_order, perhaps we also need a PreOrder record?
@@ -90,6 +95,8 @@ class CreateTransactionService
                     'total_discount' => $overallDiscount,
                     'grand_total' => $grandTotal > 0 ? $grandTotal : 0,
                     'status' => 'on process',
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
             }
 
@@ -103,6 +110,8 @@ class CreateTransactionService
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
                     'subtotal' => $item['price'] * $item['qty'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
 
                 if ($preOrder) {
@@ -115,6 +124,8 @@ class CreateTransactionService
                         'quantity' => $item['qty'],
                         'discount' => $item['discount'] ?? 0,
                         'subtotal' => $item['price'] * $item['qty'],
+                        'created_at' => $now,
+                        'updated_at' => $now,
                     ]);
                 }
 
@@ -133,6 +144,8 @@ class CreateTransactionService
                 'transaction_id' => $transaction->id,
                 'user_id' => auth()->id(),
                 'action' => 'Created transaction',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             return [

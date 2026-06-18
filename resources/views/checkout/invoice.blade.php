@@ -379,8 +379,12 @@
                     <tr>
                         <td>{{ $rowNo++ }}</td>
                         <td>{{ optional($item->product)->code ?? '-' }}</td>
-                        <td>{{ optional($item->product)->product_name ?? 'N/A' }}
-                            {{ optional($item->variant)->variant_name ? '(' . optional($item->variant)->variant_name . ')' : '' }}
+                        <td>
+                            @if (optional($item->variant)->variant_name)
+                                {{ $item->variant->variant_name }}
+                            @else
+                                {{ optional($item->product)->product_name ?? 'N/A' }}
+                            @endif
                         </td>
                         <td>{{ optional($item->sizeOption)->name ?? '-' }}</td>
                         <td>{{ $item->quantity }}</td>
@@ -490,6 +494,13 @@
                                 @else
                                     Rp -
                                 @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="calc-bold" style="font-size: 11px;">Total Barang</td>
+                            <td>&nbsp;</td>
+                            <td class="text-right calc-bold" style="font-size: 11px;">
+                                {{ $transaction->details->sum('quantity') }} pcs
                             </td>
                         </tr>
                     </table>

@@ -298,9 +298,15 @@
         <div class="items-section">
             @foreach ($transaction->details as $index => $item)
                 <div class="item-block">
-                    <div class="item-name">{{ $index + 1 }}. {{ optional($item->product)->product_name ?? 'N/A' }}</div>
+                    <div class="item-name">
+                        {{ $index + 1 }}. 
+                        @if (optional($item->variant)->variant_name)
+                            {{ $item->variant->variant_name }}
+                        @else
+                            {{ optional($item->product)->product_name ?? 'N/A' }}
+                        @endif
+                    </div>
                     <div class="item-variant-size">
-                        {{ optional($item->variant)->variant_name ? $item->variant->variant_name : '' }} 
                         {{ optional($item->sizeOption)->name ? '(Size: ' . $item->sizeOption->name . ')' : '' }}
                     </div>
                     <div class="item-calc-row">
@@ -320,10 +326,6 @@
 
         {{-- Calculations Section --}}
         <div class="calc-section">
-            <div class="calc-row">
-                <span>Total Items</span>
-                <span>{{ $totalQty }} pcs</span>
-            </div>
             <div class="calc-row">
                 <span>Subtotal</span>
                 <span>Rp {{ number_format($totalItemsPrice, 0, ',', '.') }}</span>
@@ -361,6 +363,10 @@
                         Rp 0
                     @endif
                 </span>
+            </div>
+            <div class="calc-row" style="border-top: 1px dashed #000; padding-top: 2px; margin-top: 2px;">
+                <span>Total Items</span>
+                <span>{{ $totalQty }} pcs</span>
             </div>
         </div>
 

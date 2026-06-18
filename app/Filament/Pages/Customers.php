@@ -142,7 +142,8 @@ class Customers extends Page implements HasTable
             ->columns([
                 \Filament\Tables\Columns\TextColumn::make('client_name')
                     ->label(fn () => __('transaction.customer_name'))
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('total_transactions')
                     ->label(fn () => __('transaction.total_transactions'))
                     ->sortable()
@@ -160,18 +161,7 @@ class Customers extends Page implements HasTable
             ])
             ->defaultSort('total_outstanding_balance', 'desc')
             ->filters([
-                \Filament\Tables\Filters\Filter::make('client_name_search')
-                    ->form([
-                        \Filament\Forms\Components\TextInput::make('client_name')
-                            ->label(fn () => __('transaction.customer_name'))
-                            ->placeholder(fn () => __('transaction.search_by_customer_name')),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query->when(
-                            $data['client_name'],
-                            fn (Builder $query, $name): Builder => $query->where('client_name', 'like', "%{$name}%")
-                        );
-                    })
+                //
             ])
             ->actions([
                 \Filament\Tables\Actions\Action::make('detail')

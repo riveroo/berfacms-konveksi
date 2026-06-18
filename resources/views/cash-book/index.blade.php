@@ -50,7 +50,7 @@
 
             {{-- Filters --}}
             <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm p-4">
-                <form method="GET" action="{{ route('cash-book.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <form id="filterForm" method="GET" action="{{ route('cash-book.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{ __('finance.from_account') }}</label>
                         <select name="account_id" class="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg shadow-sm focus:border-primary-500 focus:ring-primary-500">
@@ -132,7 +132,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                    {{-- Left: Showing entries --}}
                     <div class="text-sm text-gray-700 dark:text-gray-400">
                         Showing 
                         <span class="font-medium">{{ $transactions->firstItem() ?? 0 }}</span> 
@@ -142,6 +143,18 @@
                         <span class="font-medium">{{ $transactions->total() }}</span> 
                         entries
                     </div>
+
+                    {{-- Center: Rows per page --}}
+                    <div class="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400">
+                        <label class="whitespace-nowrap">{{ app()->getLocale() === 'id' ? 'per halaman' : 'per page' }}</label>
+                        <select name="per_page" form="filterForm" onchange="this.form.submit()" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-lg py-1 pl-3 pr-8 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 appearance-none bg-no-repeat bg-right bg-white dark:bg-gray-800" style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3E%3Cpath stroke=\'%236B7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3E%3C/svg%3E'); background-size: 1.25rem; background-position: right 0.5rem center;">
+                            @foreach([5, 10, 15, 25, 50, 100] as $size)
+                                <option value="{{ $size }}" {{ request('per_page', 15) == $size ? 'selected' : '' }}>{{ $size }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Right: Pagination Links --}}
                     <div>
                         {{ $transactions->links() }}
                     </div>

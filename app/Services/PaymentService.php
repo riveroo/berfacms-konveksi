@@ -24,13 +24,18 @@ class PaymentService
             $transferToAccount = \App\Models\Account::find($data['transfer_to_id']);
             $bankName = $transferToAccount ? $transferToAccount->name : ($data['bank_name'] ?? '-');
 
+            $timezone = $data['device_timezone'] ?? config('app.timezone');
+            $now = \Carbon\Carbon::now($timezone);
+
             $payment = TransactionPayment::create([
                 'transaction_id' => $transaction->id,
-                'payment_date' => $data['payment_date'] ?? now(),
+                'payment_date' => $data['payment_date'] ?? $now,
                 'bank_name' => $bankName,
                 'account_number' => $data['account_number'] ?? null,
                 'amount' => $data['amount'],
                 'created_by' => $userId ?? auth()->id(),
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             $cashTx = \App\Models\CashTransaction::create([
@@ -43,6 +48,8 @@ class PaymentService
                 'counter_account_id' => $data['category_id'],
                 'reference_type' => 'transaction',
                 'reference_id' => $transaction->trx_id,
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             $cashTx->generateJournal();
@@ -66,12 +73,15 @@ class PaymentService
                 $transaction->status = 'done';
             }
 
+            $transaction->updated_at = $now;
             $transaction->save();
 
             \App\Models\TransactionLog::create([
                 'transaction_id' => $transaction->id,
                 'user_id' => $userId ?? auth()->id(),
                 'action' => 'Updated payment',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             return $payment;

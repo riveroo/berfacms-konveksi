@@ -678,6 +678,7 @@
                                 client_info: this.clientInfo,
                                 overall_discount: isNaN(parseFloat(this.overallDiscount)) ? 0 : parseFloat(this.overallDiscount),
                                 transaction_type: '{{ request('type', 'direct_order') }}',
+                                device_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                                 items: this.items
                             })
                         });

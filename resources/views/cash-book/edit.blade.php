@@ -61,7 +61,7 @@
                         <select name="account_id" id="account_id" x-model="accountId" required class="searchable-select">
                             <option value="">Select Account</option>
                             @foreach($accounts as $account)
-                                <option value="{{ $account->id }}" {{ $cashBook->account_id == $account->id ? 'selected' : '' }}>{{ $account->name }}</option>
+                                <option value="{{ $account->id }}" {{ $cashBook->account_id == $account->id ? 'selected' : '' }}>{{ $account->name }} ({{ $account->code }})</option>
                             @endforeach
                         </select>
                     </div>

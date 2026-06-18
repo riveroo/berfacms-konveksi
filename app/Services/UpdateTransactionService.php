@@ -86,6 +86,9 @@ class UpdateTransactionService
             
             $grandTotal = $totalPrice - $overallDiscount;
 
+            $timezone = $data['device_timezone'] ?? config('app.timezone');
+            $now = \Carbon\Carbon::now($timezone);
+
             $transaction->client_id = $client->id;
             $transaction->total_price = $totalPrice;
             $transaction->total_discount = $overallDiscount;
@@ -108,6 +111,7 @@ class UpdateTransactionService
                 }
             }
 
+            $transaction->updated_at = $now;
             $transaction->save();
 
             foreach ($data['items'] as $item) {
@@ -120,6 +124,8 @@ class UpdateTransactionService
                     'quantity' => $item['qty'],
                     'discount' => $item['discount'] ?? 0,
                     'subtotal' => $item['price'] * $item['qty'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]);
 
                 // Reduce stock again if direct_order
@@ -137,6 +143,8 @@ class UpdateTransactionService
                 'transaction_id' => $transaction->id,
                 'user_id' => auth()->id(),
                 'action' => 'Updated transaction details',
+                'created_at' => $now,
+                'updated_at' => $now,
             ]);
 
             return $transaction;

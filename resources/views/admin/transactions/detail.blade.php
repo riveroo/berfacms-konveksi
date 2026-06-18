@@ -265,6 +265,11 @@
                             <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'id' ? 'Sisa Bayar' : 'Remaining Balance' }}</span>
                             <span class="font-extrabold text-rose-500">Rp {{ number_format(max(0, $transaction->grand_total - $transaction->payments()->sum('amount')), 0, ',', '.') }}</span>
                         </div>
+
+                        <div class="flex justify-between items-center text-sm pt-1 border-t border-gray-200 dark:border-gray-800">
+                            <span class="text-gray-500 dark:text-gray-400">{{ app()->getLocale() === 'id' ? 'Total Barang' : 'Total Items' }}</span>
+                            <span class="font-bold text-gray-900 dark:text-gray-100">{{ $transaction->details->sum('quantity') }} pcs</span>
+                        </div>
                     </div>
 
                 </div>
@@ -332,6 +337,7 @@
 
                 <form action="{{ route('transactions.payment', $transaction->id) }}" method="POST">
                     @csrf
+                    <input type="hidden" name="device_timezone" id="device_timezone_input">
                     <div class="space-y-4">
                         <div>
                             <x-text variant="label" class="mb-1.5">{{ __('transaction.payment_date') }}</x-text>
@@ -416,6 +422,13 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tzInput = document.getElementById('device_timezone_input');
+            if (tzInput) {
+                tzInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            }
+        });
+
         document.addEventListener('alpine:init', () => {
             Alpine.data('transactionDetail', () => ({
                 paymentModalOpen: false,

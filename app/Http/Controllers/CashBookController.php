@@ -14,16 +14,28 @@ class CashBookController extends Controller
 {
     public function index(Request $request)
     {
+        // 1. Secara default tanggal 1 bulan ini sampai hari ini
+        $startDate = $request->input('start_date', now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', now()->format('Y-m-d'));
+
+        // Inject request inputs jika kosong untuk melestarikan value di input view
+        if (!$request->has('start_date')) {
+            $request->merge(['start_date' => $startDate]);
+        }
+        if (!$request->has('end_date')) {
+            $request->merge(['end_date' => $endDate]);
+        }
+
         $query = CashTransaction::with(['account', 'counterAccount', 'client'])
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc');
 
-        if ($request->has('start_date') && $request->start_date) {
-            $query->whereDate('date', '>=', $request->start_date);
+        if ($startDate) {
+            $query->whereDate('date', '>=', $startDate);
         }
 
-        if ($request->has('end_date') && $request->end_date) {
-            $query->whereDate('date', '<=', $request->end_date);
+        if ($endDate) {
+            $query->whereDate('date', '<=', $endDate);
         }
 
         if ($request->has('account_id') && $request->account_id) {
@@ -34,36 +46,46 @@ class CashBookController extends Controller
             $query->where('description', 'like', '%' . $request->search . '%');
         }
 
-        $transactions = $query->paginate(15);
+        // Support pagination size seperti di opening-balance
+        $perPage = $request->input('per_page', 15);
+        $transactions = $query->paginate($perPage)->withQueryString();
 
-        // Summary calculations
-        $totalIn = 0;
-        $totalOut = 0;
+        // 2. Adjust card total money in, money out, dan balance untuk bulan ini saja (sesuai range filter default/aktif)
+        $summaryStart = now()->startOfMonth()->format('Y-m-d');
+        $summaryEnd = now()->format('Y-m-d');
 
         if ($request->has('account_id') && $request->account_id) {
             $accId = $request->account_id;
             
-            // Money In to this account:
-            // 1. type = money_in and account_id = $accId
-            // 2. type = transfer and account_id = $accId (destination)
-            $totalIn = CashTransaction::where(function($q) use ($accId) {
-                $q->whereIn('type', ['money_in', 'in'])->where('account_id', $accId);
-            })->orWhere(function($q) use ($accId) {
-                $q->where('type', 'transfer')->where('account_id', $accId);
-            })->sum('amount');
+            $totalIn = CashTransaction::whereDate('date', '>=', $summaryStart)
+                ->whereDate('date', '<=', $summaryEnd)
+                ->where(function($q) use ($accId) {
+                    $q->where(function($sq) use ($accId) {
+                        $sq->whereIn('type', ['money_in', 'in'])->where('account_id', $accId);
+                    })->orWhere(function($sq) use ($accId) {
+                        $sq->where('type', 'transfer')->where('account_id', $accId);
+                    });
+                })->sum('amount');
 
-            // Money Out from this account:
-            // 1. type = money_out and account_id = $accId
-            // 2. type = transfer and counter_account_id = $accId (source)
-            $totalOut = CashTransaction::where(function($q) use ($accId) {
-                $q->whereIn('type', ['money_out', 'out'])->where('account_id', $accId);
-            })->orWhere(function($q) use ($accId) {
-                $q->where('type', 'transfer')->where('counter_account_id', $accId);
-            })->sum('amount');
+            $totalOut = CashTransaction::whereDate('date', '>=', $summaryStart)
+                ->whereDate('date', '<=', $summaryEnd)
+                ->where(function($q) use ($accId) {
+                    $q->where(function($sq) use ($accId) {
+                        $sq->whereIn('type', ['money_out', 'out'])->where('account_id', $accId);
+                    })->orWhere(function($sq) use ($accId) {
+                        $sq->where('type', 'transfer')->where('counter_account_id', $accId);
+                    });
+                })->sum('amount');
         } else {
-            // General overview (overall cashflow sum)
-            $totalIn = CashTransaction::whereIn('type', ['money_in', 'in'])->sum('amount');
-            $totalOut = CashTransaction::whereIn('type', ['money_out', 'out'])->sum('amount');
+            $totalIn = CashTransaction::whereDate('date', '>=', $summaryStart)
+                ->whereDate('date', '<=', $summaryEnd)
+                ->whereIn('type', ['money_in', 'in'])
+                ->sum('amount');
+
+            $totalOut = CashTransaction::whereDate('date', '>=', $summaryStart)
+                ->whereDate('date', '<=', $summaryEnd)
+                ->whereIn('type', ['money_out', 'out'])
+                ->sum('amount');
         }
 
         $balance = $totalIn - $totalOut;
@@ -76,7 +98,7 @@ class CashBookController extends Controller
     public function create()
     {
         $accounts = Account::where('type', 'asset')->where('is_active', true)->get();
-        $categories = Account::where('is_active', true)->get();
+        $categories = Account::whereNotIn('subtype', ['cash', 'bank'])->where('is_active', true)->get();
         $clients = Client::orderBy('client_name')->get();
 
         return view('cash-book.create', compact('accounts', 'categories', 'clients'));
