@@ -17,11 +17,19 @@ class PublicStockController extends Controller
 
         $sizes = SizeOption::ordered()->get();
         $productTypes = ProductType::orderBy('name')->get();
-        $products = Product::where('is_active', true)->orderBy('product_name')->get();
+        $products = Product::where('is_active', true)
+            ->where(function($q) {
+                $q->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+            })
+            ->orderBy('product_name')
+            ->get();
 
         $query = \App\Models\Variant::with(['product', 'productType', 'stocks'])
             ->whereHas('product', function($q) {
-                $q->where('is_active', true);
+                $q->where('is_active', true)
+                  ->where(function($q2) {
+                      $q2->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+                  });
             })
             ->orderBy(
                 \App\Models\Product::select('sort_order')
@@ -51,7 +59,10 @@ class PublicStockController extends Controller
 
         $variantsList = \App\Models\Variant::with('product')
             ->whereHas('product', function($q) {
-                $q->where('is_active', true);
+                $q->where('is_active', true)
+                  ->where(function($q2) {
+                      $q2->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+                  });
             })
             ->get()
             ->map(fn($v) => [

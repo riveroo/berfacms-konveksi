@@ -20,6 +20,9 @@ Route::get('/products', function (Illuminate\Http\Request $request) {
     $sort = $request->query('sort', 'latest');
     $productsQuery = Product::with('variants.stocks.sizeOption')
         ->where('is_active', true)
+        ->where(function ($q) {
+            $q->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+        })
         ->orderBy('sort_order', 'asc')
         ->orderBy('created_at', 'desc');
 
@@ -41,7 +44,12 @@ Route::get('/products', function (Illuminate\Http\Request $request) {
 })->name('products.index');
 
 Route::get('/products/{id}', function ($id) {
-    $product = \App\Models\Product::with('variants.stocks.sizeOption')->where('is_active', true)->findOrFail($id);
+    $product = \App\Models\Product::with('variants.stocks.sizeOption')
+        ->where('is_active', true)
+        ->where(function ($q) {
+            $q->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+        })
+        ->findOrFail($id);
 
     // Find first variant+size combination with stock > 0
     $firstAvailable = $product->variants->flatMap->stocks->where('stock', '>', 0)->first();
@@ -51,6 +59,9 @@ Route::get('/products/{id}', function ($id) {
 
     $otherProducts = \App\Models\Product::where('id', '!=', $product->id)
         ->where('is_active', true)
+        ->where(function ($q) {
+            $q->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+        })
         ->latest()
         ->take(5)
         ->get();

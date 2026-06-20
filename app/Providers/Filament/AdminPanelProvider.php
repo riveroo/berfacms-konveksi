@@ -231,6 +231,18 @@ class AdminPanelProvider extends PanelProvider
                     <a href="{{ route(\'switch.locale\', \'id\') }}" class="text-sm border px-2 py-1 rounded {{ app()->getLocale() == \'id\' ? \'bg-primary-500 text-white font-bold border-primary-500\' : \'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 border-gray-300 dark:border-gray-700\' }}">ID</a>
                 </div>')
             )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn(): string => '<script>
+                    (function() {
+                        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                        if (tz) {
+                            // Set cookie that middleware can read
+                            document.cookie = "device_timezone=" + encodeURIComponent(tz) + "; path=/; max-age=31536000; SameSite=Lax";
+                        }
+                    })();
+                </script>'
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -241,6 +253,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 \App\Http\Middleware\SetLanguage::class,
+                \App\Http\Middleware\StoreTimezoneMiddleware::class,
                 DispatchServingFilamentEvent::class,
                 \App\Http\Middleware\CheckMenuPermission::class,
             ])

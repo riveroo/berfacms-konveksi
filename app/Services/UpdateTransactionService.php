@@ -37,11 +37,14 @@ class UpdateTransactionService
             // Restore stocks from old details if it was direct_order
             if ($oldType === 'direct_order') {
                 foreach ($transaction->details as $oldDetail) {
-                    $stock = Stock::where('variant_id', $oldDetail->variant_id)
-                        ->where('size_option_id', $oldDetail->size_option_id)
-                        ->first();
-                    if ($stock) {
-                        $stock->increment('stock', $oldDetail->quantity);
+                    $isOldItemService = \App\Models\Product::where('id', $oldDetail->product_id)->value('is_service') === 'yes';
+                    if (!$isOldItemService) {
+                        $stock = Stock::where('variant_id', $oldDetail->variant_id)
+                            ->where('size_option_id', $oldDetail->size_option_id)
+                            ->first();
+                        if ($stock) {
+                            $stock->increment('stock', $oldDetail->quantity);
+                        }
                     }
                 }
             }
@@ -50,6 +53,10 @@ class UpdateTransactionService
             if ($newType === 'direct_order') {
                 $errors = [];
                 foreach ($data['items'] as $index => $item) {
+                    $isItemService = \App\Models\Product::where('id', $item['product_id'])->value('is_service') === 'yes';
+                    if ($isItemService) {
+                        continue; // Skip stock validation for services
+                    }
                     $stock = Stock::where('variant_id', $item['variant_id'])
                         ->where('size_option_id', $item['size_option_id'])
                         ->first();
@@ -132,11 +139,14 @@ class UpdateTransactionService
 
                 // Reduce stock again if direct_order
                 if ($newType === 'direct_order') {
-                    $stock = Stock::where('variant_id', $item['variant_id'])
-                        ->where('size_option_id', $item['size_option_id'])
-                        ->first();
-                    if ($stock) {
-                        $stock->decrement('stock', $item['qty']);
+                    $isItemService = \App\Models\Product::where('id', $item['product_id'])->value('is_service') === 'yes';
+                    if (!$isItemService) {
+                        $stock = Stock::where('variant_id', $item['variant_id'])
+                            ->where('size_option_id', $item['size_option_id'])
+                            ->first();
+                        if ($stock) {
+                            $stock->decrement('stock', $item['qty']);
+                        }
                     }
                 }
             }

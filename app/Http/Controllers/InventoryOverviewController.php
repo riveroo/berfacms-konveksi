@@ -37,8 +37,7 @@ class InventoryOverviewController extends Controller
             });
         }
 
-        $perPage = $request->query('perPage', 10);
-        $items = $query->paginate($perPage)->withQueryString();
+        $items = $query->get();
 
         return view('inventory.overview', compact('items', 'suppliers', 'productTypes', 'search', 'supplierId', 'productTypeId'));
     }

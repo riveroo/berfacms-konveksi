@@ -67,6 +67,11 @@ class ProductResource extends Resource
                                         ->label(fn () => __('product.active'))
                                         ->default(true)
                                         ->live(),
+                                    Forms\Components\Toggle::make('is_service')
+                                        ->label(fn () => __('product.is_service'))
+                                        ->formatStateUsing(fn ($state) => $state === 'yes')
+                                        ->dehydrateStateUsing(fn ($state) => $state ? 'yes' : null)
+                                        ->live(),
                                     Forms\Components\TextInput::make('sort_order')
                                         ->label(fn () => __('product.urutan'))
                                         ->numeric()

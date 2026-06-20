@@ -143,12 +143,6 @@ class StockOutResource extends Resource
                                 },
                             ]),
 
-                        Forms\Components\DateTimePicker::make('trx_date')
-                            ->label(fn () => __('stock.trx_date'))
-                            ->default(now())
-                            ->required()
-                            ->disabled(fn (Forms\Get $get) => ! $get('item_type')),
-
                         Forms\Components\Hidden::make('user_id')
                             ->default(auth()->id()),
                     ])

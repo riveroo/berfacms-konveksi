@@ -196,9 +196,9 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 @if(!($this->product && $this->product->is_service === 'yes')) md:grid-cols-2 @endif gap-5">
                         <!-- Product Type -->
-                        <div>
+                        <div class="@if($this->product && $this->product->is_service === 'yes') col-span-1 @endif">
                             <x-text variant="label" class="mb-1.5">{{ __('product.product_type') }} <span class="text-red-500">*</span></x-text>
                             <select wire:model="productTypeId"
                                 class="w-full h-10 px-3 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition duration-150 cursor-pointer">
@@ -211,6 +211,7 @@
                         </div>
 
                         <!-- Color -->
+                        @if(!($this->product && $this->product->is_service === 'yes'))
                         <div>
                             <x-text variant="label" class="mb-1.5">{{ __('product.color') }} Hex <span class="text-red-500">*</span></x-text>
                             <div class="flex items-center gap-3">
@@ -220,6 +221,7 @@
                             </div>
                             @error('color') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
+                        @endif
                     </div>
 
                     <!-- Image Upload -->
@@ -247,6 +249,7 @@
                     </div>
 
                     <!-- Size Checklist -->
+                    @if(!($this->product && $this->product->is_service === 'yes'))
                     <div>
                         <x-text variant="label" class="mb-3">{{ __('product.sizes') }} Aktif <span class="text-red-500">*</span></x-text>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -261,6 +264,7 @@
                         </div>
                         @error('selectedSizes') <span class="text-xs text-red-500 mt-2 block">{{ $message }}</span> @enderror
                     </div>
+                    @endif
 
                     <!-- Actions -->
                     <div class="flex justify-end gap-3 pt-5 border-t border-gray-100 dark:border-gray-800 mt-6">

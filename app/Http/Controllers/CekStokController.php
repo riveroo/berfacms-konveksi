@@ -14,9 +14,16 @@ class CekStokController extends Controller
         $productId = $request->query('product_id');
 
         $sizes = SizeOption::ordered()->get();
-        $products = \App\Models\Product::orderBy('product_name')->get();
+        $products = \App\Models\Product::where(function ($q) {
+                $q->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+            })
+            ->orderBy('product_name')
+            ->get();
 
-        $query = Variant::with(['product', 'productType', 'stocks']);
+        $query = Variant::with(['product', 'productType', 'stocks'])
+            ->whereHas('product', function ($q) {
+                $q->whereNull('is_service')->orWhere('is_service', '!=', 'yes');
+            });
 
         if ($productId) {
             $query->where('product_id', $productId);

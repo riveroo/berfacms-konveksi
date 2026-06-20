@@ -123,10 +123,10 @@
             </form>
 
             <div
-                class="bg-white dark:bg-gray-900 shadow-sm rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
-                <div class="overflow-x-auto">
+                class="bg-white dark:bg-gray-900 shadow-sm rounded-lg border border-gray-200 dark:border-gray-800">
+                <div class="overflow-x-auto overflow-y-auto" style="max-height: calc(100vh - 280px);">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
-                        <thead class="bg-gray-50 dark:bg-gray-800/50">
+                        <thead class="bg-gray-50 dark:bg-gray-800/50 sticky top-0 z-20">
                             <tr>
                                 <th scope="col"
                                     class="px-3 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap">
@@ -161,7 +161,7 @@
                                 @endphp
                                 <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm {{ $isLowStock ? 'bg-red-50/70 dark:bg-red-950/20' : '' }}">
                                     <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-500/80 dark:text-red-400/80' : 'text-gray-500 dark:text-gray-400' }}">
-                                        {{ $items->firstItem() + $index }}
+                                        {{ $index + 1 }}
                                     </td>
                                     <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-500/80 dark:text-red-400/80' : 'text-gray-500 dark:text-gray-400' }}">
                                         {{ $item->item_id }}
@@ -207,33 +207,6 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div>
-
-                <div class="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
-                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <!-- Show Per Page -->
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ __('inventory.show') }}</span>
-                            <form method="GET" action="{{ route('inventory.overview') }}" id="perPageForm">
-                                @foreach(request()->except('perPage') as $key => $value)
-                                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                @endforeach
-                                <select name="perPage" onchange="document.getElementById('perPageForm').submit()"
-                                    class="h-8 px-2 w-12 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs text-gray-700 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500 outline-none cursor-pointer">
-                                    <option value="10" {{ request('perPage') == '10' ? 'selected' : '' }}>10</option>
-                                    <option value="25" {{ request('perPage') == '25' ? 'selected' : '' }}>25</option>
-                                    <option value="50" {{ request('perPage') == '50' ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ request('perPage') == '100' ? 'selected' : '' }}>100</option>
-                                </select>
-                            </form>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ __('inventory.per_page') }}</span>
-                        </div>
-
-                        <!-- Pagination -->
-                        <div class="pagination-container">
-                            {{ $items->links() }}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

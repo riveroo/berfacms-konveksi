@@ -8,4 +8,5 @@ return [
     'edit_product' => 'Ubah Produk',
     'product_details' => 'Detail Produk',
     'search' => 'Cari produk...',
+    'is_service' => 'Jasa',
 ];

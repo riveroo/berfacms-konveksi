@@ -89,11 +89,18 @@ class ProductVariantsManager extends Component
         $this->variantCode = '';
         $this->variantName = '';
         $this->productTypeId = $this->productTypes->first()?->id ?? '';
-        $this->color = '#4F46E5';
         $this->imageFile = null;
         $this->existingImage = null;
-        // Pre-select all active size options by default
-        $this->selectedSizes = $this->sizeOptions->pluck('id')->map(fn($id) => (string)$id)->toArray();
+        
+        $isService = $this->product && $this->product->is_service === 'yes';
+        if ($isService) {
+            $this->color = '#FFFFFF';
+            $this->selectedSizes = [];
+        } else {
+            $this->color = '#4F46E5';
+            // Pre-select all active size options by default
+            $this->selectedSizes = $this->sizeOptions->pluck('id')->map(fn($id) => (string)$id)->toArray();
+        }
         
         $this->isModalOpen = true;
     }
@@ -110,11 +117,17 @@ class ProductVariantsManager extends Component
         $this->variantCode = $variant->variant_code;
         $this->variantName = $variant->variant_name;
         $this->productTypeId = $variant->product_type_id;
-        $this->color = $variant->color ?? '#4F46E5';
         $this->imageFile = null;
         $this->existingImage = $variant->image;
         
-        $this->selectedSizes = $variant->stocks->pluck('size_option_id')->map(fn($id) => (string)$id)->toArray();
+        $isService = $this->product && $this->product->is_service === 'yes';
+        if ($isService) {
+            $this->color = '#FFFFFF';
+            $this->selectedSizes = [];
+        } else {
+            $this->color = $variant->color ?? '#4F46E5';
+            $this->selectedSizes = $variant->stocks->pluck('size_option_id')->map(fn($id) => (string)$id)->toArray();
+        }
         
         $this->isModalOpen = true;
     }
@@ -123,15 +136,25 @@ class ProductVariantsManager extends Component
     {
         if ($this->isReadOnly) return;
 
-        $this->validate([
+        $isService = $this->product && $this->product->is_service === 'yes';
+
+        $rules = [
             'variantName' => 'required|string|max:255',
             'productTypeId' => 'required|exists:master_product_type,id',
-            'color' => 'required|string|max:7',
             'variantCode' => 'nullable|string|max:100',
             'imageFile' => 'nullable|image|max:2048', // 2MB max
-            'selectedSizes' => 'required|array|min:1',
-            'selectedSizes.*' => 'exists:size_options,id',
-        ], [
+        ];
+
+        if ($isService) {
+            $this->color = '#FFFFFF';
+            $this->selectedSizes = [];
+        } else {
+            $rules['color'] = 'required|string|max:7';
+            $rules['selectedSizes'] = 'required|array|min:1';
+            $rules['selectedSizes.*'] = 'exists:size_options,id';
+        }
+
+        $this->validate($rules, [
             'variantName.required' => 'Variant name is required.',
             'selectedSizes.required' => 'At least one size option must be selected.',
             'selectedSizes.min' => 'At least one size option must be selected.',

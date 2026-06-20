@@ -21,6 +21,10 @@ class CreateTransactionService
         if ($transactionType === 'direct_order') {
             $errors = [];
             foreach ($data['items'] as $index => $item) {
+                $isItemService = \App\Models\Product::where('id', $item['product_id'])->value('is_service') === 'yes';
+                if ($isItemService) {
+                    continue; // Skip stock validation for services
+                }
                 $stock = Stock::where('variant_id', $item['variant_id'])
                     ->where('size_option_id', $item['size_option_id'])
                     ->first();
@@ -140,11 +144,14 @@ class CreateTransactionService
 
                 // 3. Stock deduction for direct_order
                 if ($transactionType === 'direct_order') {
-                    $stock = Stock::where('variant_id', $item['variant_id'])
-                        ->where('size_option_id', $item['size_option_id'])
-                        ->first();
-                    if ($stock) {
-                        $stock->decrement('stock', $item['qty']);
+                    $isItemService = \App\Models\Product::where('id', $item['product_id'])->value('is_service') === 'yes';
+                    if (!$isItemService) {
+                        $stock = Stock::where('variant_id', $item['variant_id'])
+                            ->where('size_option_id', $item['size_option_id'])
+                            ->first();
+                        if ($stock) {
+                            $stock->decrement('stock', $item['qty']);
+                        }
                     }
                 }
             }

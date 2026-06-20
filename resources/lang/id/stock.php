@@ -30,4 +30,31 @@ return [
     'new_stock' => 'Stok Baru',
     'difference' => 'Selisih',
     'reason_placeholder' => 'misal, Temuan stock opname, Barang rusak, dll.',
+    
+    // Bulk Stock In translations
+    'bulk_stock_in' => 'Bulk Stock In',
+    'bulk_stock_in_desc' => 'Tambah stok ke beberapa item sekaligus.',
+    'add_row' => 'Tambah Baris',
+    'delete_row' => 'Hapus',
+    'product_required' => 'Produk wajib diisi.',
+    'variant_required' => 'Varian wajib diisi.',
+    'material_required' => 'Material wajib diisi.',
+    'qty_required' => 'Jumlah wajib diisi.',
+    'qty_min' => 'Jumlah minimal 1.',
+    'bulk_stock_in_success' => 'Bulk stock in berhasil disimpan.',
+    'bulk_stock_in_failed' => 'Gagal menyimpan bulk stock in.',
+    'save' => 'Simpan',
+    'cancel' => 'Batal',
+    'no' => 'No',
+    'quantity' => 'Jumlah',
+    'select_product' => 'Pilih Produk',
+    'select_variant' => 'Pilih Varian',
+    'select_size' => 'Pilih Ukuran (Opsional)',
+    'select_material' => 'Pilih Material',
+
+    // Bulk Stock Out translations
+    'bulk_stock_out' => 'Bulk Stock Out',
+    'bulk_stock_out_desc' => 'Kurangi stok untuk beberapa item sekaligus.',
+    'bulk_stock_out_success' => 'Bulk stock out berhasil disimpan.',
+    'bulk_stock_out_failed' => 'Gagal menyimpan bulk stock out.',
 ];

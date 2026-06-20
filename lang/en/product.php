@@ -8,4 +8,5 @@ return [
     'edit_product' => 'Edit Product',
     'product_details' => 'Product Details',
     'search' => 'Search product...',
+    'is_service' => 'Is Service',
 ];

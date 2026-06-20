@@ -441,31 +441,57 @@
                     let list = [];
                     this.products.forEach(p => {
                         p.variants.forEach(v => {
-                            v.stocks.forEach(s => {
+                            if (p.is_service === 'yes') {
                                 let existingQty = 0;
                                 let matchedDetail = this.items.find(d => 
                                     d.product_id == p.id && 
                                     d.variant_id == v.id && 
-                                    d.size_option_id == s.size_option_id
+                                    d.size_option_id == null
                                 );
                                 if (matchedDetail) {
                                     existingQty = matchedDetail.qty;
                                 }
 
                                 list.push({
-                                    stock_id: s.id,
+                                    stock_id: null,
                                     product_id: p.id,
                                     variant_id: v.id,
-                                    size_option_id: s.size_option_id,
+                                    size_option_id: null,
                                     product_name: p.product_name,
                                     variant_name: v.variant_name,
                                     product_type_name: v.product_type ? v.product_type.name : '-',
-                                    size_name: s.size_option ? s.size_option.name : '-',
-                                    stock: Math.round(parseFloat(s.stock)) + existingQty,
-                                    price: parseFloat(s.price),
+                                    size_name: '-',
+                                    stock: 999999,
+                                    price: 0,
                                     selected: false
                                 });
-                            });
+                            } else {
+                                v.stocks.forEach(s => {
+                                    let existingQty = 0;
+                                    let matchedDetail = this.items.find(d => 
+                                        d.product_id == p.id && 
+                                        d.variant_id == v.id && 
+                                        d.size_option_id == s.size_option_id
+                                    );
+                                    if (matchedDetail) {
+                                        existingQty = matchedDetail.qty;
+                                    }
+
+                                    list.push({
+                                        stock_id: s.id,
+                                        product_id: p.id,
+                                        variant_id: v.id,
+                                        size_option_id: s.size_option_id,
+                                        product_name: p.product_name,
+                                        variant_name: v.variant_name,
+                                        product_type_name: v.product_type ? v.product_type.name : '-',
+                                        size_name: s.size_option ? s.size_option.name : '-',
+                                        stock: Math.round(parseFloat(s.stock)) + existingQty,
+                                        price: parseFloat(s.price),
+                                        selected: false
+                                    });
+                                });
+                            }
                         });
                     });
                     this.selectableItems = list;
@@ -593,7 +619,7 @@
                     {
                         product_id: {{ $detail->product_id }},
                         variant_id: {{ $detail->variant_id }},
-                        size_option_id: {{ $detail->size_option_id }},
+                        size_option_id: {{ $detail->size_option_id ?? 'null' }},
                         product_name: `{{ optional($detail->product)->product_name ?? '' }}`,
                         variant_name: `{{ optional($detail->variant)->variant_name ?? '' }}`,
                         size_name: `{{ optional($detail->sizeOption)->name ?? '' }}`,

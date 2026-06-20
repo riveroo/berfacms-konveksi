@@ -30,4 +30,31 @@ return [
     'new_stock' => 'New Stock',
     'difference' => 'Difference',
     'reason_placeholder' => 'e.g., Stock opname finding, Damaged goods, etc.',
+    
+    // Bulk Stock In translations
+    'bulk_stock_in' => 'Bulk Stock In',
+    'bulk_stock_in_desc' => 'Add stock to multiple items at once.',
+    'add_row' => 'Add Row',
+    'delete_row' => 'Delete Row',
+    'product_required' => 'Product is required.',
+    'variant_required' => 'Variant is required.',
+    'material_required' => 'Material is required.',
+    'qty_required' => 'Quantity is required.',
+    'qty_min' => 'Quantity must be at least 1.',
+    'bulk_stock_in_success' => 'Bulk stock in has been saved successfully.',
+    'bulk_stock_in_failed' => 'Failed to save bulk stock in.',
+    'save' => 'Save',
+    'cancel' => 'Cancel',
+    'no' => 'No',
+    'quantity' => 'Quantity',
+    'select_product' => 'Select Product',
+    'select_variant' => 'Select Variant',
+    'select_size' => 'Select Size (Optional)',
+    'select_material' => 'Select Material',
+
+    // Bulk Stock Out translations
+    'bulk_stock_out' => 'Bulk Stock Out',
+    'bulk_stock_out_desc' => 'Reduce stock for multiple items at once.',
+    'bulk_stock_out_success' => 'Bulk stock out has been saved successfully.',
+    'bulk_stock_out_failed' => 'Failed to save bulk stock out.',
 ];

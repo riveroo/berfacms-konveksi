@@ -461,21 +461,37 @@
                     let list = [];
                     this.products.forEach(p => {
                         p.variants.forEach(v => {
-                            v.stocks.forEach(s => {
+                            if (p.is_service === 'yes') {
                                 list.push({
-                                    stock_id: s.id,
+                                    stock_id: null,
                                     product_id: p.id,
                                     variant_id: v.id,
-                                    size_option_id: s.size_option_id,
+                                    size_option_id: null,
                                     product_name: p.product_name,
                                     variant_name: v.variant_name,
                                     product_type_name: v.product_type ? v.product_type.name : '-',
-                                    size_name: s.size_option ? s.size_option.name : '-',
-                                    stock: Math.round(parseFloat(s.stock)),
-                                    price: parseFloat(s.price),
+                                    size_name: '-',
+                                    stock: 999999,
+                                    price: 0,
                                     selected: false
                                 });
-                            });
+                            } else {
+                                v.stocks.forEach(s => {
+                                    list.push({
+                                        stock_id: s.id,
+                                        product_id: p.id,
+                                        variant_id: v.id,
+                                        size_option_id: s.size_option_id,
+                                        product_name: p.product_name,
+                                        variant_name: v.variant_name,
+                                        product_type_name: v.product_type ? v.product_type.name : '-',
+                                        size_name: s.size_option ? s.size_option.name : '-',
+                                        stock: Math.round(parseFloat(s.stock)),
+                                        price: parseFloat(s.price),
+                                        selected: false
+                                    });
+                                });
+                            }
                         });
                     });
                     this.selectableItems = list;
