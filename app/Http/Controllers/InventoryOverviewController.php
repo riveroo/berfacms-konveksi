@@ -19,6 +19,7 @@ class InventoryOverviewController extends Controller
         $productTypes = ProductType::orderBy('name')->get();
 
         $query = Item::with(['supplier', 'unit', 'productType'])
+            ->orderByRaw('CASE WHEN stock < minimum_stock THEN 0 ELSE 1 END ASC')
             ->orderByRaw('(stock - minimum_stock) ASC')
             ->orderBy('item_name');
 

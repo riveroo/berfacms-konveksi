@@ -159,11 +159,11 @@
                                 @php
                                     $isLowStock = $item->stock < $item->minimum_stock;
                                 @endphp
-                                <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm {{ $isLowStock ? 'bg-red-50/70 dark:bg-red-950/20' : '' }}">
-                                    <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-500/80 dark:text-red-400/80' : 'text-gray-500 dark:text-gray-400' }}">
+                                 <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm" style="{{ $isLowStock ? 'background-color: #fce6ed;' : '' }}">
+                                    <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-500 dark:text-gray-400' }}">
                                         {{ $index + 1 }}
                                     </td>
-                                    <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-500/80 dark:text-red-400/80' : 'text-gray-500 dark:text-gray-400' }}">
+                                     <td class="px-3 py-2 whitespace-nowrap {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-500 dark:text-gray-400' }}">
                                         {{ $item->item_id }}
                                     </td>
                                     <td class="px-3 py-2 whitespace-nowrap font-bold {{ $isLowStock ? 'text-red-700 dark:text-red-300' : 'text-gray-900 dark:text-gray-100' }}">
