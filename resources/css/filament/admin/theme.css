@@ -20,13 +20,16 @@
     }
 }
 
-/* Fix filament sidebar on mobile views to prevent locked 15% width constraint */
+/* Fix filament sidebar on mobile views to occupy 3/4 (75vw) of the screen width */
 @media (max-width: 1023px) {
+    :root {
+        --sidebar-width: 75vw !important;
+    }
     .fi-sidebar {
-        width: 16rem !important; /* Standard tailwind w-64 */
+        width: 75vw !important;
     }
     .fi-sidebar-open {
-        width: 16rem !important;
+        width: 75vw !important;
     }
 }
 
