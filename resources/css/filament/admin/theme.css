@@ -35,8 +35,8 @@
     :root {
         --sidebar-width: 15% !important;
     }
-    /* Apply width ONLY when the sidebar is NOT minimized (does not have class collapsed or is open) */
-    .fi-sidebar:not(.lg\:-translate-x-full):not([class*="translate-x-"]) {
+    /* Apply 15% width ONLY when the sidebar does NOT have class lg:-translate-x-full */
+    aside.fi-sidebar:not(.lg\:-translate-x-full) {
         width: 15% !important;
     }
     .fi-sidebar-open {
