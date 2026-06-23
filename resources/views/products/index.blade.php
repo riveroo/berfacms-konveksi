@@ -132,14 +132,14 @@
                                     @endphp
                                     @if($productColors->isNotEmpty())
                                         <div class="flex items-center gap-1.5 mb-3 flex-wrap">
-                                            @foreach($productColors->take(5) as $color)
+                                            @foreach($productColors->take(12) as $color)
                                                 <span class="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-sm shrink-0" 
                                                       style="background-color: {{ strtolower($color) }};" 
                                                       title="{{ $color }}"></span>
                                             @endforeach
-                                            @if($productColors->count() > 5)
+                                            @if($productColors->count() > 12)
                                                 <span class="text-[10.5px] font-bold text-gray-500 ml-0.5">
-                                                    ({{ $productColors->count() - 5 }}+)
+                                                    ({{ $productColors->count() - 12 }}+)
                                                 </span>
                                             @endif
                                         </div>
