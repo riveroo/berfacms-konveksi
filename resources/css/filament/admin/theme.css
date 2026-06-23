@@ -31,6 +31,11 @@
     .fi-sidebar-open {
         width: 75vw !important;
     }
+    /* Set custom branding wrapper padding inside wide mobile drawer */
+    .fi-sidebar-header {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
 }
 
 /* Re-apply desktop only 15% width so it does not affect mobile drawer */
@@ -38,7 +43,7 @@
     :root {
         --sidebar-width: 15% !important;
     }
-    /* Apply 15% width ONLY when the sidebar does NOT have class lg:-translate-x-full */
+    /* Apply 15% width ONLY when the sidebar is NOT minimized (does not have class lg:-translate-x-full) */
     aside.fi-sidebar:not(.lg\:-translate-x-full) {
         width: 15% !important;
     }
