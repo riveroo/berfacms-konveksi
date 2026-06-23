@@ -25,4 +25,20 @@
     .fi-sidebar {
         width: 16rem !important; /* Standard tailwind w-64 */
     }
+    .fi-sidebar-open {
+        width: 16rem !important;
+    }
+}
+
+/* Re-apply desktop only 15% width so it does not affect mobile drawer */
+@media (min-width: 1024px) {
+    :root {
+        --sidebar-width: 15% !important;
+    }
+    .fi-sidebar {
+        width: 15% !important;
+    }
+    .fi-sidebar-open {
+        width: 15% !important;
+    }
 }

@@ -336,7 +336,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-850">
-                            <template x-for="item in filteredSelectableItems" :key="item.stock_id">
+                            <template x-for="item in filteredSelectableItems" :key="item.product_id + '-' + item.variant_id + '-' + item.size_option_id">
                                 <tr class="hover:bg-indigo-50/30 dark:hover:bg-gray-850/50 transition">
                                     <td class="px-4 py-3 text-center">
                                         <input type="checkbox" x-model="item.selected" 
