@@ -114,15 +114,7 @@
                                             class="w-full h-full object-cover object-center bg-gray-50 mix-blend-multiply transition-transform duration-300 ease-in-out group-hover:scale-105">
                                     @endif
 
-                                    <div
-                                        class="absolute top-2 left-2 flex flex-col gap-1 items-start pointer-events-none z-10">
-                                        @if(rand(0, 1))
-                                            <span
-                                                class="bg-indigo-600 text-white text-[10.5px] font-bold tracking-wide px-2.5 py-1 rounded-md shadow-sm pointer-events-auto opacity-95">
-                                                Ekstra Voucher
-                                            </span>
-                                        @endif
-                                    </div>
+
                                 </div>
 
                                 <div class="p-4 flex flex-col flex-1 bg-white relative z-20">
@@ -132,14 +124,14 @@
                                     @endphp
                                     @if($productColors->isNotEmpty())
                                         <div class="flex items-center gap-1.5 mb-3 flex-wrap">
-                                            @foreach($productColors->take(12) as $color)
+                                            @foreach($productColors->take(10) as $color)
                                                 <span class="w-3.5 h-3.5 rounded-full border border-gray-300 shadow-sm shrink-0" 
                                                       style="background-color: {{ strtolower($color) }};" 
                                                       title="{{ $color }}"></span>
                                             @endforeach
-                                            @if($productColors->count() > 12)
+                                            @if($productColors->count() > 10)
                                                 <span class="text-[10.5px] font-bold text-gray-500 ml-0.5">
-                                                    ({{ $productColors->count() - 12 }}+)
+                                                    ({{ $productColors->count() - 10 }}+)
                                                 </span>
                                             @endif
                                         </div>
