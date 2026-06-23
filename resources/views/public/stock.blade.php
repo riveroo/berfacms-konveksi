@@ -235,14 +235,8 @@
                                             $stockItem = $variant->stocks->firstWhere('size_option_id', $size->id);
                                             $qty = $stockItem ? (int)$stockItem->stock : 0;
                                         @endphp
-                                        <td class="px-3 py-1.5 whitespace-nowrap text-center border-l border-slate-50 text-xs md:text-sm">
-                                            @if($qty == 0)
-                                                <span class="text-slate-300 font-medium">0</span>
-                                            @elseif($qty <= 5)
-                                                <span class="text-rose-600 font-black animate-pulse">{{ $qty }}</span>
-                                            @else
-                                                <span class="font-extrabold text-slate-900">{{ $qty }}</span>
-                                            @endif
+                                        <td class="px-3 py-1.5 whitespace-nowrap text-center border-l border-slate-50 text-xs md:text-sm font-extrabold text-slate-900">
+                                            {{ $qty }}
                                         </td>
                                     @endforeach
                                 </tr>
