@@ -178,4 +178,12 @@ return [
     'total_transaction' => 'Total Transaction',
     'total_ar' => 'Total AR',
     'no_active_transactions' => 'No active transactions registered for this customer',
+    'refund_title' => 'Excess Payment Option',
+    'refund_desc' => 'This transaction has an excess payment of :amount. Please choose how to handle it:',
+    'refund_option_balance' => 'Save to Customer Balance',
+    'refund_option_cash' => 'Refund Money (Cash Book)',
+    'refund_confirm' => 'Confirm and Save',
+    'refund_description_format' => 'Refund - :invoice',
+    'customer_deposit' => 'Customer Deposit',
+    'total_qty' => 'Total Qty',
 ];

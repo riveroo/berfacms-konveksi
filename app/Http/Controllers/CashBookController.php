@@ -43,7 +43,13 @@ class CashBookController extends Controller
         }
 
         if ($request->has('search') && $request->search) {
-            $query->where('description', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('description', 'like', '%' . $search . '%')
+                  ->orWhereHas('client', function($q2) use ($search) {
+                      $q2->where('client_name', 'like', '%' . $search . '%');
+                  });
+            });
         }
 
         // Support pagination size seperti di opening-balance

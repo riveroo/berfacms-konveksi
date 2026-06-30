@@ -138,11 +138,8 @@
                         @if($transaction->status === 'on progress' && $transaction->item_status === 'collected')
                             <p class="text-xs text-rose-500 mt-1 font-medium">{{ __('transaction.cannot_modify_collected') }}</p>
                         @endif
-                        @if($transaction->payment_status === 'paid')
-                            <p class="text-xs text-rose-500 mt-1 font-medium">{{ __('transaction.cannot_modify_paid') }}</p>
-                        @endif
                     </div>
-                    @if(!($transaction->status === 'on progress' && $transaction->item_status === 'collected') && $transaction->payment_status !== 'paid')
+                    @if($transaction->status !== 'done')
                     <x-button type="button" @click="productModalOpen = true" variant="primary" size="sm">
                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -181,14 +178,14 @@
                                     <td class="px-4 py-4 text-right min-w-[130px]">
                                         <div class="relative inline-block">
                                             <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">Rp</span>
-                                            <input type="number" x-model.number="item.price" @input="validatePrice(index)" min="0" :disabled="('{{ $transaction->status }}' === 'on progress' && '{{ $transaction->item_status }}' === 'collected') || '{{ $transaction->payment_status }}' === 'paid'"
+                                            <input type="number" x-model.number="item.price" @input="validatePrice(index)" min="0" :disabled="'{{ $transaction->status }}' === 'done'"
                                                 class="w-28 h-9 pl-7 pr-1.5 text-right text-sm font-bold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/30 outline-none transition disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-850">
                                         </div>
                                     </td>
                                     
                                     <!-- QTY Input -->
                                     <td class="px-4 py-4 text-center min-w-[100px]">
-                                        <input type="number" x-model.number="item.qty" @input="validateQty(index)" min="1" :disabled="('{{ $transaction->status }}' === 'on progress' && '{{ $transaction->item_status }}' === 'collected') || '{{ $transaction->payment_status }}' === 'paid'"
+                                        <input type="number" x-model.number="item.qty" @input="validateQty(index)" min="1" :disabled="'{{ $transaction->status }}' === 'done'"
                                             class="w-20 h-9 px-2 text-center text-sm font-extrabold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/30 outline-none transition disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-850">
                                         <div x-show="errors['items.'+index+'.qty']" class="text-xs text-rose-500 mt-1 font-medium" x-text="errors['items.'+index+'.qty'][0]"></div>
                                     </td>
@@ -197,7 +194,7 @@
                                     <td class="px-4 py-4 text-right min-w-[130px]">
                                         <div class="relative inline-block">
                                             <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">Rp</span>
-                                            <input type="number" x-model.number="item.discount" @input="validateDiscount(index)" min="0" :disabled="('{{ $transaction->status }}' === 'on progress' && '{{ $transaction->item_status }}' === 'collected') || '{{ $transaction->payment_status }}' === 'paid'"
+                                            <input type="number" x-model.number="item.discount" @input="validateDiscount(index)" min="0" :disabled="'{{ $transaction->status }}' === 'done'"
                                                 class="w-28 h-9 pl-7 pr-1.5 text-right text-sm font-bold rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500/30 outline-none transition disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-850">
                                         </div>
                                     </td>
@@ -208,7 +205,7 @@
                                     <!-- Action -->
                                     <td class="px-4 py-4 text-center">
                                         <div class="flex items-center justify-center">
-                                            @if(!($transaction->status === 'on progress' && $transaction->item_status === 'collected') && $transaction->payment_status !== 'paid')
+                                            @if($transaction->status !== 'done')
                                             <button type="button" @click="removeItem(index)" class="text-red-500 hover:text-red-700 p-1.5 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 rounded-md transition tooltip" title="{{ __('transaction.remove') }}">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -219,6 +216,12 @@
                                     </td>
                                 </tr>
                             </template>
+
+                            <tr x-show="items.length > 0" class="border-t border-gray-250 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 font-bold">
+                                <td colspan="3" class="px-5 py-4 text-right">{{ __('transaction.total_qty') }}</td>
+                                <td class="px-4 py-4 text-center font-extrabold text-gray-900 dark:text-white" x-text="totalQty"></td>
+                                <td colspan="3"></td>
+                            </tr>
 
                             <tr x-show="items.length === 0">
                                 <td colspan="7" class="px-5 py-12 text-center text-gray-400 dark:text-gray-500">
@@ -244,9 +247,14 @@
 
                         <div class="flex justify-between items-center text-sm">
                             <span class="text-gray-500 dark:text-gray-400 pt-1">{{ __('transaction.overall_discount') }}</span>
-                            <input type="number" x-model.number="overallDiscount" @change="validateOverallDiscount()" @blur="validateOverallDiscount()" :disabled="('{{ $transaction->status }}' === 'on progress' && '{{ $transaction->item_status }}' === 'collected') || '{{ $transaction->payment_status }}' === 'paid'"
+                            <input type="number" x-model.number="overallDiscount" @change="validateOverallDiscount()" @blur="validateOverallDiscount()" :disabled="'{{ $transaction->status }}' === 'done'"
                                 class="w-32 h-9 px-3 text-right text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500/50 outline-none transition disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-800"
                                 min="0" placeholder="0">
+                        </div>
+
+                        <div x-show="customerBalance > 0" style="display: none;" class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">{{ __('transaction.customer_deposit') }}</span>
+                            <span class="font-bold text-rose-500" x-text="'-' + formatRupiah(customerBalance)"></span>
                         </div>
 
                         <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
@@ -281,6 +289,44 @@
                         </x-button>
                         <x-button type="button" @click="checkClient" variant="primary" size="sm">
                             {{ __('transaction.check_account') }}
+                        </x-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Refund Choice Modal -->
+        <div x-cloak x-show="refundModalOpen"
+            class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4">
+            <div @click.away="refundModalOpen = false"
+                class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-md p-6 overflow-hidden">
+                <x-text variant="heading" class="mb-2">{{ __('transaction.refund_title') }}</x-text>
+                
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6"
+                    x-text="'{{ __('transaction.refund_desc', ['amount' => ':amount']) }}'.replace(':amount', formatRupiah(remainingBalance))">
+                </p>
+
+                <div class="space-y-4">
+                    <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                        <input type="radio" name="refund_choice" value="balance" x-model="refundOption" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                        <div>
+                            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ __('transaction.refund_option_balance') }}</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                        <input type="radio" name="refund_choice" value="refund" x-model="refundOption" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                        <div>
+                            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ __('transaction.refund_option_cash') }}</span>
+                        </div>
+                    </label>
+
+                    <div class="flex justify-end gap-2 pt-4">
+                        <x-button type="button" @click="refundModalOpen = false" variant="outline" size="sm">
+                            {{ __('transaction.cancel') }}
+                        </x-button>
+                        <x-button type="button" @click="confirmRefund" variant="primary" size="sm" x-bind:disabled="!refundOption">
+                            {{ __('transaction.refund_confirm') }}
                         </x-button>
                     </div>
                 </div>
@@ -396,6 +442,10 @@
                 clientFormVisible: true,
                 clientFound: true,
                 clientModalOpen: false,
+                refundModalOpen: false,
+                refundOption: 'balance',
+                remainingBalance: 0,
+                customerBalance: parseFloat('{{ $transaction->customer_balance }}') || 0,
 
                 // Transaction config
                 transactionType: '{{ $transaction->transaction_type }}',
@@ -655,12 +705,16 @@
                     return this.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
                 },
 
+                get totalQty() {
+                    return this.items.reduce((sum, item) => sum + (parseInt(item.qty) || 0), 0);
+                },
+
                 get grandTotal() {
                     let overall = parseFloat(this.overallDiscount);
                     if (isNaN(overall) || overall < 0) {
                         overall = 0;
                     }
-                    let total = this.subtotal - overall;
+                    let total = this.subtotal - overall - this.customerBalance;
                     return total > 0 ? total : 0;
                 },
 
@@ -707,7 +761,15 @@
                     }
 
                     this.errors = {};
+                    await this.executeSubmit(null);
+                },
 
+                async confirmRefund() {
+                    this.refundModalOpen = false;
+                    await this.executeSubmit(this.refundOption);
+                },
+
+                async executeSubmit(refundOption) {
                     try {
                         let response = await fetch('{{ route('transactions.update', $transaction->id) }}', {
                             method: 'PUT',
@@ -724,18 +786,26 @@
                                 transaction_type: this.transactionType,
                                 item_status: this.transactionType === 'pre_order' ? 'in_progress' : this.itemStatus,
                                 device_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                                items: this.items
+                                items: this.items,
+                                refund_option: refundOption
                              })
                         });
 
                         const result = await response.json();
 
                         if (response.ok) {
+                            if (result.requires_refund_decision) {
+                                this.remainingBalance = result.remaining_balance;
+                                this.refundOption = 'balance';
+                                this.refundModalOpen = true;
+                                return;
+                            }
+
                             alert('{{ __('transaction.transaction_updated') }}');
                             if (result.redirect_url) {
                                 window.location.href = result.redirect_url;
                             } else {
-                                window.location.href = redirectUrl;
+                                window.location.href = '{{ route('transactions.detail', $transaction->id) }}';
                             }
                         } else if (response.status === 422) {
                             this.errors = result.errors || {};

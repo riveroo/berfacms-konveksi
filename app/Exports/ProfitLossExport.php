@@ -14,6 +14,11 @@ class ProfitLossExport implements FromArray, WithTitle
     protected $netProfit;
     protected $profitMargin;
     protected $periodLabel;
+    protected $filterType;
+    protected $monthlyTotalRevenue;
+    protected $monthlyTotalExpense;
+    protected $monthlyNetProfit;
+    protected $monthHeaders;
 
     public function __construct(
         $revenueAccounts,
@@ -22,7 +27,12 @@ class ProfitLossExport implements FromArray, WithTitle
         $totalExpense,
         $netProfit,
         $profitMargin,
-        $periodLabel
+        $periodLabel,
+        $filterType = 'monthly',
+        $monthlyTotalRevenue = [],
+        $monthlyTotalExpense = [],
+        $monthlyNetProfit = [],
+        $monthHeaders = []
     ) {
         $this->revenueAccounts = $revenueAccounts;
         $this->expenseAccounts = $expenseAccounts;
@@ -31,10 +41,87 @@ class ProfitLossExport implements FromArray, WithTitle
         $this->netProfit = $netProfit;
         $this->profitMargin = $profitMargin;
         $this->periodLabel = $periodLabel;
+        $this->filterType = $filterType;
+        $this->monthlyTotalRevenue = $monthlyTotalRevenue;
+        $this->monthlyTotalExpense = $monthlyTotalExpense;
+        $this->monthlyNetProfit = $monthlyNetProfit;
+        $this->monthHeaders = $monthHeaders;
     }
 
     public function array(): array
     {
+        if ($this->filterType === 'yearly') {
+            $headerRow = ['Account Code', 'Account Name'];
+            for ($m = 1; $m <= 12; $m++) {
+                $headerRow[] = $this->monthHeaders[$m] ?? "Month $m";
+            }
+            $headerRow[] = 'Total';
+
+            $rows = [
+                ['PROFIT & LOSS REPORT'],
+                ['Period: ' . $this->periodLabel],
+                [],
+                ['SUMMARY METADATA'],
+                ['Total Income', 'Rp ' . number_format($this->totalRevenue, 0, ',', '.')],
+                ['Total Expenses', 'Rp ' . number_format($this->totalExpense, 0, ',', '.')],
+                ['Net Profit', 'Rp ' . number_format($this->netProfit, 0, ',', '.')],
+                ['Profit Margin', number_format($this->profitMargin, 2, ',', '.') . '%'],
+                [],
+                ['ACCOUNT DETAILED STATEMENT'],
+                $headerRow,
+                [],
+                ['INCOME'],
+            ];
+
+            // Add revenue accounts
+            foreach ($this->revenueAccounts as $account) {
+                $row = [$account->code, $account->name];
+                for ($m = 1; $m <= 12; $m++) {
+                    $row[] = 'Rp ' . number_format($account->monthly_balances[$m] ?? 0, 0, ',', '.');
+                }
+                $row[] = 'Rp ' . number_format($account->balance, 0, ',', '.');
+                $rows[] = $row;
+            }
+
+            $subtotalIncomeRow = ['SUBTOTAL INCOME', ''];
+            for ($m = 1; $m <= 12; $m++) {
+                $subtotalIncomeRow[] = 'Rp ' . number_format($this->monthlyTotalRevenue[$m] ?? 0, 0, ',', '.');
+            }
+            $subtotalIncomeRow[] = 'Rp ' . number_format($this->totalRevenue, 0, ',', '.');
+            $rows[] = $subtotalIncomeRow;
+            
+            $rows[] = [];
+            $rows[] = ['EXPENSES'];
+
+            // Add expense accounts
+            foreach ($this->expenseAccounts as $account) {
+                $row = [$account->code, $account->name];
+                for ($m = 1; $m <= 12; $m++) {
+                    $row[] = 'Rp ' . number_format($account->monthly_balances[$m] ?? 0, 0, ',', '.');
+                }
+                $row[] = 'Rp ' . number_format($account->balance, 0, ',', '.');
+                $rows[] = $row;
+            }
+
+            $subtotalExpensesRow = ['SUBTOTAL EXPENSES', ''];
+            for ($m = 1; $m <= 12; $m++) {
+                $subtotalExpensesRow[] = 'Rp ' . number_format($this->monthlyTotalExpense[$m] ?? 0, 0, ',', '.');
+            }
+            $subtotalExpensesRow[] = 'Rp ' . number_format($this->totalExpense, 0, ',', '.');
+            $rows[] = $subtotalExpensesRow;
+
+            $rows[] = [];
+            
+            $netProfitRow = ['NET PROFIT / LOSS', ''];
+            for ($m = 1; $m <= 12; $m++) {
+                $netProfitRow[] = 'Rp ' . number_format($this->monthlyNetProfit[$m] ?? 0, 0, ',', '.');
+            }
+            $netProfitRow[] = 'Rp ' . number_format($this->netProfit, 0, ',', '.');
+            $rows[] = $netProfitRow;
+
+            return $rows;
+        }
+
         $rows = [
             ['PROFIT & LOSS REPORT'],
             ['Period: ' . $this->periodLabel],

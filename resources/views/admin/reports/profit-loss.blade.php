@@ -8,11 +8,15 @@
         loading: false,
         accountName: '',
         transactions: [],
-        fetchDrilldown(accountId) {
+        fetchDrilldown(accountId, monthNum = null) {
             this.isOpen = true;
             this.loading = true;
             this.transactions = [];
-            fetch('{{ route('reports.profit-loss.drilldown') }}?account_id=' + accountId + '&filter_type={{ $filter_type }}&filter_month={{ $filter_month }}&filter_year={{ $filter_year }}&start_date={{ $start_date_input }}&end_date={{ $end_date_input }}')
+            let url = '{{ route('reports.profit-loss.drilldown') }}?account_id=' + accountId + 
+                '&filter_type=' + (monthNum ? 'monthly' : '{{ $filter_type }}') + 
+                '&filter_month=' + (monthNum ? '{{ $filter_year }}-' + String(monthNum).padStart(2, '0') : '{{ $filter_month }}') + 
+                '&filter_year={{ $filter_year }}&start_date={{ $start_date_input }}&end_date={{ $end_date_input }}';
+            fetch(url)
                 .then(res => res.json())
                 .then(data => {
                     this.accountName = data.account_name;
@@ -198,6 +202,131 @@
                 
                 <div class="overflow-x-auto mt-4">
                     <table class="w-full text-left border-collapse">
+                        @if ($filter_type === 'yearly')
+                        <thead>
+                            <tr class="bg-gray-50/50 dark:bg-gray-800/40 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 dark:border-gray-800">
+                                <th class="px-6 py-3" style="min-width: 220px; white-space: nowrap;">{{ __('finance.category_account') }}</th>
+                                <th class="px-6 py-3" style="min-width: 100px; white-space: nowrap;">{{ __('finance.code') }}</th>
+                                @foreach(range(1, 12) as $m)
+                                    <th class="px-6 py-3 text-right" style="min-width: 110px; width: 110px; white-space: nowrap;">{{ $monthHeaders[$m] }}</th>
+                                @endforeach
+                                <th class="px-6 py-3 text-right" style="min-width: 120px; width: 120px; white-space: nowrap;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800/50">
+                            {{-- INCOME SECTION --}}
+                            <tr class="bg-gray-50/20 dark:bg-gray-900/10">
+                                <td colspan="15" class="px-6 py-3 text-sm font-black text-gray-900 dark:text-white uppercase tracking-wide" style="white-space: nowrap;">{{ __('finance.income_category') }}</td>
+                            </tr>
+                            @forelse($revenueAccounts as $account)
+                                <tr class="hover:bg-gray-50/30 dark:hover:bg-gray-800/20 transition">
+                                    <td class="px-6 py-3.5 text-sm text-gray-700 dark:text-gray-300 pl-12 font-medium" style="white-space: nowrap;">
+                                        {{ $account->name }}
+                                    </td>
+                                    <td class="px-6 py-3.5 text-sm text-gray-400" style="white-space: nowrap;">
+                                        {{ $account->code }}
+                                    </td>
+                                    @foreach(range(1, 12) as $m)
+                                        <td class="px-6 py-3.5 text-sm text-right align-middle" style="white-space: nowrap;">
+                                            <button 
+                                                type="button" 
+                                                @click="fetchDrilldown({{ $account->id }}, {{ $m }})" 
+                                                class="font-bold text-emerald-600 hover:text-emerald-500 border-b border-dashed border-emerald-300 hover:border-emerald-500 outline-none transition"
+                                                title="{{ __('finance.click_to_view_details') }}"
+                                            >
+                                                Rp {{ number_format($account->monthly_balances[$m] ?? 0, 0, ',', '.') }}
+                                            </button>
+                                        </td>
+                                    @endforeach
+                                    <td class="px-6 py-3.5 text-sm text-right align-middle font-bold" style="white-space: nowrap;">
+                                        <button 
+                                            type="button" 
+                                            @click="fetchDrilldown({{ $account->id }})" 
+                                            class="font-bold text-emerald-600 hover:text-emerald-500 border-b border-dashed border-emerald-300 hover:border-emerald-500 outline-none transition"
+                                            title="{{ __('finance.click_to_view_details') }}"
+                                        >
+                                            Rp {{ number_format($account->balance, 0, ',', '.') }}
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="15" class="px-6 py-4 text-sm text-gray-400 italic pl-12" style="white-space: nowrap;">{{ __('finance.no_income_accounts') }}</td>
+                                </tr>
+                            @endforelse
+                            <tr class="bg-emerald-50/20 dark:bg-emerald-900/10 font-bold border-t border-gray-200 dark:border-gray-800">
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px] pl-8" style="white-space: nowrap;">{{ __('finance.total_income') }}</td>
+                                <td style="white-space: nowrap;"></td>
+                                @foreach(range(1, 12) as $m)
+                                    <td class="px-6 py-4 text-sm text-right text-emerald-600 dark:text-emerald-400" style="white-space: nowrap;">Rp {{ number_format($monthlyTotalRevenue[$m] ?? 0, 0, ',', '.') }}</td>
+                                @endforeach
+                                <td class="px-6 py-4 text-sm text-right text-emerald-600 dark:text-emerald-400" style="white-space: nowrap;">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</td>
+                            </tr>
+
+                            {{-- EXPENSES SECTION --}}
+                            <tr class="bg-gray-50/20 dark:bg-gray-900/10">
+                                <td colspan="15" class="px-6 py-3 text-sm font-black text-gray-900 dark:text-white uppercase tracking-wide" style="white-space: nowrap;">{{ __('finance.expenses_category') }}</td>
+                            </tr>
+                            @forelse($expenseAccounts as $account)
+                                <tr class="hover:bg-gray-50/30 dark:hover:bg-gray-800/20 transition">
+                                    <td class="px-6 py-3.5 text-sm text-gray-700 dark:text-gray-300 pl-12 font-medium" style="white-space: nowrap;">
+                                        {{ $account->name }}
+                                    </td>
+                                    <td class="px-6 py-3.5 text-sm text-gray-400" style="white-space: nowrap;">
+                                        {{ $account->code }}
+                                    </td>
+                                    @foreach(range(1, 12) as $m)
+                                        <td class="px-6 py-3.5 text-sm text-right align-middle" style="white-space: nowrap;">
+                                            <button 
+                                                type="button" 
+                                                @click="fetchDrilldown({{ $account->id }}, {{ $m }})" 
+                                                class="font-bold text-rose-600 hover:text-rose-500 border-b border-dashed border-rose-300 hover:border-rose-500 outline-none transition"
+                                                title="{{ __('finance.click_to_view_details') }}"
+                                            >
+                                                Rp {{ number_format($account->monthly_balances[$m] ?? 0, 0, ',', '.') }}
+                                            </button>
+                                        </td>
+                                    @endforeach
+                                    <td class="px-6 py-3.5 text-sm text-right align-middle font-bold" style="white-space: nowrap;">
+                                        <button 
+                                            type="button" 
+                                            @click="fetchDrilldown({{ $account->id }})" 
+                                            class="font-bold text-rose-600 hover:text-rose-500 border-b border-dashed border-rose-300 hover:border-rose-500 outline-none transition"
+                                            title="{{ __('finance.click_to_view_details') }}"
+                                        >
+                                            Rp {{ number_format($account->balance, 0, ',', '.') }}
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="15" class="px-6 py-4 text-sm text-gray-400 italic pl-12" style="white-space: nowrap;">{{ __('finance.no_expense_accounts') }}</td>
+                                </tr>
+                            @endforelse
+                            <tr class="bg-rose-50/20 dark:bg-rose-900/10 font-bold border-t border-gray-200 dark:border-gray-800">
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px] pl-8" style="white-space: nowrap;">{{ __('finance.total_expenses') }}</td>
+                                <td style="white-space: nowrap;"></td>
+                                @foreach(range(1, 12) as $m)
+                                    <td class="px-6 py-4 text-sm text-right text-rose-600 dark:text-rose-400" style="white-space: nowrap;">Rp {{ number_format($monthlyTotalExpense[$m] ?? 0, 0, ',', '.') }}</td>
+                                @endforeach
+                                <td class="px-6 py-4 text-sm text-right text-rose-600 dark:text-rose-400" style="white-space: nowrap;">Rp {{ number_format($totalExpense, 0, ',', '.') }}</td>
+                            </tr>
+
+                            {{-- NET PROFIT SECTION --}}
+                            <tr class="bg-gray-100/50 dark:bg-gray-800 font-black border-t-2 border-b-2 border-gray-900 dark:border-gray-700">
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white uppercase tracking-wider text-[11px]" style="white-space: nowrap;">{{ __('finance.net_profit_loss') }}</td>
+                                <td style="white-space: nowrap;"></td>
+                                @foreach(range(1, 12) as $m)
+                                    <td class="px-6 py-4 text-sm text-right {{ $monthlyNetProfit[$m] >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }}" style="white-space: nowrap;">
+                                        Rp {{ number_format($monthlyNetProfit[$m] ?? 0, 0, ',', '.') }}
+                                    </td>
+                                @endforeach
+                                <td class="px-6 py-4 text-sm text-right {{ $netProfit >= 0 ? 'text-success-600 dark:text-success-400' : 'text-danger-600 dark:text-danger-400' }}" style="white-space: nowrap;">
+                                    Rp {{ number_format($netProfit, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                        </tbody>
+                        @else
                         <thead>
                             <tr class="bg-gray-50/50 dark:bg-gray-800/40 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-200 dark:border-gray-800">
                                 <th class="px-6 py-3 w-1/3">{{ __('finance.category_account') }}</th>
@@ -283,6 +412,7 @@
                                 </td>
                             </tr>
                         </tbody>
+                        @endif
                     </table>
                 </div>
             </div>

@@ -92,12 +92,22 @@ class ProfitLossController extends Controller
         $endDate = $filterData['end_date'];
         $periodLabel = $filterData['period_label'];
 
-        $financials = $this->calculateProfitAndLoss($startDate, $endDate);
+        if ($filterData['filter_type'] === 'yearly') {
+            $financials = $this->calculateProfitAndLossMonthlyBreakdown($startDate, $endDate);
+        } else {
+            $financials = $this->calculateProfitAndLoss($startDate, $endDate);
+        }
+
+        $monthHeaders = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $monthHeaders[$m] = Carbon::create()->month($m)->translatedFormat('M');
+        }
 
         $pdf = Pdf::loadView('admin.reports.profit-loss-pdf', array_merge(
             $filterData,
-            $financials
-        ));
+            $financials,
+            ['monthHeaders' => $monthHeaders]
+        ))->setPaper('a4', $filterData['filter_type'] === 'yearly' ? 'landscape' : 'portrait');
 
         $fileName = 'profit_loss_' . str_replace(' ', '_', strtolower($periodLabel)) . '.pdf';
         return $pdf->download($fileName);
@@ -113,7 +123,16 @@ class ProfitLossController extends Controller
         $endDate = $filterData['end_date'];
         $periodLabel = $filterData['period_label'];
 
-        $financials = $this->calculateProfitAndLoss($startDate, $endDate);
+        if ($filterData['filter_type'] === 'yearly') {
+            $financials = $this->calculateProfitAndLossMonthlyBreakdown($startDate, $endDate);
+        } else {
+            $financials = $this->calculateProfitAndLoss($startDate, $endDate);
+        }
+
+        $monthHeaders = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $monthHeaders[$m] = Carbon::create()->month($m)->translatedFormat('M');
+        }
 
         $fileName = 'profit_loss_' . str_replace(' ', '_', strtolower($periodLabel)) . '.xlsx';
         return Excel::download(
@@ -124,7 +143,12 @@ class ProfitLossController extends Controller
                 $financials['totalExpense'],
                 $financials['netProfit'],
                 $financials['profitMargin'],
-                $periodLabel
+                $periodLabel,
+                $filterData['filter_type'],
+                $financials['monthlyTotalRevenue'] ?? [],
+                $financials['monthlyTotalExpense'] ?? [],
+                $financials['monthlyNetProfit'] ?? [],
+                $monthHeaders
             ), 
             $fileName
         );
@@ -302,6 +326,82 @@ class ProfitLossController extends Controller
             'revenue' => $revenueData,
             'expense' => $expenseData,
             'profit' => $profitData,
+        ];
+    }
+
+    private function calculateProfitAndLossMonthlyBreakdown(Carbon $startDate, Carbon $endDate): array
+    {
+        $isSqlite = DB::connection()->getDriverName() === 'sqlite';
+        $monthExpr = $isSqlite 
+            ? "CAST(strftime('%m', journal_entries.date) AS INTEGER)" 
+            : "MONTH(journal_entries.date)";
+
+        $balances = JournalDetail::query()
+            ->select(
+                'account_id',
+                DB::raw("$monthExpr as month_num"),
+                DB::raw('SUM(debit) as total_debit'),
+                DB::raw('SUM(credit) as total_credit')
+            )
+            ->join('journal_entries', 'journal_entries.id', '=', 'journal_details.journal_entry_id')
+            ->whereBetween('journal_entries.date', [$startDate, $endDate])
+            ->groupBy('account_id', DB::raw("$monthExpr"))
+            ->get()
+            ->groupBy('account_id');
+
+        $revenueAccounts = Account::where('type', 'revenue')->get()->map(function($account) use ($balances) {
+            $accountBalances = $balances->get($account->id) ? $balances->get($account->id)->keyBy('month_num') : collect();
+            $monthlyBalances = [];
+            for ($m = 1; $m <= 12; $m++) {
+                $bal = $accountBalances->get($m);
+                $debit = $bal ? floatval($bal->total_debit) : 0.00;
+                $credit = $bal ? floatval($bal->total_credit) : 0.00;
+                $monthlyBalances[$m] = $credit - $debit;
+            }
+            $account->monthly_balances = $monthlyBalances;
+            $account->balance = array_sum($monthlyBalances);
+            return $account;
+        });
+
+        $expenseAccounts = Account::where('type', 'expense')->get()->map(function($account) use ($balances) {
+            $accountBalances = $balances->get($account->id) ? $balances->get($account->id)->keyBy('month_num') : collect();
+            $monthlyBalances = [];
+            for ($m = 1; $m <= 12; $m++) {
+                $bal = $accountBalances->get($m);
+                $debit = $bal ? floatval($bal->total_debit) : 0.00;
+                $credit = $bal ? floatval($bal->total_credit) : 0.00;
+                $monthlyBalances[$m] = $debit - $credit;
+            }
+            $account->monthly_balances = $monthlyBalances;
+            $account->balance = array_sum($monthlyBalances);
+            return $account;
+        });
+
+        $monthlyTotalRevenue = [];
+        $monthlyTotalExpense = [];
+        $monthlyNetProfit = [];
+
+        for ($m = 1; $m <= 12; $m++) {
+            $monthlyTotalRevenue[$m] = $revenueAccounts->sum(fn($acc) => $acc->monthly_balances[$m]);
+            $monthlyTotalExpense[$m] = $expenseAccounts->sum(fn($acc) => $acc->monthly_balances[$m]);
+            $monthlyNetProfit[$m] = $monthlyTotalRevenue[$m] - $monthlyTotalExpense[$m];
+        }
+
+        $totalRevenue = array_sum($monthlyTotalRevenue);
+        $totalExpense = array_sum($monthlyTotalExpense);
+        $netProfit = $totalRevenue - $totalExpense;
+        $profitMargin = $totalRevenue > 0 ? ($netProfit / $totalRevenue) * 100 : 0;
+
+        return [
+            'revenueAccounts' => $revenueAccounts,
+            'expenseAccounts' => $expenseAccounts,
+            'totalRevenue' => $totalRevenue,
+            'totalExpense' => $totalExpense,
+            'netProfit' => $netProfit,
+            'profitMargin' => $profitMargin,
+            'monthlyTotalRevenue' => $monthlyTotalRevenue,
+            'monthlyTotalExpense' => $monthlyTotalExpense,
+            'monthlyNetProfit' => $monthlyNetProfit,
         ];
     }
 }

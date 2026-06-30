@@ -274,10 +274,10 @@ class TransactionController extends Controller
     {
         $transaction = \App\Models\Transaction::with(['client', 'details.product', 'details.variant', 'details.sizeOption'])->findOrFail($id);
         
-        if (in_array($transaction->status, ['done', 'cancelled'])) {
+        if ($transaction->status === 'done') {
             \Filament\Notifications\Notification::make()
                 ->title('Cannot edit')
-                ->body('Transaction is already done or cancelled.')
+                ->body('Transaction is already done.')
                 ->danger()
                 ->send();
             return redirect()->route('transactions.detail', $id);
@@ -292,7 +292,7 @@ class TransactionController extends Controller
     public function update(Request $request, $id, \App\Services\UpdateTransactionService $updateTransactionService)
     {
         $transaction = \App\Models\Transaction::with('details')->findOrFail($id);
-        if (in_array($transaction->status, ['done', 'cancelled'])) {
+        if ($transaction->status === 'done') {
             return response()->json(['success' => false, 'message' => 'Cannot edit transaction.']);
         }
 
@@ -309,6 +309,7 @@ class TransactionController extends Controller
             'items.*.qty' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
             'items.*.discount' => 'nullable|numeric|min:0',
+            'refund_option' => 'nullable|string|in:balance,refund',
         ]);
 
         try {
@@ -323,6 +324,15 @@ class TransactionController extends Controller
                 'redirect_url' => route('transactions.detail', $transaction->id)
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
+            if (isset($e->errors()['refund_decision_required'])) {
+                $errorData = $e->errors()['refund_decision_required'];
+                $remainingBalance = $errorData['remaining_balance'] ?? ($errorData[0]['remaining_balance'] ?? 0);
+                return response()->json([
+                    'success' => false,
+                    'requires_refund_decision' => true,
+                    'remaining_balance' => $remainingBalance
+                ], 200);
+            }
             return response()->json([
                 'success' => false,
                 'errors' => $e->errors()

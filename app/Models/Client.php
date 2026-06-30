@@ -13,6 +13,7 @@ class Client extends Model
         'email',
         'phone_number',
         'information',
+        'customer_balance',
     ];
 
     public function transactions(): HasMany

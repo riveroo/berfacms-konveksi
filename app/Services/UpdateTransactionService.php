@@ -91,7 +91,8 @@ class UpdateTransactionService
                 ]);
             }
             
-            $grandTotal = $totalPrice - $overallDiscount;
+            $depositUsed = $transaction->customer_balance ?: 0;
+            $grandTotal = $totalPrice - $overallDiscount - $depositUsed;
 
             $timezone = $data['device_timezone'] ?? config('app.timezone');
             $localTime = \Carbon\Carbon::now($timezone);
@@ -102,6 +103,66 @@ class UpdateTransactionService
             $transaction->total_discount = $overallDiscount;
             $transaction->grand_total = $grandTotal > 0 ? $grandTotal : 0;
             
+            // Payment Status and Refund Logic
+            $oldPaymentStatus = $transaction->payment_status;
+            if ($oldPaymentStatus !== 'unpaid') {
+                $totalPaid = $transaction->payments()->sum('amount');
+                $actualGrandTotal = $transaction->grand_total;
+                
+                if ($totalPaid < $actualGrandTotal) {
+                    $transaction->payment_status = 'deposit';
+                } else {
+                    $remainingBalance = $totalPaid - $actualGrandTotal;
+                    if ($remainingBalance > 0) {
+                        $refundOption = $data['refund_option'] ?? null;
+                        if (!$refundOption) {
+                            throw \Illuminate\Validation\ValidationException::withMessages([
+                                'refund_decision_required' => [
+                                    'remaining_balance' => $remainingBalance
+                                ]
+                            ]);
+                        }
+                        
+                        $transaction->payment_status = 'paid';
+                        
+                        if ($refundOption === 'balance') {
+                            $client->increment('customer_balance', $remainingBalance);
+                        } elseif ($refundOption === 'refund') {
+                            $firstCashTx = \App\Models\CashTransaction::where('reference_type', 'transaction')
+                                ->where('reference_id', $transaction->trx_id)
+                                ->orderBy('id', 'asc')
+                                ->first();
+                                
+                            $accountId = $firstCashTx ? $firstCashTx->account_id : \App\Models\Account::where('type', 'asset')->where('is_active', true)->value('id');
+                            $counterAccountId = $firstCashTx ? $firstCashTx->counter_account_id : \App\Models\Account::where('type', 'revenue')->where('is_active', true)->value('id');
+                            
+                            $refundDesc = __('transaction.refund_description_format', ['invoice' => $transaction->trx_id]);
+                            if ($refundDesc === 'transaction.refund_description_format') {
+                                $refundDesc = 'Refund - ' . $transaction->trx_id;
+                            }
+                            
+                            $refundTx = new \App\Models\CashTransaction([
+                                'date' => $now,
+                                'description' => $refundDesc,
+                                'type' => 'money_out',
+                                'amount' => $remainingBalance,
+                                'client_id' => $client->id,
+                                'account_id' => $accountId,
+                                'counter_account_id' => $counterAccountId,
+                                'reference_type' => 'transaction',
+                                'reference_id' => $transaction->trx_id,
+                            ]);
+                            $refundTx->created_at = $now;
+                            $refundTx->updated_at = $now;
+                            $refundTx->save();
+                            $refundTx->generateJournal();
+                        }
+                    } else {
+                        $transaction->payment_status = 'paid';
+                    }
+                }
+            }
+
             $transaction->transaction_type = $newType;
             if ($newType === 'direct_order') {
                 $transaction->item_status = $newItemStatus;

@@ -228,6 +228,13 @@
                                     <td class="px-4 py-4 text-right font-bold text-gray-900 dark:text-white">Rp
                                         {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                                 </tr>
+                                @if($loop->last)
+                                <tr class="border-t border-gray-250 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 font-bold">
+                                    <td colspan="3" class="px-5 py-4 text-right">{{ __('transaction.total_qty') }}</td>
+                                    <td class="px-4 py-4 text-center font-extrabold text-gray-900 dark:text-white">{{ $transaction->details->sum('quantity') }}</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                @endif
                             @empty
                                 <tr>
                                     <td colspan="6" class="px-5 py-12 text-center text-gray-400 dark:text-gray-500">{{ __('transaction.no_items_available') }}</td>
@@ -250,6 +257,13 @@
                             <span class="text-gray-500 dark:text-gray-400 pt-1">{{ __('transaction.overall_discount') }}</span>
                             <span class="font-bold text-rose-500">-Rp {{ number_format($transaction->total_discount, 0, ',', '.') }}</span>
                         </div>
+
+                        @if($transaction->customer_balance > 0)
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500 dark:text-gray-400 pt-1">{{ __('transaction.customer_deposit') }}</span>
+                            <span class="font-bold text-rose-500">-Rp {{ number_format($transaction->customer_balance, 0, ',', '.') }}</span>
+                        </div>
+                        @endif
 
                         <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
                             <span class="font-extrabold text-gray-900 dark:text-gray-100 uppercase tracking-wider text-sm">{{ __('transaction.grand_total') }}</span>

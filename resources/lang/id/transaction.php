@@ -178,4 +178,12 @@ return [
     'total_transaction' => 'Total Transaksi',
     'total_ar' => 'Total Piutang',
     'no_active_transactions' => 'Tidak ada transaksi aktif yang terdaftar untuk pelanggan ini',
+    'refund_title' => 'Pilihan Kelebihan Pembayaran',
+    'refund_desc' => 'Transaksi ini memiliki kelebihan pembayaran sebesar :amount. Silakan pilih cara penanganannya:',
+    'refund_option_balance' => 'Simpan ke Saldo Pelanggan',
+    'refund_option_cash' => 'Kembalikan Uang (Buku Kas)',
+    'refund_confirm' => 'Konfirmasi dan Simpan',
+    'refund_description_format' => 'Pengembalian Dana - :invoice',
+    'customer_deposit' => 'Saldo Deposit',
+    'total_qty' => 'Total Qty',
 ];

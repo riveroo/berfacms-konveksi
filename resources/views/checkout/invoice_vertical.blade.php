@@ -326,6 +326,10 @@
 
         {{-- Calculations Section --}}
         <div class="calc-section">
+            <div class="calc-row" style="font-weight: bold;">
+                <span>{{ __('transaction.total_qty') }}</span>
+                <span>{{ $transaction->details->sum('quantity') }}</span>
+            </div>
             <div class="calc-row">
                 <span>Subtotal</span>
                 <span>Rp {{ number_format($totalItemsPrice, 0, ',', '.') }}</span>
@@ -340,6 +344,12 @@
                     @endif
                 </span>
             </div>
+            @if ($transaction->customer_balance > 0)
+            <div class="calc-row">
+                <span>Saldo Deposit</span>
+                <span>-Rp {{ number_format($transaction->customer_balance, 0, ',', '.') }}</span>
+            </div>
+            @endif
             <div class="calc-row grand-total">
                 <span>GRAND TOTAL</span>
                 <span>Rp {{ number_format($transaction->grand_total, 0, ',', '.') }}</span>

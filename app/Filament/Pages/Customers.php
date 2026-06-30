@@ -158,6 +158,11 @@ class Customers extends Page implements HasTable
                     ->sortable()
                     ->alignEnd()
                     ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
+                \Filament\Tables\Columns\TextColumn::make('customer_balance')
+                    ->label(fn () => __('transaction.customer_deposit'))
+                    ->sortable()
+                    ->alignEnd()
+                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.')),
             ])
             ->defaultSort('total_outstanding_balance', 'desc')
             ->filters([

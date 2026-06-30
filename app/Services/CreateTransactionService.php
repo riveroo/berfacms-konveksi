@@ -68,7 +68,8 @@ class CreateTransactionService
                 ]);
             }
             
-            $grandTotal = $totalPrice - $overallDiscount;
+            $depositUsed = $client->customer_balance ?: 0;
+            $grandTotal = $totalPrice - $overallDiscount - $depositUsed;
 
             $timezone = $data['device_timezone'] ?? config('app.timezone');
             // Dapatkan waktu lokal saat ini di timezone device klien
@@ -83,6 +84,7 @@ class CreateTransactionService
                 'client_id' => $client->id,
                 'total_price' => $totalPrice,
                 'total_discount' => $overallDiscount,
+                'customer_balance' => $depositUsed,
                 'grand_total' => $grandTotal > 0 ? $grandTotal : 0,
                 'status' => 'on progress',
                 'transaction_type' => $transactionType,
@@ -92,6 +94,11 @@ class CreateTransactionService
             $transaction->created_at = $now;
             $transaction->updated_at = $now;
             $transaction->save();
+
+            if ($depositUsed > 0) {
+                $client->customer_balance = 0;
+                $client->save();
+            }
 
             // If it's a pre_order, perhaps we also need a PreOrder record?
             // To make this work without breaking the existing PreOrder page, we create a PreOrder.

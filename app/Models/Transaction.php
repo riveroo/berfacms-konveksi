@@ -22,10 +22,12 @@ class Transaction extends Model
         'transaction_type',
         'item_status',
         'payment_status',
+        'customer_balance',
     ];
 
     protected $casts = [
         'deadline' => 'date',
+        'customer_balance' => 'decimal:2',
     ];
 
     public const STATUSES = [

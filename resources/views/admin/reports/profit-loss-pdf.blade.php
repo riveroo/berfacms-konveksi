@@ -148,6 +148,85 @@
 
     {{-- Profit & Loss Table --}}
     <table class="statement-table">
+        @if ($filter_type === 'yearly')
+        <thead>
+            <tr>
+                <th style="width: 20%; text-align: left;">Category / Account</th>
+                <th style="width: 10%; text-align: left;">Code</th>
+                @foreach(range(1, 12) as $m)
+                    <th style="width: 5%; text-align: right; font-size: 8px;">{{ $monthHeaders[$m] }}</th>
+                @endforeach
+                <th style="width: 10%; text-align: right;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{-- INCOME SECTION --}}
+            <tr class="section-header">
+                <td colspan="15" style="padding: 10px 12px;">Income</td>
+            </tr>
+            @forelse($revenueAccounts as $account)
+                <tr class="account-row">
+                    <td class="account-name">{{ $account->name }}</td>
+                    <td style="color: #666;">{{ $account->code }}</td>
+                    @foreach(range(1, 12) as $m)
+                        <td class="text-right font-semibold" style="color: #111; font-size: 8px;">{{ number_format($account->monthly_balances[$m] ?? 0, 0, ',', '.') }}</td>
+                    @endforeach
+                    <td class="text-right font-semibold" style="color: #111;">{{ number_format($account->balance, 0, ',', '.') }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="15" class="account-name" style="color: #777; font-style: italic;">No active income accounts.</td>
+                </tr>
+            @endforelse
+            <tr class="total-row">
+                <td style="padding-left: 15px; font-size: 10px; text-transform: uppercase;">Total Income</td>
+                <td></td>
+                @foreach(range(1, 12) as $m)
+                    <td class="text-right" style="color: #16a34a; font-size: 8px;">{{ number_format($monthlyTotalRevenue[$m] ?? 0, 0, ',', '.') }}</td>
+                @endforeach
+                <td class="text-right" style="color: #16a34a;">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</td>
+            </tr>
+
+            {{-- EXPENSES SECTION --}}
+            <tr class="section-header">
+                <td colspan="15" style="padding: 10px 12px;">Expenses</td>
+            </tr>
+            @forelse($expenseAccounts as $account)
+                <tr class="account-row">
+                    <td class="account-name">{{ $account->name }}</td>
+                    <td style="color: #666;">{{ $account->code }}</td>
+                    @foreach(range(1, 12) as $m)
+                        <td class="text-right font-semibold" style="color: #111; font-size: 8px;">{{ number_format($account->monthly_balances[$m] ?? 0, 0, ',', '.') }}</td>
+                    @endforeach
+                    <td class="text-right font-semibold" style="color: #111;">{{ number_format($account->balance, 0, ',', '.') }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="15" class="account-name" style="color: #777; font-style: italic;">No active expense accounts.</td>
+                </tr>
+            @endforelse
+            <tr class="total-row">
+                <td style="padding-left: 15px; font-size: 10px; text-transform: uppercase;">Total Expenses</td>
+                <td></td>
+                @foreach(range(1, 12) as $m)
+                    <td class="text-right" style="color: #dc2626; font-size: 8px;">{{ number_format($monthlyTotalExpense[$m] ?? 0, 0, ',', '.') }}</td>
+                @endforeach
+                <td class="text-right" style="color: #dc2626;">Rp {{ number_format($totalExpense, 0, ',', '.') }}</td>
+            </tr>
+
+            {{-- NET PROFIT SECTION --}}
+            <tr class="net-profit-row">
+                <td style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Net Profit / Loss</td>
+                <td></td>
+                @foreach(range(1, 12) as $m)
+                    <td class="text-right {{ $monthlyNetProfit[$m] >= 0 ? 'status-balanced' : 'status-loss' }}" style="font-size: 8px;">{{ number_format($monthlyNetProfit[$m] ?? 0, 0, ',', '.') }}</td>
+                @endforeach
+                <td class="text-right {{ $netProfit >= 0 ? 'status-balanced' : 'status-loss' }}">
+                    Rp {{ number_format($netProfit, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tbody>
+        @else
         <thead>
             <tr>
                 <th style="width: 50%; text-align: left;">Category / Account</th>
@@ -207,6 +286,7 @@
                 </td>
             </tr>
         </tbody>
+        @endif
     </table>
 
 </body>

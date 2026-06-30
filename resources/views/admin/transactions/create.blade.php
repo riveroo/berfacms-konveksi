@@ -184,6 +184,12 @@
                                 </tr>
                             </template>
 
+                            <tr x-show="items.length > 0" class="border-t border-gray-250 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 font-bold">
+                                <td colspan="3" class="px-5 py-4 text-right">{{ __('transaction.total_qty') }}</td>
+                                <td class="px-4 py-4 text-center font-extrabold text-gray-900 dark:text-white" x-text="totalQty"></td>
+                                <td colspan="3"></td>
+                            </tr>
+
                             <tr x-show="items.length === 0">
                                 <td colspan="7" class="px-5 py-12 text-center text-gray-400 dark:text-gray-500">
                                     <svg class="mx-auto h-12 w-12 mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -219,6 +225,11 @@
                             <input type="number" x-model.number="overallDiscount" @change="validateOverallDiscount()" @blur="validateOverallDiscount()"
                                 class="w-32 h-9 px-3 text-right text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-indigo-500/50 outline-none transition"
                                 min="0" placeholder="0">
+                        </div>
+
+                        <div x-show="customerBalance > 0" style="display: none;" class="flex justify-between items-center text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">{{ __('transaction.customer_deposit') }}</span>
+                            <span class="font-bold text-rose-500" x-text="'-' + formatRupiah(customerBalance)"></span>
                         </div>
 
                         <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
@@ -403,6 +414,7 @@
                 clientFormVisible: false,
                 clientFound: false,
                 clientModalOpen: false,
+                customerBalance: 0,
 
                 get filteredClients() {
                     if (!this.searchQuery.trim()) {
@@ -422,6 +434,7 @@
                     this.clientFound = true;
                     this.clientFormVisible = true;
                     this.clientModalOpen = false;
+                    this.customerBalance = parseFloat(client.customer_balance) || 0;
                 },
 
                 proceedAsNewCustomer() {
@@ -439,6 +452,7 @@
                     this.clientFound = false;
                     this.clientFormVisible = true;
                     this.clientModalOpen = false;
+                    this.customerBalance = 0;
                 },
 
                 resetClient() {
@@ -448,6 +462,7 @@
                     this.clientInfo = '';
                     this.clientFound = false;
                     this.clientFormVisible = false;
+                    this.customerBalance = 0;
                 },
 
                 // Product info state
@@ -641,12 +656,16 @@
                     return this.items.reduce((sum, item) => sum + (item.price * item.qty), 0);
                 },
 
+                get totalQty() {
+                    return this.items.reduce((sum, item) => sum + (parseInt(item.qty) || 0), 0);
+                },
+
                 get grandTotal() {
                     let overall = parseFloat(this.overallDiscount);
                     if (isNaN(overall) || overall < 0) {
                         overall = 0;
                     }
-                    let total = this.subtotal - overall;
+                    let total = this.subtotal - overall - this.customerBalance;
                     return total > 0 ? total : 0;
                 },
 

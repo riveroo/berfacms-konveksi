@@ -407,6 +407,12 @@
                         <td>&nbsp;</td>
                     </tr>
                 @endfor
+
+                <tr>
+                    <td colspan="4" style="text-align: right; font-weight: bold; font-size: 10px; padding: 6px 4px;">{{ __('transaction.total_qty') }}</td>
+                    <td style="font-weight: bold; font-size: 10px; padding: 6px 4px; text-align: left;">{{ $transaction->details->sum('quantity') }}</td>
+                    <td colspan="3" style="padding: 6px 4px;">&nbsp;</td>
+                </tr>
             </tbody>
         </table>
 
@@ -464,6 +470,15 @@
                                 @endif
                             </td>
                         </tr>
+                        @if ($transaction->customer_balance > 0)
+                        <tr>
+                            <td style="width: 40%;" class="text-right">&nbsp;</td>
+                            <td style="width: 25%;" class="text-center calc-bold">Saldo Deposit</td>
+                            <td style="width: 35%;" class="text-right ">
+                                Rp {{ number_format($transaction->customer_balance, 0, ',', '.') }}
+                            </td>
+                        </tr>
+                        @endif
                         <tr class="calc-border-top">
                             <td class="calc-bold" style="font-size: 11px;">GRAND TOTAL</td>
                             <td>&nbsp;</td>
